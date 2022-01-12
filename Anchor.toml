@@ -1,0 +1,12 @@
+[programs.localnet]
+somos_solana = "HSQL2EtMkFbMLFAN61Er7enhAdfFVizYKRpSFjsfYADy"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/alex/.config/solana/id.json"
+
+[scripts]
+test = "./node_modules/mocha/bin/mocha -t 1000000 tests/"
