@@ -27,13 +27,27 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-
-
         let actual = await program.account.music.fetch(
             musicAccount
         );
         console.log(actual)
-        assert.equal(actual.binary.words[0], fakeBinaryMusicData.words[0]);
+        assert.equal(actual.binary.toNumber(), fakeBinaryMusicData.toNumber());
+        assert.equal(actual.bump, bump);
+    });
+
+    let moreFakeBinaryMusicData = new anchor.BN(4321)
+
+    it("updates music account with new binary data", async () => {
+        await program.rpc.update(moreFakeBinaryMusicData, {
+            accounts: {
+                musicAccount: musicAccount
+            }
+        })
+        let actual = await program.account.music.fetch(
+            musicAccount
+        )
+        console.log(actual)
+        assert.equal(actual.binary.toNumber(), moreFakeBinaryMusicData.toNumber());
         assert.equal(actual.bump, bump);
     });
 
