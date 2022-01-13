@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {Connection} from "@solana/web3.js";
 import {Program, Provider, web3, BN} from "@project-serum/anchor";
 import {useSnackbar} from "notistack";
-import {preflightCommitment, programID} from "./config";
+import {network, preflightCommitment, programID} from "./config";
 import idl from "./idl.json";
 import {WalletMultiButton} from "@solana/wallet-adapter-material-ui";
 
@@ -22,6 +22,22 @@ function Init({network, musicAccountPublicKey, bump}) {
     const [music, setMusic] = useState({
         binary: null
     });
+
+    useEffect(() => {
+        async function getCurrentState() {
+            const provider = await getProvider()
+            const program = new Program(idl, programID, provider);
+            try {
+                const account = await program.account.music.fetch(musicAccountPublicKey);
+                setMusic({
+                    binary: account.binary
+                });
+            } catch (error) {
+                console.log("could not getVotes: ", error);
+            }
+        }
+        getCurrentState();
+    }, [musicAccountPublicKey, network, wallet]);
 
     // Initialize the program
     async function initialize() {
