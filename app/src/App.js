@@ -9,6 +9,7 @@ import {WalletMultiButton} from "@solana/wallet-adapter-material-ui";
 import {SnackbarProvider, useSnackbar} from "notistack";
 import {web3} from "@project-serum/anchor";
 import {programID, network, wallets, ACCOUNT_SEED} from "./config";
+import Update from "./update";
 
 // Nest app within <SnackbarProvider /> so that we can set up Snackbar notifications on Wallet errors
 function Wrapped() {
@@ -52,6 +53,10 @@ function Wrapped() {
                     musicAccountPublicKey={musicAccount.publicKey}
                     bump={musicAccount.bump}
                 />
+                <Update
+                    network={network}
+                    musicAccountPublicKey={musicAccount.publicKey}
+                    />
             </WalletDialogProvider>
         </WalletProvider>
     );
