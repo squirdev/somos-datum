@@ -5,7 +5,6 @@ import {
     WalletProvider,
 } from "@solana/wallet-adapter-react";
 import {WalletDialogProvider} from "@solana/wallet-adapter-material-ui";
-import {WalletMultiButton} from "@solana/wallet-adapter-material-ui";
 import {SnackbarProvider, useSnackbar} from "notistack";
 import {web3} from "@project-serum/anchor";
 import {programID, network, wallets, ACCOUNT_SEED} from "./config";

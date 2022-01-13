@@ -66,18 +66,25 @@ function Init({network, musicAccountPublicKey, bump}) {
         }
     }
 
-    function MaybeInitButton() {
+    function View() {
         if (wallet.connected) {
-            return (
+            // already init
+            if (music.binary) {
+                return (
                 <div>
-                    <button onClick={initialize}>
-                        Initialize Program!
-                    </button>
-                    <div>
-                        binary music data: {JSON.stringify(music, null, "\t")}
-                    </div>
+                    binary music data: {JSON.stringify(music, null, "\t")}
                 </div>
-            )
+                )
+            } else {
+                // init
+                return (
+                    <div>
+                        <button onClick={initialize}>
+                            Initialize Program!
+                        </button>
+                    </div>
+                )
+            }
         } else {
             return null
         }
@@ -86,7 +93,7 @@ function Init({network, musicAccountPublicKey, bump}) {
     return (
         <div>
             <WalletMultiButton/>
-            <MaybeInitButton/>
+            <View/>
         </div>
     );
 }
