@@ -10,8 +10,9 @@ Cargo.lock
 **/*.rs.bk
 
 
-## anchor
+## solana
 .anchor
+test-ledger
 
 ## js
 /node_modules
