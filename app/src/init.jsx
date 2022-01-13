@@ -51,14 +51,11 @@ function Init({network, musicAccountPublicKey, bump}) {
     }
 
     return (
-        <div >
+        <div>
             <WalletMultiButton/>
-            <button onClick={initialize()}>
+            <button onClick={initialize}>
                 Initialize Program!
             </button>
-            <div >
-                Binary Music Data: {music.binary.toString()}
-            </div>
         </div>
     );
 }
