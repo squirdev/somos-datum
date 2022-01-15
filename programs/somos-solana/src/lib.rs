@@ -26,8 +26,8 @@ pub mod somos_solana {
 
     pub fn update(
         ctx: Context<Update>,
-        data_one: u128,
-        data_two: u128,
+        data_one: String,
+        data_two: String,
     ) -> ProgramResult {
         let partition_one = &mut ctx.accounts.partition_one;
         let partition_two = &mut ctx.accounts.partition_two;
@@ -67,6 +67,6 @@ pub struct Update<'info> {
 
 #[account]
 pub struct Partition {
-    pub data: u128,
+    pub data: String,
     pub bump: u8,
 }

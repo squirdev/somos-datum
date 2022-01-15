@@ -26,8 +26,8 @@ describe("somos-solana", () => {
             );
     });
     // data
-    let dataOne = new anchor.BN("12345")
-    let dataTwo = new anchor.BN("678910")
+    let dataOne = "12345"
+    let dataTwo = "678910"
     // init
     it("initializes partition one with bump", async () => {
         await program.rpc.initializePartitionOne(new anchor.BN(bumpOne), {
