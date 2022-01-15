@@ -7,53 +7,73 @@ describe("somos-solana", () => {
     anchor.setProvider(provider);
     // fetch program
     const program = anchor.workspace.SomosSolana;
-    // derive pda key with bump
-    let pdaPublicKey, bump;
+    // derive pda key
+    let pdaOnePublicKey, bumpOne;
     before(async () => {
-        [pdaPublicKey, bump] =
+        [pdaOnePublicKey, bumpOne] =
             await anchor.web3.PublicKey.findProgramAddress(
-                [Buffer.from("somos_seed")],
+                [Buffer.from("hemingway")],
+                program.programId
+            );
+    });
+    // derive pda key
+    let pdaTwoPublicKey, bumpTwo;
+    before(async () => {
+        [pdaTwoPublicKey, bumpTwo] =
+            await anchor.web3.PublicKey.findProgramAddress(
+                [Buffer.from("miller")],
                 program.programId
             );
     });
     // data
-    let title = "EP01";
-    let song01 = {
-        title: "Track01",
-        encodedWav: "base64_str_01"
-    };
+    let dataOne = new anchor.BN("12345")
+    let dataTwo = new anchor.BN("678910")
     // init
-    it("initializes music account with data & bump", async () => {
-        await program.rpc.initialize(new anchor.BN(bump), title, song01, song01, {
+    it("initializes partition one with bump", async () => {
+        await program.rpc.initializePartitionOne(new anchor.BN(bumpOne), {
             accounts: {
                 user: provider.wallet.publicKey,
-                musicAccount: pdaPublicKey,
+                partition: pdaOnePublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actual = await program.account.project.fetch(
-            pdaPublicKey
+        let actualOne = await program.account.partition.fetch(
+            pdaOnePublicKey
         );
-        console.log(actual)
-        assert.equal(actual.title.toString(), title.toNumber());
-        assert.equal(actual.bump, bump);
+        console.log(actualOne)
     });
-
-    // data
-    let newTitle = "EP_01"
-    // update
-    it("updates music account with new binary data", async () => {
-        await program.rpc.update(newTitle, {
+    // init
+    it("initializes partition two with bump", async () => {
+        await program.rpc.initializePartitionTwo(new anchor.BN(bumpTwo), {
             accounts: {
-                musicAccount: pdaPublicKey
+                user: provider.wallet.publicKey,
+                partition: pdaTwoPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
             }
-        })
-        let actual = await program.account.project.fetch(
-            pdaPublicKey
-        )
-        console.log(actual)
-        assert.equal(actual.title.toString(), newTitle.toString());
-        assert.equal(actual.bump, bump);
+        });
+        let actualTwo = await program.account.partition.fetch(
+            pdaTwoPublicKey
+        );
+        console.log(actualTwo)
+    });
+    // update
+    it("updates both partitions with data", async () => {
+        await program.rpc.update(dataOne, dataTwo, {
+            accounts: {
+                user: provider.wallet.publicKey,
+                partitionOne: pdaOnePublicKey,
+                partitionTwo: pdaTwoPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualOne = await program.account.partition.fetch(
+            pdaOnePublicKey
+        );
+        let actualTwo = await program.account.partition.fetch(
+            pdaTwoPublicKey
+        );
+        console.log(actualOne)
+        console.log(actualTwo)
     });
 
 });

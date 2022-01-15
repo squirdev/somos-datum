@@ -6,49 +6,67 @@ declare_id!("AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN");
 pub mod somos_solana {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>, bump: u8, title: String, one: Song, two: Song) -> ProgramResult {
-        let music_account = &mut ctx.accounts.music_account;
-        music_account.title = title;
-        music_account.one = one;
-        music_account.two = two;
-        music_account.bump = bump;
+    pub fn initialize_partition_one(
+        ctx: Context<InitializeOne>,
+        bump: u8,
+    ) -> ProgramResult {
+        let partition = &mut ctx.accounts.partition;
+        partition.bump = bump;
         Ok(())
     }
 
-    pub fn update(ctx: Context<Update>, title: String) -> ProgramResult {
-        let music_account = &mut ctx.accounts.music_account;
-        music_account.title = title;
+    pub fn initialize_partition_two(
+        ctx: Context<InitializeTwo>,
+        bump: u8,
+    ) -> ProgramResult {
+        let partition = &mut ctx.accounts.partition;
+        partition.bump = bump;
+        Ok(())
+    }
+
+    pub fn update(
+        ctx: Context<Update>,
+        data_one: u128,
+        data_two: u128,
+    ) -> ProgramResult {
+        let partition_one = &mut ctx.accounts.partition_one;
+        let partition_two = &mut ctx.accounts.partition_two;
+        partition_one.data = data_one;
+        partition_two.data = data_two;
         Ok(())
     }
 }
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct Initialize<'info> {
-    #[account(init, seeds = [b"somos_seed".as_ref()], bump = bump, payer = user, space = 16 + 16)]
-    music_account: Account<'info, Project>,
+pub struct InitializeOne<'info> {
+    #[account(init, seeds = [b"hemingway".as_ref()], bump = bump, payer = user, space = 10240)]
+    pub partition: Account<'info, Partition>,
     #[account(mut)]
-    user: Signer<'info>,
-    system_program: Program<'info, System>,
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(bump: u8)]
+pub struct InitializeTwo<'info> {
+    #[account(init, seeds = [b"miller".as_ref()], bump = bump, payer = user, space = 10240)]
+    pub partition: Account<'info, Partition>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct Update<'info> {
-    #[account(mut, seeds = [b"somos_seed".as_ref()], bump = music_account.bump)]
-    music_account: Account<'info, Project>,
+    #[account(mut, seeds = [b"hemingway".as_ref()], bump = partition_one.bump)]
+    pub partition_one: Account<'info, Partition>,
+    #[account(mut, seeds = [b"miller".as_ref()], bump = partition_two.bump)]
+    pub partition_two: Account<'info, Partition>,
 }
 
 #[account]
-pub struct Project {
-    pub title: String,
-    pub one: Song,
-    pub two: Song,
-    // used to persist data with unique seed + .bump
+pub struct Partition {
+    pub data: u128,
     pub bump: u8,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct Song {
-    pub title: String,
-    pub encoded_wav: String,
 }
