@@ -8,6 +8,7 @@ describe("somos-solana", () => {
     anchor.setProvider(provider);
     // fetch program
     const program = anchor.workspace.SomosSolana;
+
     // create 2nd (or more) user
     async function createUser(airdropBalance) {
         airdropBalance = airdropBalance ?? 10 * LAMPORTS_PER_SOL;
@@ -24,10 +25,12 @@ describe("somos-solana", () => {
             provider: userProvider,
         };
     }
+
     // create program from secondary user
     function programForUser(user) {
         return new anchor.Program(program.idl, program.programId, user.provider);
     }
+
     // derive pda key
     let pdaOnePublicKey, bumpOne;
     before(async () => {
@@ -85,10 +88,8 @@ describe("somos-solana", () => {
     it("updates both partitions with data", async () => {
         await program.rpc.update(dataOne, dataTwo, {
             accounts: {
-                user: provider.wallet.publicKey,
                 partitionOne: pdaOnePublicKey,
                 partitionTwo: pdaTwoPublicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
         let actualOne = await program.account.partition.fetch(
