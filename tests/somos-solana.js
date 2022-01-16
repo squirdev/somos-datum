@@ -49,6 +49,15 @@ describe("somos-solana", () => {
                 program.programId
             );
     });
+    // derive pda key
+    let pdaLedgerPublicKey, bumpLedger;
+    before(async () => {
+        [pdaLedgerPublicKey, bumpLedger] =
+            await anchor.web3.PublicKey.findProgramAddress(
+                [Buffer.from("hancock")],
+                program.programId
+            );
+    });
     // data
     let dataOne = "12345"
     let dataTwo = "678910"
@@ -83,6 +92,21 @@ describe("somos-solana", () => {
             pdaTwoPublicKey
         );
         console.log(actualTwo)
+    });
+    // init
+    it("initializes ledger with bump", async () => {
+        console.log(provider.wallet.publicKey)
+        await program.rpc.initializeLedger(new anchor.BN(bumpLedger), {
+            accounts: {
+                user: provider.wallet.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
     });
     // update
     it("updates both partitions with data", async () => {
