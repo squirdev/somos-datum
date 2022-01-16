@@ -90,6 +90,7 @@ describe("somos-solana", () => {
             accounts: {
                 partitionOne: pdaOnePublicKey,
                 partitionTwo: pdaTwoPublicKey,
+                authority: provider.wallet.publicKey
             }
         });
         let actualOne = await program.account.partition.fetch(

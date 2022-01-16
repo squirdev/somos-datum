@@ -21,6 +21,7 @@ pub mod somos_solana {
     ) -> ProgramResult {
         let partition = &mut ctx.accounts.partition;
         partition.bump = bump;
+        partition.authority = ctx.accounts.user.key();
         Ok(())
     }
 
@@ -61,12 +62,15 @@ pub struct InitializeTwo<'info> {
 pub struct Update<'info> {
     #[account(mut, seeds = [b"hemingway".as_ref()], bump = partition_one.bump)]
     pub partition_one: Account<'info, Partition>,
-    #[account(mut, seeds = [b"miller".as_ref()], bump = partition_two.bump)]
+    #[account(mut, seeds = [b"miller".as_ref()], bump = partition_two.bump, has_one = authority)]
     pub partition_two: Account<'info, Partition>,
+    pub authority: Signer<'info>,
 }
 
 #[account]
 pub struct Partition {
     pub data: String,
     pub bump: u8,
+    // only init user can access
+    pub authority: Pubkey,
 }
