@@ -107,6 +107,49 @@ describe("somos-solana", () => {
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
+        let balance = await provider.connection.getBalance(provider.wallet.publicKey);
+        console.log(balance);
+    });
+    // purchase primary
+    it("purchase primary", async () => {
+        let purchaser = await createUser();
+        let _program = programForUser(purchaser)
+        console.log(provider.wallet.publicKey)
+        let balance = await provider.connection.getBalance(provider.wallet.publicKey)
+        console.log(balance)
+        await _program.rpc.purchasePrimary({
+            accounts: {
+                user: purchaser.key.publicKey,
+                boss: provider.wallet.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualLedger = await _program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        const newBalance = await provider.connection.getBalance(provider.wallet.publicKey);
+        console.log(newBalance - balance)
+        console.log(newBalance)
+        console.log(balance)
+    });
+    // failed purchase primary
+    it("purchase primary failed without boss", async () => {
+        let purchaser = await createUser();
+        let _program = programForUser(purchaser)
+        try {
+            await _program.rpc.purchasePrimary({
+                accounts: {
+                    user: purchaser.key.publicKey,
+                    boss: purchaser.key.publicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            console.log(error)
+        }
     });
     // update
     it("updates both partitions with data", async () => {
