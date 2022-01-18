@@ -17,5 +17,10 @@ test-ledger
 ## js
 /node_modules
 
+## cs
+css/node_modules
+css/package-lock.json
+css/custom.css
+
 ## project
 .idea
