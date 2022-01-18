@@ -55,7 +55,7 @@ function Wrapped() {
                 <Update
                     network={network}
                     musicAccountPublicKey={musicAccount.publicKey}
-                    />
+                />
             </WalletDialogProvider>
         </WalletProvider>
     );
@@ -63,10 +63,16 @@ function Wrapped() {
 
 export default function App() {
     return (
-        <SnackbarProvider>
-            <ConnectionProvider endpoint={network}>
-                <Wrapped/>
-            </ConnectionProvider>
-        </SnackbarProvider>
+        <section className={"hero is-fullheight has-black"}>
+            <div className={"hero-body"}>
+                <div className={"container"}>
+                    <SnackbarProvider>
+                        <ConnectionProvider endpoint={network}>
+                            <Wrapped/>
+                        </ConnectionProvider>
+                    </SnackbarProvider>
+                </div>
+            </div>
+        </section>
     );
 }

@@ -36,6 +36,7 @@ function Init({network, musicAccountPublicKey, bump}) {
                 console.log("could not getVotes: ", error);
             }
         }
+
         getCurrentState();
     }, [musicAccountPublicKey, network, wallet]);
 
@@ -71,9 +72,9 @@ function Init({network, musicAccountPublicKey, bump}) {
             // already init
             if (music.binary) {
                 return (
-                <div>
-                    binary music data: {JSON.stringify(music, null, "\t")}
-                </div>
+                    <div>
+                        binary music data: {JSON.stringify(music, null, "\t")}
+                    </div>
                 )
             } else {
                 // init
