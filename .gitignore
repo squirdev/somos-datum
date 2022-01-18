@@ -21,6 +21,7 @@ test-ledger
 css/node_modules
 css/package-lock.json
 css/custom.css
+app/public/custom.css
 
 ## project
 .idea
