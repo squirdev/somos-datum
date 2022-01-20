@@ -56,6 +56,8 @@ describe("somos-solana", () => {
         console.log(actualLedger)
         let balance = await provider.connection.getBalance(provider.wallet.publicKey);
         console.log(balance);
+        // assertions
+        assert.ok(actualLedger.originalSupplyRemaining === 1000)
     });
     // purchase primary
     it("purchase primary", async () => {
@@ -77,9 +79,13 @@ describe("somos-solana", () => {
         );
         console.log(actualLedger)
         const newBalance = await provider.connection.getBalance(provider.wallet.publicKey);
-        console.log(newBalance - balance)
+        const diff = newBalance - balance
+        console.log(diff)
         console.log(newBalance)
         console.log(balance)
+        // assertions
+        assert.ok(actualLedger.originalSupplyRemaining === 999)
+        assert.ok(diff === 2499968)
     });
     // failed purchase primary
     it("purchase primary failed without boss", async () => {
