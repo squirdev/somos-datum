@@ -8,28 +8,28 @@ import {WalletDialogProvider} from "@solana/wallet-adapter-material-ui";
 import {SnackbarProvider, useSnackbar} from "notistack";
 import {web3} from "@project-serum/anchor";
 import {programID, network, wallets, ACCOUNT_SEED} from "./config";
-import Update from "./update";
 
 // Nest app within <SnackbarProvider /> so that we can set up Snackbar notifications on Wallet errors
 function Wrapped() {
     const {enqueueSnackbar} = useSnackbar();
-    const [musicAccount, setMusicAccount] = useState({
+    // state
+    const [accountLookup, setAccountLookup] = useState({
         publicKey: null,
         bump: null,
     });
 
     useEffect(() => {
-        const getMusicAccount = async () => {
+        const getAccountLookup = async () => {
             let publicKey_, bump_ = null;
             [publicKey_, bump_] = await web3.PublicKey.findProgramAddress(
-                [Buffer.from("somos_seed")],
+                [Buffer.from(ACCOUNT_SEED)],
                 programID
             );
-            setMusicAccount(
+            setAccountLookup(
                 {publicKey: publicKey_, bump: bump_}
             );
         };
-        getMusicAccount();
+        getAccountLookup();
     }, []);
 
     const onWalletError = useCallback(
@@ -48,13 +48,8 @@ function Wrapped() {
         <WalletProvider wallets={wallets} onError={onWalletError} autoConnect>
             <WalletDialogProvider>
                 <Init
-                    network={network}
-                    musicAccountPublicKey={musicAccount.publicKey}
-                    bump={musicAccount.bump}
-                />
-                <Update
-                    network={network}
-                    musicAccountPublicKey={musicAccount.publicKey}
+                    ledgerPubkey={accountLookup.publicKey}
+                    bump={accountLookup.bump}
                 />
             </WalletDialogProvider>
         </WalletProvider>

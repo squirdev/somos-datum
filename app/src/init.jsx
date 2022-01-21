@@ -7,58 +7,64 @@ import {network, preflightCommitment, programID} from "./config";
 import idl from "./idl.json";
 import {WalletMultiButton} from "@solana/wallet-adapter-material-ui";
 
-const anchor = require("@project-serum/anchor");
-
-function Init({network, musicAccountPublicKey, bump}) {
+function Init({ledgerPubkey, bump}) {
     const {enqueueSnackbar} = useSnackbar();
     const wallet = useWallet();
 
     async function getProvider() {
         const connection = new Connection(network, preflightCommitment);
-        const provider = new Provider(connection, wallet, preflightCommitment);
-        return provider;
+        return new Provider(connection, wallet, preflightCommitment);
     }
 
-    const [music, setMusic] = useState({
-        binary: null
+    const [ledger, setLedger] = useState({
+        originalSupplyRemaining: null,
+        purchased: null,
+        secondaryMarket: null
     });
 
+    async function getCurrentState(program) {
+        try {
+            return await program.account.ledger.fetch(ledgerPubkey);
+        } catch (error) {
+            console.log("could not get ledger: ", error);
+        }
+    }
+
+    function setCurrentState(account) {
+        setLedger({
+            originalSupplyRemaining: account.originalSupplyRemaining,
+            purchased: account.purchased,
+            secondaryMarket: account.secondaryMarket
+        });
+    }
+
+
     useEffect(() => {
-        async function getCurrentState() {
+        async function init() {
             const provider = await getProvider()
             const program = new Program(idl, programID, provider);
-            try {
-                const account = await program.account.music.fetch(musicAccountPublicKey);
-                setMusic({
-                    binary: account.binary
-                });
-            } catch (error) {
-                console.log("could not getVotes: ", error);
-            }
+            const account = await getCurrentState(program)
+            setCurrentState(account)
         }
 
-        getCurrentState();
-    }, [musicAccountPublicKey, network, wallet]);
+        init()
+    }, [ledgerPubkey, wallet]);
 
     // Initialize the program
     async function initialize() {
         const provider = await getProvider();
         const program = new Program(idl, programID, provider);
-        // fake binary music data
-        const fakeBinaryMusicData = new anchor.BN(1234)
         // rpc
         try {
-            await program.rpc.initialize(new BN(bump), fakeBinaryMusicData, {
+            await program.rpc.initializeLedger(new BN(bump), {
                 accounts: {
                     user: provider.wallet.publicKey,
-                    musicAccount: musicAccountPublicKey,
+                    ledger: ledgerPubkey,
                     systemProgram: web3.SystemProgram.programId,
                 },
             });
-            const musicAccount = await program.account.music.fetch(musicAccountPublicKey);
-            setMusic({
-                binary: musicAccount.binary
-            });
+            const account = await getCurrentState(program);
+            setCurrentState(account)
             enqueueSnackbar("program initialized", {variant: "success"});
         } catch (error) {
             console.log("Transaction error: ", error);
@@ -70,10 +76,10 @@ function Init({network, musicAccountPublicKey, bump}) {
     function View() {
         if (wallet.connected) {
             // already init
-            if (music.binary) {
+            if (ledger.originalSupplyRemaining) {
                 return (
                     <div>
-                        binary music data: {JSON.stringify(music, null, "\t")}
+                        binary music data: {JSON.stringify(ledger, null, "\t")}
                     </div>
                 )
             } else {

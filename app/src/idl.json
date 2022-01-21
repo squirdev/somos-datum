@@ -3,10 +3,10 @@
   "name": "somos_solana",
   "instructions": [
     {
-      "name": "initialize",
+      "name": "initializeLedger",
       "accounts": [
         {
-          "name": "musicAccount",
+          "name": "ledger",
           "isMut": true,
           "isSigner": false
         },
@@ -25,39 +25,61 @@
         {
           "name": "bump",
           "type": "u8"
-        },
-        {
-          "name": "binary",
-          "type": "u128"
         }
       ]
     },
     {
-      "name": "update",
+      "name": "purchasePrimary",
       "accounts": [
         {
-          "name": "musicAccount",
+          "name": "user",
           "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "boss",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ledger",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "binary",
-          "type": "u128"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
     {
-      "name": "Music",
+      "name": "Ledger",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "binary",
-            "type": "u128"
+            "name": "originalSupplyRemaining",
+            "type": "u16"
+          },
+          {
+            "name": "purchased",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "secondaryMarket",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "boss",
+            "type": "publicKey"
           },
           {
             "name": "bump",
@@ -67,7 +89,24 @@
       }
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SoldOut",
+      "msg": "we've already sold-out. check the secondary market."
+    },
+    {
+      "code": 6001,
+      "name": "NothingForSale",
+      "msg": "nothing is for sale. try reaching out to an owner directly."
+    },
+    {
+      "code": 6002,
+      "name": "BossUp",
+      "msg": "you can only pay the boss for this track."
+    }
+  ],
   "metadata": {
-    "address": "7PPNqpdvgetTjxaMnMR9ADqm2gSw8KwEpmKkRrq3ACNs"
+    "address": "AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN"
   }
 }
