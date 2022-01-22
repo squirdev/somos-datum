@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {Connection} from "@solana/web3.js";
 import {Program, Provider, web3, BN} from "@project-serum/anchor";
@@ -7,38 +7,17 @@ import {network, preflightCommitment, programID} from "./config";
 import idl from "./idl.json";
 import {WalletMultiButton} from "@solana/wallet-adapter-material-ui";
 
-function Init({ledgerPubkey, bump}) {
+function Init({ledgerPubkey, bump, ledger, setCurrentState, getCurrentState}) {
     const {enqueueSnackbar} = useSnackbar();
     const wallet = useWallet();
 
+    // get provider
     async function getProvider() {
         const connection = new Connection(network, preflightCommitment);
         return new Provider(connection, wallet, preflightCommitment);
     }
 
-    const [ledger, setLedger] = useState({
-        originalSupplyRemaining: null,
-        purchased: null,
-        secondaryMarket: null
-    });
-
-    async function getCurrentState(program) {
-        try {
-            return await program.account.ledger.fetch(ledgerPubkey);
-        } catch (error) {
-            console.log("could not get ledger: ", error);
-        }
-    }
-
-    function setCurrentState(account) {
-        setLedger({
-            originalSupplyRemaining: account.originalSupplyRemaining,
-            purchased: account.purchased,
-            secondaryMarket: account.secondaryMarket
-        });
-    }
-
-
+    // ledger state init
     useEffect(() => {
         async function init() {
             const provider = await getProvider()
@@ -78,8 +57,25 @@ function Init({ledgerPubkey, bump}) {
             // already init
             if (ledger.originalSupplyRemaining) {
                 return (
-                    <div>
-                        binary music data: {JSON.stringify(ledger, null, "\t")}
+                    <div className={"columns"}>
+                        <div className={"column is-6 has-border-2"}>
+                            <h3>
+                                Total Supply Remaining
+                            </h3>
+                            <div>
+                                {ledger.originalSupplyRemaining.toString()}
+                            </div>
+                        </div>
+                        <div className={"column is-6 has-border-2"}>
+                            <h3>
+                                Owners
+                            </h3>
+                            <ul>
+                                {ledger.purchased.map(function (_publicKey) {
+                                    return (<li className={"mb-2"}> {_publicKey.toString()}</li>)
+                                })}
+                            </ul>
+                        </div>
                     </div>
                 )
             } else {
@@ -99,7 +95,7 @@ function Init({ledgerPubkey, bump}) {
 
     return (
         <div>
-            <WalletMultiButton/>
+            <WalletMultiButton className={"mb-6"}/>
             <View/>
         </div>
     );
