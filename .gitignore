@@ -17,6 +17,13 @@ test-ledger
 ## js
 /node_modules
 
+## elm
+elm-stuff
+assets/css
+assets/elm.min.js
+assets/node_modules
+dist/
+
 ## cs
 css/node_modules
 css/package-lock.json

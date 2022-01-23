@@ -1,0 +1,16 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "description": "SCSS Build",
+  "main": "elm.min.js",
+  "scripts": {
+    "build": "node-sass --output-style expanded --include-path=node_modules/bulma sass/custom.scss css/custom.css",
+    "start": "npm run build --watch"
+  },
+  "author": "MrMizz",
+  "license": "ISC",
+  "devDependencies": {
+    "bulma": "^0.9.1",
+    "node-sass": "^5.0.0"
+  }
+}
