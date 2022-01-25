@@ -5,7 +5,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Model.Model as Model exposing (Model)
-import Model.Phantom exposing (Phantom)
+import Model.Phantom as Phantom exposing (Phantom)
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -58,36 +58,19 @@ update msg model =
         ToPhantom toPhantomMsg ->
             case toPhantomMsg of
                 Connect ->
-                    ( model, connectSender ())
-
+                    ( model, connectSender () )
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
-                Msg.Phantom.SuccessOnConnection ->
-                    let
-                        phantom: Phantom
-                        phantom =
-                            model.phantom
-
-                        bump: Phantom
-                        bump =
-                            { phantom | isConnected = True }
-                    in
-                    ( { model | phantom = bump }, Cmd.none )
+                Msg.Phantom.SuccessOnConnection pubKey ->
+                    ( { model | phantom = Phantom.Connected { pubKey = pubKey } }
+                    , Cmd.none
+                    )
 
                 Msg.Phantom.ErrorOnConnection string ->
-                    let
-                        phantom: Phantom
-                        phantom =
-                            model.phantom
-
-                        bump: Phantom
-                        bump =
-                            { phantom | isConnected = False }
-                    in
-                    ( { model | phantom = bump, state = (Error string) }, Cmd.none )
-
-
+                    ( { model | phantom = Phantom.NotConnected, state = Error string }
+                    , Cmd.none
+                    )
 
 
 

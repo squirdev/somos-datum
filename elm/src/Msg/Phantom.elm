@@ -1,10 +1,14 @@
 module Msg.Phantom exposing (FromPhantomMsg(..), ToPhantomMsg(..))
 
-type FromPhantomMsg
+
+type
+    FromPhantomMsg
     -- connection attempt
-    = SuccessOnConnection
+    = SuccessOnConnection String
     | ErrorOnConnection String
 
-type ToPhantomMsg
+
+type
+    ToPhantomMsg
     -- connection attempt
     = Connect

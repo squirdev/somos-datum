@@ -1,10 +1,16 @@
-module Model.Phantom exposing (Phantom, init)
+module Model.Phantom exposing (Phantom(..), PubKey, init)
 
-type alias Phantom =
-    { isConnected: Bool
+
+type Phantom
+    = Connected PubKey
+    | NotConnected
+
+
+type alias PubKey =
+    { pubKey : String
     }
+
 
 init : Phantom
 init =
-     { isConnected = False
-     }
+    NotConnected

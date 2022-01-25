@@ -8,6 +8,6 @@ import Sub.Phantom exposing (connectFailureListener, connectSuccessListener)
 subs : Sub Msg
 subs =
     Sub.batch
-        [ connectSuccessListener (\_ -> (FromPhantom SuccessOnConnection))
-        , connectFailureListener (\s -> (FromPhantom (ErrorOnConnection s)))
+        [ connectSuccessListener (\pubKey -> FromPhantom (SuccessOnConnection pubKey))
+        , connectFailureListener (\error -> FromPhantom (ErrorOnConnection error))
         ]

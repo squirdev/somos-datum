@@ -11,7 +11,7 @@ type alias Model =
     { state : State
     , url : Url.Url
     , key : Nav.Key
-    , phantom: Phantom
+    , phantom : Phantom
     }
 
 

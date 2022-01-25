@@ -11,7 +11,7 @@ type Msg
     = NoOp
     | UrlChanged Url.Url
     | LinkClicked Browser.UrlRequest
-    -- phantom sub
+      -- phantom sub
     | ToPhantom ToPhantomMsg
     | FromPhantom FromPhantomMsg
 

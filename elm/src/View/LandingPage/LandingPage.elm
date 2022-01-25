@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model.Model exposing (Model)
+import Model.Phantom exposing (Phantom(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Hero
@@ -18,11 +19,11 @@ body : Model -> Html Msg
 body model =
     let
         phantom =
-            case model.phantom.isConnected of
-                True ->
-                    Html.text "Connected"
+            case model.phantom of
+                Connected pubKey ->
+                    Html.text pubKey.pubKey
 
-                False ->
+                NotConnected ->
                     Html.button
                         [ onClick (ToPhantom Connect)
                         ]
