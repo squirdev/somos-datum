@@ -27,7 +27,7 @@ function Init({ledgerPubkey, bump, ledger, setCurrentState, getCurrentState}) {
         }
 
         init()
-    }, [ledgerPubkey, wallet]);
+    }, [ledgerPubkey]);
 
     // Initialize the program
     async function initialize() {
