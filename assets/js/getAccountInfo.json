@@ -1,0 +1,12 @@
+{
+  "method": "getAccountInfo",
+  "jsonrpc": "2.0",
+  "params": [
+    "CU7P6bWg25ZfKaMkaCQriRcoEz4rPqqsWGZ1TKWoe1sQ",
+    {
+      "encoding": "base64",
+      "commitment": "processed"
+    }
+  ],
+  "id": "20a51027-8e9e-435b-aa48-3b751840b4d6"
+}
