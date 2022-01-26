@@ -1,4 +1,4 @@
-var solanaWeb3 = (function (exports) {
+export var solanaWeb3 = (function (exports) {
     'use strict';
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -28931,10 +28931,11 @@ var solanaWeb3 = (function (exports) {
     exports.clusterApiUrl = clusterApiUrl;
     exports.sendAndConfirmRawTransaction = sendAndConfirmRawTransaction;
     exports.sendAndConfirmTransaction = sendAndConfirmTransaction;
+    // additions
+    exports.BN = BN;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
     return exports;
 
 })({});
-//# sourceMappingURL=index.iife.js.map

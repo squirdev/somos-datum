@@ -1,4 +1,4 @@
-// `solanaWeb3` is provided in the global namespace by the `solanaWeb3.min.js` script bundle.
+import {solanaWeb3} from "./index.js";
 import {ACCOUNT_SEED, programID} from "./config.js";
 import {textEncoder} from "./util.js";
 

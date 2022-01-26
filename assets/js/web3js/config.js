@@ -1,4 +1,5 @@
-// `solanaWeb3` is provided in the global namespace by the `solanaWeb3.min.js` script bundle.
+import {solanaWeb3} from "./index.js";
+
 export const preflightCommitment = "processed";
 export const programID = new solanaWeb3.PublicKey("AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN");
 export const ACCOUNT_SEED = "hancock"
