@@ -16,19 +16,22 @@ test-ledger
 
 ## js
 /node_modules
+assets/js/node_modules
+assets/js/bundle.js
 
 ## elm
 elm-stuff
 assets/css
 assets/elm.min.js
-assets/node_modules
 dist/
 
-## cs
+## css TODO : delete
 css/node_modules
 css/package-lock.json
 css/custom.css
 app/public/custom.css
+assets/sass/node_modules
+assets/sass/custom.css
 
 ## project
 .idea
