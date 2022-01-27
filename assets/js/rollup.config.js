@@ -1,6 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
+import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 
 export default {
@@ -15,6 +16,7 @@ export default {
         resolve({
             browser: true
         }),
+        typescript(),
         json()
     ]
 };
