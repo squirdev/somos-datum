@@ -2,7 +2,7 @@ import {web3} from "@project-serum/anchor";
 import {ACCOUNT_SEED, programID} from "./config.js";
 import {textEncoder} from "./util.js";
 
-export async function publicKey() {
+async function _publicKey() {
     let publicKey_, bump_ = null;
     [publicKey_, bump_] = await web3.PublicKey.findProgramAddress(
         [textEncoder.encode(ACCOUNT_SEED)],
@@ -11,16 +11,12 @@ export async function publicKey() {
     return {publicKey: publicKey_, bump: bump_}
 }
 
-// get provider
-async function getProvider(wallet) {
-    const connection = new Connection(network, preflightCommitment);
-    return new Provider(connection, wallet, preflightCommitment);
-}
+const publicKey = await _publicKey()
 
 // get ledger state
-async function getCurrentState(program, accountLookup) {
+export async function getCurrentState(program) {
     try {
-        return await program.account.ledger.fetch(accountLookup.publicKey);
+        return await program.account.ledger.fetch(publicKey.publicKey);
     } catch (error) {
         console.log("could not get ledger: ", error);
     }
