@@ -1,19 +1,16 @@
-import {Program, Provider, web3} from "@project-serum/anchor";
-import {ACCOUNT_SEED, preflightCommitment, programID} from "./config";
-import {connection, textEncoder} from "./util.js";
-import {PhantomWallet} from "./wallet";
+import {web3} from "@project-serum/anchor";
+import {ACCOUNT_SEED, programID} from "./config";
+import {getPP, textEncoder} from "./util.js";
 import {getPhantom} from "../phantom";
-import idl from "./idl.json";
 import {getCurrentState} from "./state";
+import {primary} from "./purchase/primary";
 
 // get program public key
-let publicKey_, bump_ = null;
-[publicKey_, bump_] = await web3.PublicKey.findProgramAddress(
+let statePublicKey, bump = null;
+[statePublicKey, bump] = await web3.PublicKey.findProgramAddress(
     [textEncoder.encode(ACCOUNT_SEED)],
     programID
 );
-const programPublicKey = {publicKey: publicKey_, bump: bump_}
-
 
 // get phantom
 let phantom = null;
@@ -21,16 +18,18 @@ app.ports.connectSender.subscribe(async function () {
     phantom = await getPhantom()
 });
 
-// get provider
-let provider = null;
+// get current state as soon as user logs in
 app.ports.isConnectedSender.subscribe(async function () {
-    // build wallet
-    const wallet = new PhantomWallet(phantom)
-    // set provider
-    provider = new Provider(connection, wallet, preflightCommitment);
-    // fetch current state of program
-    // program
-    const program = new Program(idl, programID, provider);
-    // send current state of program to elm
-    await getCurrentState(program, programPublicKey.publicKey)
+    // get provider & program
+    const pp = getPP(phantom)
+    // invoke state request & send response to elm
+    await getCurrentState(pp.program, statePublicKey)
+});
+
+// primary purchase
+app.ports.purchasePrimarySender.subscribe(async function () {
+    // get provider & program
+    const pp = getPP(phantom)
+    // invoke purchase request
+    await primary(pp.program, pp.provider, statePublicKey)
 });

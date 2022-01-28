@@ -10,7 +10,7 @@ import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import Sub.Anchor exposing (isConnectedSender)
+import Sub.Anchor exposing (isConnectedSender, purchasePrimarySender)
 import Sub.Phantom exposing (connectSender)
 import Sub.Sub as Sub
 import Url
@@ -76,18 +76,29 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
-                TODO ->
-                    ( model, Cmd.none )
+                PurchasePrimary ->
+                    ( model
+                    , purchasePrimarySender ()
+                    )
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup jsonString ->
-                    ( { model | state = LandingPage (Ready { json = jsonString }) }
+                    ( { model | state = LandingPage (UserWithNoOwnership { json = jsonString }) }
                     , Cmd.none
                     )
 
-                Msg.Anchor.FailureOnStateLookup string ->
-                    ( { model | state = Error string }, Cmd.none )
+                Msg.Anchor.FailureOnStateLookup error ->
+                    ( { model | state = Error error }, Cmd.none )
+
+                Msg.Anchor.SuccessOnPurchasePrimary jsonString ->
+                    -- TODO: send signed message to http endpoint
+                    ( model
+                    , Cmd.none
+                    )
+
+                Msg.Anchor.FailureOnPurchasePrimary error ->
+                    ( { model | state = Error error }, Cmd.none )
 
 
 

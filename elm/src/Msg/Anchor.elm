@@ -2,7 +2,7 @@ module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
 
 type ToAnchorMsg
-    = TODO
+    = PurchasePrimary
 
 
 type
@@ -10,3 +10,6 @@ type
     -- state lookup attempt
     = SuccessOnStateLookup String
     | FailureOnStateLookup String
+      -- purchase primary attempt
+    | SuccessOnPurchasePrimary String
+    | FailureOnPurchasePrimary String

@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model.Anchor exposing (Anchor(..))
+import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Hero
@@ -52,12 +53,20 @@ body anchor =
                             ]
                         ]
 
-                Ready anchorState ->
+                UserWithNoOwnership anchorState ->
                     Html.div
                         []
                         [ Html.div
                             []
                             [ Html.text anchorState.json
+                            ]
+                        , Html.div
+                            []
+                            [ Html.button
+                                [ onClick (ToAnchor PurchasePrimary)
+                                ]
+                                [ Html.text "Purchase"
+                                ]
                             ]
                         ]
     in

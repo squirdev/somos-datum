@@ -5,7 +5,7 @@ type Anchor
     = WaitingForWallet
     | JustHasWallet PublicKey
     | WaitingForProgramInit PublicKey
-    | Ready AnchorState
+    | UserWithNoOwnership AnchorState
 
 
 type alias PublicKey =

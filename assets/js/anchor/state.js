@@ -1,8 +1,8 @@
 // get ledger state
-export async function getCurrentState(program, programPublicKey) {
+export async function getCurrentState(program, statePublicKey) {
     try {
         // fetch state
-        const state = await program.account.ledger.fetch(programPublicKey);
+        const state = await program.account.ledger.fetch(statePublicKey);
         // define how to simplify for codec
         function simplify() {
             const _purchased = state.purchased.map(_publicKey => _publicKey.toString());
@@ -23,7 +23,7 @@ export async function getCurrentState(program, programPublicKey) {
     } catch (error) {
         // log error
         console.log("could not get program state: ", error);
-        // send err to elm
+        // send error to elm
         app.ports.getCurrentStateFailureListener.send(error.message)
     }
 }
