@@ -4,11 +4,13 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Model.Anchor exposing (Anchor(..))
 import Model.Model as Model exposing (Model)
-import Model.Phantom as Phantom exposing (Phantom)
 import Model.State as State exposing (State(..))
+import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
+import Sub.Anchor exposing (isConnectedSender)
 import Sub.Phantom exposing (connectSender)
 import Sub.Sub as Sub
 import Url
@@ -63,14 +65,31 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection pubKey ->
-                    ( { model | phantom = Phantom.Connected { pubKey = pubKey } }
-                    , Cmd.none
+                    ( { model | state = (LandingPage (JustHasWallet pubKey)) }
+                    , isConnectedSender ()
                     )
 
                 Msg.Phantom.ErrorOnConnection string ->
-                    ( { model | phantom = Phantom.NotConnected, state = Error string }
+                    ( { model | state = Error string }
                     , Cmd.none
                     )
+
+        ToAnchor toAnchorMsg ->
+            case toAnchorMsg of
+                TODO ->
+                    ( model, Cmd.none )
+
+        FromAnchor fromAnchorMsg ->
+            case fromAnchorMsg of
+                Msg.Anchor.SuccessOnStateLookup jsonString ->
+                    ( { model | state = (LandingPage (Ready {json = jsonString})) }
+                    , Cmd.none
+                     )
+
+
+                Msg.Anchor.FailureOnStateLookup string ->
+                    ( { model | state = Error string }, Cmd.none )
+
 
 
 
@@ -82,8 +101,8 @@ view model =
     let
         html =
             case model.state of
-                LandingPage ->
-                    View.LandingPage.LandingPage.view model
+                LandingPage anchor ->
+                    View.LandingPage.LandingPage.view anchor
 
                 About ->
                     View.About.About.view

@@ -3,35 +3,69 @@ module View.LandingPage.LandingPage exposing (view)
 import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Model.Model exposing (Model)
-import Model.Phantom exposing (Phantom(..))
+import Model.Anchor exposing (Anchor(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Hero
 
 
-view : Model -> Html Msg
-view model =
-    View.Hero.view (body model)
+view : Anchor -> Html Msg
+view anchor =
+    View.Hero.view (body anchor)
 
 
-body : Model -> Html Msg
-body model =
+body : Anchor -> Html Msg
+body anchor =
     let
-        phantom =
-            case model.phantom of
-                Connected pubKey ->
-                    Html.text pubKey.pubKey
-
-                NotConnected ->
+        state =
+            case anchor of
+                WaitingForWallet ->
                     Html.button
                         [ onClick (ToPhantom Connect)
                         ]
                         [ Html.text "Connect"
                         ]
+
+                JustHasWallet publicKey ->
+                    Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text publicKey
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text "what next?"
+                            ]
+                        ]
+
+                WaitingForProgramInit publicKey ->
+                    Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text publicKey
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text "still need to init program"
+                            ]
+                        ]
+
+
+                Ready anchorState ->
+                    Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text anchorState.json
+                            ]
+                        ]
+
+
     in
     Html.div
         [ class "container"
         ]
-        [ phantom
+        [ state
         ]

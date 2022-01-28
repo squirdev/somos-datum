@@ -2,6 +2,7 @@ module Msg.Msg exposing (Msg(..), resetViewport)
 
 import Browser
 import Browser.Dom as Dom
+import Msg.Anchor exposing (FromAnchorMsg, ToAnchorMsg)
 import Msg.Phantom exposing (FromPhantomMsg, ToPhantomMsg)
 import Task
 import Url
@@ -14,6 +15,9 @@ type Msg
       -- phantom sub
     | ToPhantom ToPhantomMsg
     | FromPhantom FromPhantomMsg
+    -- anchor sub
+    | ToAnchor ToAnchorMsg
+    | FromAnchor FromAnchorMsg
 
 
 resetViewport : Cmd Msg

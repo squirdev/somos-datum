@@ -2,12 +2,13 @@ module Model.State exposing (State(..), href, parse)
 
 import Html
 import Html.Attributes
+import Model.Anchor exposing (Anchor(..))
 import Url
 import Url.Parser as UrlParser
 
 
 type State
-    = LandingPage
+    = LandingPage Anchor
     | About
     | Error String
 
@@ -15,8 +16,8 @@ type State
 urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
-        [ UrlParser.map LandingPage UrlParser.top
-        , UrlParser.map LandingPage (UrlParser.s "welcome")
+        [ UrlParser.map (LandingPage WaitingForWallet) UrlParser.top
+        , UrlParser.map (LandingPage WaitingForWallet) (UrlParser.s "welcome")
         , UrlParser.map About (UrlParser.s "about")
         ]
 
@@ -41,7 +42,7 @@ parse url =
 path : State -> String
 path state =
     case state of
-        LandingPage ->
+        LandingPage _->
             "#/welcome"
 
         About ->

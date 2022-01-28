@@ -2,6 +2,7 @@ module View.Header exposing (view)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)
+import Model.Anchor exposing (Anchor(..))
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg)
 
@@ -33,7 +34,7 @@ view =
                         , Html.li
                             []
                             [ Html.a
-                                [ State.href LandingPage
+                                [ State.href (LandingPage WaitingForWallet)
                                 ]
                                 [ Html.text "Landing"
                                 ]
