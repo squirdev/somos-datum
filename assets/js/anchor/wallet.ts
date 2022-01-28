@@ -1,7 +1,7 @@
 import {Keypair, PublicKey, Transaction} from "@solana/web3.js";
 import {Wallet} from "@project-serum/anchor";
 
-export class ElmWallet implements Wallet {
+export class PhantomWallet implements Wallet {
 
     constructor(readonly phantom: any) {
     }
