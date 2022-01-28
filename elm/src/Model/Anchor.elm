@@ -1,4 +1,5 @@
-module Model.Anchor exposing (AnchorState, Anchor(..))
+module Model.Anchor exposing (Anchor(..), AnchorState)
+
 
 type Anchor
     = WaitingForWallet
@@ -6,8 +7,11 @@ type Anchor
     | WaitingForProgramInit PublicKey
     | Ready AnchorState
 
-type alias PublicKey = String
+
+type alias PublicKey =
+    String
+
 
 type alias AnchorState =
-    { json: String
+    { json : String
     }

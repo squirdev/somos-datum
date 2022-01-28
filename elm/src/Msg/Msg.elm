@@ -15,7 +15,7 @@ type Msg
       -- phantom sub
     | ToPhantom ToPhantomMsg
     | FromPhantom FromPhantomMsg
-    -- anchor sub
+      -- anchor sub
     | ToAnchor ToAnchorMsg
     | FromAnchor FromAnchorMsg
 

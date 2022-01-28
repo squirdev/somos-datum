@@ -65,7 +65,7 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection pubKey ->
-                    ( { model | state = (LandingPage (JustHasWallet pubKey)) }
+                    ( { model | state = LandingPage (JustHasWallet pubKey) }
                     , isConnectedSender ()
                     )
 
@@ -82,14 +82,12 @@ update msg model =
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup jsonString ->
-                    ( { model | state = (LandingPage (Ready {json = jsonString})) }
+                    ( { model | state = LandingPage (Ready { json = jsonString }) }
                     , Cmd.none
-                     )
-
+                    )
 
                 Msg.Anchor.FailureOnStateLookup string ->
                     ( { model | state = Error string }, Cmd.none )
-
 
 
 

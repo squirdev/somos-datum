@@ -1,9 +1,12 @@
-module Msg.Anchor exposing (ToAnchorMsg(..), FromAnchorMsg(..))
+module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
+
 
 type ToAnchorMsg
     = TODO
 
-type FromAnchorMsg
+
+type
+    FromAnchorMsg
     -- state lookup attempt
     = SuccessOnStateLookup String
     | FailureOnStateLookup String

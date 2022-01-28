@@ -52,7 +52,6 @@ body anchor =
                             ]
                         ]
 
-
                 Ready anchorState ->
                     Html.div
                         []
@@ -61,8 +60,6 @@ body anchor =
                             [ Html.text anchorState.json
                             ]
                         ]
-
-
     in
     Html.div
         [ class "container"

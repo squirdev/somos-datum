@@ -42,7 +42,7 @@ parse url =
 path : State -> String
 path state =
     case state of
-        LandingPage _->
+        LandingPage _ ->
             "#/welcome"
 
         About ->

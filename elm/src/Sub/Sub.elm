@@ -12,18 +12,18 @@ subs =
     Sub.batch
         [ connectSuccessListener
             (\pubKey ->
-            FromPhantom (SuccessOnConnection pubKey)
+                FromPhantom (SuccessOnConnection pubKey)
             )
         , connectFailureListener
             (\error ->
-            FromPhantom (ErrorOnConnection error)
+                FromPhantom (ErrorOnConnection error)
             )
         , getCurrentStateSuccessListener
             (\jsonString ->
-            FromAnchor(SuccessOnStateLookup jsonString)
+                FromAnchor (SuccessOnStateLookup jsonString)
             )
         , getCurrentStateFailureListener
             (\error ->
-            FromAnchor (FailureOnStateLookup error)
+                FromAnchor (FailureOnStateLookup error)
             )
         ]
