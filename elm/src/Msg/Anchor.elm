@@ -2,7 +2,7 @@ module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
 
 type ToAnchorMsg
-    = PurchasePrimary
+    = PurchasePrimary String
 
 
 type

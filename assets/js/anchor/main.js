@@ -19,17 +19,17 @@ app.ports.connectSender.subscribe(async function () {
 });
 
 // get current state as soon as user logs in
-app.ports.isConnectedSender.subscribe(async function () {
+app.ports.isConnectedSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
     // invoke state request & send response to elm
-    await getCurrentState(pp.program, statePublicKey)
+    await getCurrentState(pp.program, statePublicKey, user)
 });
 
 // primary purchase
-app.ports.purchasePrimarySender.subscribe(async function () {
+app.ports.purchasePrimarySender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
     // invoke purchase request
-    await primary(pp.program, pp.provider, statePublicKey)
+    await primary(pp.program, pp.provider, statePublicKey, user)
 });

@@ -74,7 +74,46 @@ body anchor =
                         , Html.div
                             []
                             [ Html.button
-                                [ onClick (ToAnchor PurchasePrimary)
+                                [ onClick (ToAnchor (PurchasePrimary anchorState.user))
+                                ]
+                                [ Html.text "Purchase"
+                                ]
+                            ]
+                        ]
+
+                UserWithOwnership anchorState count ->
+                    Html.div
+                        []
+                        [ Html.div
+                            [ class "columns is-mobile"
+                            ]
+                            [ Html.div
+                                [ class "column"
+                                ]
+                                [ Html.text
+                                    (String.join
+                                        ": "
+                                        [ "Original Supply Remaining"
+                                        , String.fromInt anchorState.originalSupplyRemaining
+                                        ]
+                                    )
+                                ]
+                            , Html.div
+                                [ class "column"
+                                ]
+                                [ Html.text
+                                    (String.join
+                                        ": "
+                                        [ "Your Ownership"
+                                        , String.fromInt count
+                                        ]
+                                    )
+                                ]
+                            ]
+                        , Html.div
+                            []
+                            [ Html.button
+                                [ onClick (ToAnchor (PurchasePrimary anchorState.user))
                                 ]
                                 [ Html.text "Purchase"
                                 ]

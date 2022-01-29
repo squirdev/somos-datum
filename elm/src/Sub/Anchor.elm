@@ -3,10 +3,10 @@ port module Sub.Anchor exposing (downloadRequestListener, getCurrentStateFailure
 -- senders
 
 
-port isConnectedSender : () -> Cmd msg
+port isConnectedSender : String -> Cmd msg
 
 
-port purchasePrimarySender : () -> Cmd msg
+port purchasePrimarySender : String -> Cmd msg
 
 
 

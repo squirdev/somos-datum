@@ -8,6 +8,7 @@ type Anchor
     | JustHasWallet PublicKey
     | WaitingForProgramInit PublicKey
     | UserWithNoOwnership AnchorState
+    | UserWithOwnership AnchorState Int
 
 
 type alias PublicKey =
@@ -16,8 +17,9 @@ type alias PublicKey =
 
 type alias AnchorState =
     { originalSupplyRemaining : Int
-    , purchased : List String
-    , secondaryMarket : List String
+    , purchased : List PublicKey
+    , secondaryMarket : List PublicKey
+    , user : PublicKey
     }
 
 
@@ -26,9 +28,10 @@ decode string =
     let
         decoder : Decode.Decoder AnchorState
         decoder =
-            Decode.map3 AnchorState
+            Decode.map4 AnchorState
                 (Decode.field "originalSupplyRemaining" Decode.int)
                 (Decode.field "purchased" (Decode.list Decode.string))
                 (Decode.field "secondaryMarket" (Decode.list Decode.string))
+                (Decode.field "user" Decode.string)
     in
     Decode.decodeString decoder string

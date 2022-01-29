@@ -1,5 +1,5 @@
 // get ledger state
-export async function getCurrentState(program, statePublicKey) {
+export async function getCurrentState(program, statePublicKey, user) {
     try {
         // fetch state
         const state = await program.account.ledger.fetch(statePublicKey);
@@ -10,7 +10,8 @@ export async function getCurrentState(program, statePublicKey) {
             const _state = {
                 originalSupplyRemaining: state.originalSupplyRemaining,
                 purchased: _purchased,
-                secondaryMarket: _secondaryMarket
+                secondaryMarket: _secondaryMarket,
+                user: user
             }
             return JSON.stringify(_state)
         }

@@ -67,7 +67,7 @@ update msg model =
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection pubKey ->
                     ( { model | state = LandingPage (JustHasWallet pubKey) }
-                    , isConnectedSender ()
+                    , isConnectedSender pubKey
                     )
 
                 Msg.Phantom.ErrorOnConnection string ->
@@ -77,9 +77,9 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
-                PurchasePrimary ->
+                PurchasePrimary user ->
                     ( model
-                    , purchasePrimarySender ()
+                    , purchasePrimarySender user
                     )
 
         FromAnchor fromAnchorMsg ->
@@ -94,7 +94,24 @@ update msg model =
                         update_ =
                             case maybeAnchorState of
                                 Ok anchorState ->
-                                    LandingPage (UserWithNoOwnership anchorState)
+                                    let
+                                        ownership : Int
+                                        ownership =
+                                            List.filter
+                                                (\pk -> pk == anchorState.user)
+                                                anchorState.purchased
+                                                |> List.length
+
+                                        user : Anchor
+                                        user =
+                                            case ownership > 0 of
+                                                True ->
+                                                    UserWithOwnership anchorState ownership
+
+                                                False ->
+                                                    UserWithNoOwnership anchorState
+                                    in
+                                    LandingPage user
 
                                 Err error ->
                                     State.Error (Decode.errorToString error)
