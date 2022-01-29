@@ -4,7 +4,8 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Model.Anchor exposing (Anchor(..))
+import Json.Decode as Decode
+import Model.Anchor as Anchor exposing (Anchor(..), AnchorState)
 import Model.Model as Model exposing (Model)
 import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -70,7 +71,7 @@ update msg model =
                     )
 
                 Msg.Phantom.ErrorOnConnection string ->
-                    ( { model | state = Error string }
+                    ( { model | state = State.Error string }
                     , Cmd.none
                     )
 
@@ -84,15 +85,29 @@ update msg model =
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup jsonString ->
-                    ( { model | state = LandingPage (UserWithNoOwnership { json = jsonString }) }
+                    let
+                        maybeAnchorState : Result Decode.Error AnchorState
+                        maybeAnchorState =
+                            Anchor.decode jsonString
+
+                        update_ : State
+                        update_ =
+                            case maybeAnchorState of
+                                Ok anchorState ->
+                                    LandingPage (UserWithNoOwnership anchorState)
+
+                                Err error ->
+                                    State.Error (Decode.errorToString error)
+                    in
+                    ( { model | state = update_ }
                     , Cmd.none
                     )
 
                 Msg.Anchor.FailureOnStateLookup error ->
-                    ( { model | state = Error error }, Cmd.none )
+                    ( { model | state = State.Error error }, Cmd.none )
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
-                    ( { model | state = Error error }, Cmd.none )
+                    ( { model | state = State.Error error }, Cmd.none )
 
                 Msg.Anchor.DownloadRequest string ->
                     -- TODO: send signed message to http endpoint

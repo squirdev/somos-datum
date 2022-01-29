@@ -57,8 +57,19 @@ body anchor =
                     Html.div
                         []
                         [ Html.div
-                            []
-                            [ Html.text anchorState.json
+                            [ class "columns is-mobile"
+                            ]
+                            [ Html.div
+                                [ class "column"
+                                ]
+                                [ Html.text
+                                    (String.join
+                                        ": "
+                                        [ "Original Supply Remaining"
+                                        , String.fromInt anchorState.originalSupplyRemaining
+                                        ]
+                                    )
+                                ]
                             ]
                         , Html.div
                             []
