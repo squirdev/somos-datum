@@ -24,7 +24,13 @@ export async function getCurrentState(program, statePublicKey, user) {
     } catch (error) {
         // log error
         console.log("could not get program state: ", error);
+        // build elm error
+        const _error = {
+            error: error.message,
+            user: user
+        }
+        const _jsonError = JSON.stringify(_error)
         // send error to elm
-        app.ports.getCurrentStateFailureListener.send(error.message)
+        app.ports.getCurrentStateFailureListener.send(_jsonError)
     }
 }

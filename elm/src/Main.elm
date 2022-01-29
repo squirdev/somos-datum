@@ -5,7 +5,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Json.Decode as Decode
-import Model.Anchor as Anchor exposing (Anchor(..), AnchorState)
+import Model.Anchor as Anchor exposing (Anchor(..), AnchorState, isAccountDoesNotExistError)
 import Model.Model as Model exposing (Model)
 import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -88,7 +88,7 @@ update msg model =
                     let
                         maybeAnchorState : Result Decode.Error AnchorState
                         maybeAnchorState =
-                            Anchor.decode jsonString
+                            Anchor.decodeSuccess jsonString
 
                         update_ : State
                         update_ =
@@ -113,15 +113,34 @@ update msg model =
                                     in
                                     LandingPage user
 
-                                Err error ->
-                                    State.Error (Decode.errorToString error)
+                                Err jsonError ->
+                                    State.Error (Decode.errorToString jsonError)
                     in
                     ( { model | state = update_ }
                     , Cmd.none
                     )
 
                 Msg.Anchor.FailureOnStateLookup error ->
-                    ( { model | state = State.Error error }, Cmd.none )
+                    let
+                        maybeAnchorStateLookupFailure : Result Decode.Error Anchor.AnchorStateLookupFailure
+                        maybeAnchorStateLookupFailure =
+                            Anchor.decodeFailure error
+
+                        update_ : State
+                        update_ =
+                            case maybeAnchorStateLookupFailure of
+                                Ok anchorStateLookupFailure ->
+                                    case isAccountDoesNotExistError anchorStateLookupFailure.error of
+                                        True ->
+                                            LandingPage (WaitingForProgramInit anchorStateLookupFailure.user)
+
+                                        False ->
+                                            State.Error error
+
+                                Err jsonError ->
+                                    State.Error (Decode.errorToString jsonError)
+                    in
+                    ( { model | state = update_ }, Cmd.none )
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )

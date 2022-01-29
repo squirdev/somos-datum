@@ -1,4 +1,4 @@
-module Model.Anchor exposing (Anchor(..), AnchorState, decode)
+module Model.Anchor exposing (Anchor(..), AnchorState, AnchorStateLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
 import Json.Decode as Decode
 
@@ -15,6 +15,10 @@ type alias PublicKey =
     String
 
 
+
+-- Success
+
+
 type alias AnchorState =
     { originalSupplyRemaining : Int
     , purchased : List PublicKey
@@ -23,8 +27,8 @@ type alias AnchorState =
     }
 
 
-decode : String -> Result Decode.Error AnchorState
-decode string =
+decodeSuccess : String -> Result Decode.Error AnchorState
+decodeSuccess string =
     let
         decoder : Decode.Decoder AnchorState
         decoder =
@@ -35,3 +39,35 @@ decode string =
                 (Decode.field "user" Decode.string)
     in
     Decode.decodeString decoder string
+
+
+
+-- Failure
+
+
+type alias AnchorStateLookupFailure =
+    { error : String
+    , user : String
+    }
+
+
+decodeFailure : String -> Result Decode.Error AnchorStateLookupFailure
+decodeFailure string =
+    let
+        decoder =
+            Decode.map2 AnchorStateLookupFailure
+                (Decode.field "error" Decode.string)
+                (Decode.field "user" Decode.string)
+    in
+    Decode.decodeString decoder string
+
+
+isAccountDoesNotExistError : String -> Bool
+isAccountDoesNotExistError error =
+    let
+        dne : String
+        dne =
+            "account does not exist"
+    in
+    String.toLower error
+        |> String.contains dne
