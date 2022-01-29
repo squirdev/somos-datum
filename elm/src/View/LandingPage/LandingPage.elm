@@ -49,7 +49,11 @@ body anchor =
                             ]
                         , Html.div
                             []
-                            [ Html.text "still need to init program"
+                            [ Html.button
+                                [ onClick (ToAnchor (InitProgram publicKey))
+                                ]
+                                [ Html.text "Init"
+                                ]
                             ]
                         ]
 

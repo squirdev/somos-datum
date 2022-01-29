@@ -3,6 +3,7 @@ import {ACCOUNT_SEED, programID} from "./config";
 import {getPP, textEncoder} from "./util.js";
 import {getPhantom} from "../phantom";
 import {getCurrentState} from "./state";
+import {init} from "./init";
 import {primary} from "./purchase/primary";
 
 // get program public key
@@ -24,6 +25,14 @@ app.ports.isConnectedSender.subscribe(async function (user) {
     const pp = getPP(phantom)
     // invoke state request & send response to elm
     await getCurrentState(pp.program, statePublicKey, user)
+});
+
+// init program
+app.ports.initProgramSender.subscribe(async function (user) {
+    // get provider & program
+    const pp = getPP(phantom)
+    // invoke init request
+    await init(pp.program, pp.provider, statePublicKey, bump, user)
 });
 
 // primary purchase

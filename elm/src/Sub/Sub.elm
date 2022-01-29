@@ -3,7 +3,7 @@ module Sub.Sub exposing (subs)
 import Msg.Anchor exposing (FromAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (FromPhantomMsg(..))
-import Sub.Anchor exposing (downloadRequestListener, getCurrentStateFailureListener, getCurrentStateSuccessListener, purchasePrimaryFailureListener)
+import Sub.Anchor exposing (downloadRequestListener, getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener)
 import Sub.Phantom exposing (connectFailureListener, connectSuccessListener)
 
 
@@ -28,6 +28,12 @@ subs =
         , getCurrentStateFailureListener
             (\error ->
                 FromAnchor (FailureOnStateLookup error)
+            )
+
+        -- init program
+        , initProgramFailureListener
+            (\error ->
+                FromAnchor (FailureOnInitProgram error)
             )
 
         -- download request

@@ -11,7 +11,7 @@ import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import Sub.Anchor exposing (isConnectedSender, purchasePrimarySender)
+import Sub.Anchor exposing (initProgramSender, isConnectedSender, purchasePrimarySender)
 import Sub.Phantom exposing (connectSender)
 import Sub.Sub as Sub
 import Url
@@ -65,9 +65,9 @@ update msg model =
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
-                Msg.Phantom.SuccessOnConnection pubKey ->
-                    ( { model | state = LandingPage (JustHasWallet pubKey) }
-                    , isConnectedSender pubKey
+                Msg.Phantom.SuccessOnConnection user ->
+                    ( { model | state = LandingPage (JustHasWallet user) }
+                    , isConnectedSender user
                     )
 
                 Msg.Phantom.ErrorOnConnection string ->
@@ -77,6 +77,11 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
+                InitProgram user ->
+                    ( model
+                    , initProgramSender user
+                    )
+
                 PurchasePrimary user ->
                     ( model
                     , purchasePrimarySender user
@@ -141,6 +146,9 @@ update msg model =
                                     State.Error (Decode.errorToString jsonError)
                     in
                     ( { model | state = update_ }, Cmd.none )
+
+                Msg.Anchor.FailureOnInitProgram error ->
+                    ( { model | state = State.Error error }, Cmd.none )
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )
