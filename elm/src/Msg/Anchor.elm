@@ -11,5 +11,6 @@ type
     = SuccessOnStateLookup String
     | FailureOnStateLookup String
       -- purchase primary attempt
-    | SuccessOnPurchasePrimary String
     | FailureOnPurchasePrimary String
+      -- download request
+    | DownloadRequest String

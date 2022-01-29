@@ -91,14 +91,14 @@ update msg model =
                 Msg.Anchor.FailureOnStateLookup error ->
                     ( { model | state = Error error }, Cmd.none )
 
-                Msg.Anchor.SuccessOnPurchasePrimary jsonString ->
+                Msg.Anchor.FailureOnPurchasePrimary error ->
+                    ( { model | state = Error error }, Cmd.none )
+
+                Msg.Anchor.DownloadRequest string ->
                     -- TODO: send signed message to http endpoint
                     ( model
                     , Cmd.none
                     )
-
-                Msg.Anchor.FailureOnPurchasePrimary error ->
-                    ( { model | state = Error error }, Cmd.none )
 
 
 

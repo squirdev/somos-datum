@@ -33,7 +33,7 @@ subs =
         -- download request
         , downloadRequestListener
             (\jsonString ->
-                FromAnchor (SuccessOnPurchasePrimary jsonString)
+                FromAnchor (DownloadRequest jsonString)
             )
 
         -- anchor purchase primary
