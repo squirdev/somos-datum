@@ -1,7 +1,7 @@
 module View.LandingPage.LandingPage exposing (view)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, href, target)
 import Html.Events exposing (onClick)
 import Model.Anchor exposing (Anchor(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -112,6 +112,15 @@ body anchor =
                                         , String.fromInt count
                                         ]
                                     )
+                                ]
+                            , Html.div
+                                []
+                                [ Html.a
+                                    [ href "https://somos-download-artifacts.s3.us-west-2.amazonaws.com/01/01.zip"
+                                    , target "_blank"
+                                    ]
+                                    [ Html.text "Download"
+                                    ]
                                 ]
                             ]
                         , Html.div

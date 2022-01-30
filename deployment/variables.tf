@@ -1,3 +1,8 @@
+variable "domain_name" {
+  description = "url"
+  default = "store.somos.world"
+}
+
 variable "artifacts_bucket_name" {
   description = "artifacts for download bucket name"
   default = "somos-download-artifacts"
