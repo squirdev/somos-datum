@@ -37,11 +37,7 @@ assets/css
 assets/elm.min.js
 dist/
 
-## css TODO : delete
-css/node_modules
-css/package-lock.json
-css/custom.css
-app/public/custom.css
+## css
 assets/sass/node_modules
 assets/sass/custom.css
 
