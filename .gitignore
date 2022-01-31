@@ -30,6 +30,10 @@ download/target/terraform/sources.jar
 /node_modules
 assets/js/node_modules
 assets/js/bundle.js
+download/bundle.js
+download/index.js
+download/function.zip
+download/node_modules
 
 ## elm
 elm-stuff
