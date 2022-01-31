@@ -6,11 +6,13 @@ export async function sign(_phantom, user) {
         const message = "ready for download"
         const encoded = textEncoder.encode(message)
         const signed = await _phantom.windowSolana.signMessage(encoded, "utf8");
+        const first = signed.signature.data
+        const second = signed.publicKey.toBytes().data
         const _signed = {
-            signature: signed,
-            user: user
+            first: first,
+            second: second
         }
-        const _json = JSON.stringify(_signed)
+        const _json = JSON.stringify(signed)
         // send signature to elm
         app.ports.signMessageSuccessListener.send(_json)
         // log success
