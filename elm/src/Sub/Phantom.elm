@@ -1,9 +1,12 @@
-port module Sub.Phantom exposing (connectFailureListener, connectSender, connectSuccessListener)
+port module Sub.Phantom exposing (connectFailureListener, connectSender, connectSuccessListener, signMessageSender, signMessageSuccessListener, signMessageFailureListener)
 
 -- senders
 
 
 port connectSender : () -> Cmd msg
+
+
+port signMessageSender : String -> Cmd msg
 
 
 
@@ -14,3 +17,9 @@ port connectSuccessListener : (String -> msg) -> Sub msg
 
 
 port connectFailureListener : (String -> msg) -> Sub msg
+
+
+port signMessageSuccessListener : (String -> msg) -> Sub msg
+
+
+port signMessageFailureListener : (String -> msg) -> Sub msg

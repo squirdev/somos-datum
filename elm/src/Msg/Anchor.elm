@@ -19,5 +19,3 @@ type
     | FailureOnInitProgram String
       -- purchase primary attempt
     | FailureOnPurchasePrimary String
-      -- download request
-    | DownloadRequest String

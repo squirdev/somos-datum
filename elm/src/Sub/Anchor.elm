@@ -1,4 +1,4 @@
-port module Sub.Anchor exposing (downloadRequestListener, getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, initProgramSender, isConnectedSender, purchasePrimaryFailureListener, purchasePrimarySender)
+port module Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, initProgramSender, isConnectedSender, purchasePrimaryFailureListener, purchasePrimarySender)
 
 -- senders
 
@@ -23,9 +23,6 @@ port getCurrentStateFailureListener : (String -> msg) -> Sub msg
 
 
 port initProgramFailureListener : (String -> msg) -> Sub msg
-
-
-port downloadRequestListener : (String -> msg) -> Sub msg
 
 
 port purchasePrimaryFailureListener : (String -> msg) -> Sub msg

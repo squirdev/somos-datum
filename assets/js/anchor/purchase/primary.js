@@ -14,11 +14,8 @@ export async function primary(program, provider, statePublicKey, user) {
         });
         // get state after transaction
         await getCurrentState(program, statePublicKey, user);
-        // sign message
-        // const signedMessage = "todo sign message for http client download"
-        // app.ports.downloadRequestListener.send(signedMessage);
         // log success
-        console.log("primary purchase success & download request sent to elm");
+        console.log("primary purchase success");
     } catch (error) {
         // log error
         console.log(error.toString());

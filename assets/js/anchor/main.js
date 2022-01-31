@@ -5,6 +5,7 @@ import {getPhantom} from "../phantom";
 import {getCurrentState} from "./state";
 import {init} from "./init";
 import {primary} from "./purchase/primary";
+import {sign} from "./sign";
 
 // get program public key
 let statePublicKey, bump = null;
@@ -41,4 +42,10 @@ app.ports.purchasePrimarySender.subscribe(async function (user) {
     const pp = getPP(phantom)
     // invoke purchase request
     await primary(pp.program, pp.provider, statePublicKey, user)
+});
+
+// sign message
+app.ports.signMessageSender.subscribe(async function (user) {
+    // invoke sign message
+    await sign(phantom, user)
 });

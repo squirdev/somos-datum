@@ -12,7 +12,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Sub.Anchor exposing (initProgramSender, isConnectedSender, purchasePrimarySender)
-import Sub.Phantom exposing (connectSender)
+import Sub.Phantom exposing (connectSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
 import View.About.About
@@ -61,7 +61,15 @@ update msg model =
         ToPhantom toPhantomMsg ->
             case toPhantomMsg of
                 Connect ->
-                    ( model, connectSender () )
+                    ( model
+                    , connectSender ()
+                     )
+
+                SignMessage user ->
+                    ( model
+                    , signMessageSender user
+                    )
+
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
@@ -74,6 +82,19 @@ update msg model =
                     ( { model | state = State.Error string }
                     , Cmd.none
                     )
+
+                Msg.Phantom.SuccessOnSignMessage json ->
+                    -- todo; decode json for message & user
+                    ( { model | state = LandingPage (UserWithOwnershipWaitingForUrlPreSign json) }
+                    , Cmd.none -- todo; pre-signed s3 url post request
+                    )
+
+
+                Msg.Phantom.FailureOnSignMessage error ->
+                    ( { model | state = State.Error error }
+                    , Cmd.none
+                    )
+
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
@@ -111,7 +132,7 @@ update msg model =
                                         user =
                                             case ownership > 0 of
                                                 True ->
-                                                    UserWithOwnership anchorState ownership
+                                                    UserWithOwnershipBeforeDownload anchorState ownership
 
                                                 False ->
                                                     UserWithNoOwnership anchorState
@@ -152,12 +173,6 @@ update msg model =
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )
-
-                Msg.Anchor.DownloadRequest string ->
-                    -- TODO: send signed message to http endpoint
-                    ( model
-                    , Cmd.none
-                    )
 
 
 

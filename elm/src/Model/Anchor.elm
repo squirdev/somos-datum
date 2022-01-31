@@ -8,7 +8,8 @@ type Anchor
     | JustHasWallet PublicKey
     | WaitingForProgramInit PublicKey
     | UserWithNoOwnership AnchorState
-    | UserWithOwnership AnchorState Int
+    | UserWithOwnershipBeforeDownload AnchorState Int
+    | UserWithOwnershipWaitingForUrlPreSign PublicKey
 
 
 type alias PublicKey =

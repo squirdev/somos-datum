@@ -1,7 +1,7 @@
 module View.LandingPage.LandingPage exposing (view)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, href, target)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model.Anchor exposing (Anchor(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -85,7 +85,7 @@ body anchor =
                             ]
                         ]
 
-                UserWithOwnership anchorState count ->
+                UserWithOwnershipBeforeDownload anchorState count ->
                     Html.div
                         []
                         [ Html.div
@@ -115,9 +115,8 @@ body anchor =
                                 ]
                             , Html.div
                                 []
-                                [ Html.a
-                                    [ href "https://somos-download-artifacts.s3.us-west-2.amazonaws.com/01/01.zip"
-                                    , target "_blank"
+                                [ Html.button
+                                    [ onClick (ToPhantom (SignMessage anchorState.user))
                                     ]
                                     [ Html.text "Download"
                                     ]
@@ -128,10 +127,24 @@ body anchor =
                             [ Html.button
                                 [ onClick (ToAnchor (PurchasePrimary anchorState.user))
                                 ]
-                                [ Html.text "Purchase"
+                                [ Html.text "Purchase More"
                                 ]
                             ]
                         ]
+
+                UserWithOwnershipWaitingForUrlPreSign publicKey ->
+                    Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text publicKey
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text "waiting for pre-signed url"
+                            ]
+                        ]
+
     in
     Html.div
         [ class "container"

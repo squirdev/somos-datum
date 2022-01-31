@@ -3,8 +3,8 @@ module Sub.Sub exposing (subs)
 import Msg.Anchor exposing (FromAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (FromPhantomMsg(..))
-import Sub.Anchor exposing (downloadRequestListener, getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener)
-import Sub.Phantom exposing (connectFailureListener, connectSuccessListener)
+import Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener)
+import Sub.Phantom exposing (connectFailureListener, connectSuccessListener, signMessageFailureListener, signMessageSuccessListener)
 
 
 subs : Sub Msg
@@ -36,15 +36,19 @@ subs =
                 FromAnchor (FailureOnInitProgram error)
             )
 
-        -- download request
-        , downloadRequestListener
-            (\jsonString ->
-                FromAnchor (DownloadRequest jsonString)
-            )
-
         -- anchor purchase primary
         , purchasePrimaryFailureListener
             (\error ->
                 FromAnchor (FailureOnPurchasePrimary error)
+            )
+
+        -- phantom sign message
+        , signMessageSuccessListener
+            (\jsonString ->
+                FromPhantom (SuccessOnSignMessage jsonString)
+            )
+        , signMessageFailureListener
+            (\error ->
+                FromPhantom (FailureOnSignMessage error)
             )
         ]
