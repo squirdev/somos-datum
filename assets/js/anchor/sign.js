@@ -1,7 +1,5 @@
-import * as nacl from "tweetnacl";
 import {web3} from "@project-serum/anchor";
-import {decodeBase64, encodeBase64, textEncoder} from "./util.js";
-
+import {encodeBase64, textEncoder} from "./util.js";
 
 export async function sign(_phantom, user) {
     try {
@@ -9,18 +7,14 @@ export async function sign(_phantom, user) {
         const message = "ready for download"
         const encoded = textEncoder.encode(message)
         const signed = await _phantom.windowSolana.signMessage(encoded, "utf8");
-        const _signed01 = {
+        const signedObj = {
             message: encodeBase64(encoded),
             signature: encodeBase64(signed.signature),
-            // user: encodeBase64(signed.publicKey.toBytes())
             user: encodeBase64(new web3.PublicKey(user).toBytes())
         }
-        const _signedJson = JSON.stringify(_signed01)
-        const _signed02 = JSON.parse(_signedJson)
-        const _verified = nacl.sign.detached.verify(decodeBase64(_signed02.message), decodeBase64(_signed02.signature), decodeBase64(_signed02.user))
-        const _json = JSON.stringify({foo: _verified})
+        const signedJson = JSON.stringify(signedObj)
         // send signature to elm
-        app.ports.signMessageSuccessListener.send(_json)
+        app.ports.signMessageSuccessListener.send(signedJson)
         // log success
         console.log("sign message success & sent to elm");
     } catch (error) {

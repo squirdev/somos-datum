@@ -11,7 +11,11 @@ export default {
     },
     plugins: [
         commonjs(),
-        nodePolyfills(),
+        nodePolyfills(
+            {
+                include: ['buffer']
+            }
+        ),
         resolve({
             browser: false,
             preferBuiltins: false

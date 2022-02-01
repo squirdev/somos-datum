@@ -1,11 +1,12 @@
 // Handler
 import * as nacl from "tweetnacl";
+import {Buffer} from "buffer";
 
 exports.handler = async function (event, context) {
     console.log('## ENVIRONMENT VARIABLES: ' + serialize(process.env))
     console.log('## CONTEXT: ' + serialize(context))
     console.log('## EVENT: ' + serialize(event))
-    let _verified = verify(foo)
+    const _verified = verify(event)
     try {
         return formatResponse(serialize({verified: _verified}))
     } catch (error) {
@@ -43,6 +44,10 @@ let serialize = function (object) {
     return JSON.stringify(object, null, 2)
 }
 
+function decodeBase64(b64) {
+    return new Uint8Array(Buffer.from(b64, 'base64'))
+}
+
 let verify = function (signedMessage) {
-    nacl.sign.detached.verify(signedMessage.message, signedMessage.signature, signedMessage.user)
+    return nacl.sign.detached.verify(decodeBase64(signedMessage.message), decodeBase64(signedMessage.signature), decodeBase64(signedMessage.user))
 }
