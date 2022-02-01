@@ -1,5 +1,6 @@
-import {decodeBase64, encodeBase64, textEncoder} from "./util.js";
 import * as nacl from "tweetnacl";
+import {web3} from "@project-serum/anchor";
+import {decodeBase64, encodeBase64, textEncoder} from "./util.js";
 
 
 export async function sign(_phantom, user) {
@@ -11,11 +12,11 @@ export async function sign(_phantom, user) {
         const _signed01 = {
             message: encodeBase64(encoded),
             signature: encodeBase64(signed.signature),
-            user: encodeBase64(signed.publicKey.toBytes())
+            // user: encodeBase64(signed.publicKey.toBytes())
+            user: encodeBase64(new web3.PublicKey(user).toBytes())
         }
         const _signedJson = JSON.stringify(_signed01)
         const _signed02 = JSON.parse(_signedJson)
-        //const _verified = nacl.sign.detached.verify(encoded, signed.signature, signed.publicKey.toBytes())
         const _verified = nacl.sign.detached.verify(decodeBase64(_signed02.message), decodeBase64(_signed02.signature), decodeBase64(_signed02.user))
         const _json = JSON.stringify({foo: _verified})
         // send signature to elm
