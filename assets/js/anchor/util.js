@@ -1,4 +1,5 @@
 import {Program, Provider, web3} from "@project-serum/anchor";
+import {Buffer} from "buffer";
 import {network, preflightCommitment, programID} from "./config.js";
 import {PhantomWallet} from "./wallet";
 import idl from "./idl.json";
@@ -16,4 +17,12 @@ export function getPP(_phantom) {
     // program
     const program = new Program(idl, programID, provider);
     return {provider: provider, program: program}
+}
+
+export function encodeBase64(u8) {
+    return Buffer.from(u8).toString('base64')
+}
+
+export function decodeBase64(b64) {
+    return new Uint8Array(Buffer.from(b64, 'base64'))
 }
