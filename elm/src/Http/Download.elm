@@ -22,4 +22,5 @@ requestEncoder phantomSignature =
         [ ( "message", Encode.string phantomSignature.message )
         , ( "signature", Encode.string phantomSignature.signature )
         , ( "user", Encode.string phantomSignature.user )
+        , ( "userDecoded", Encode.string phantomSignature.userDecoded )
         ]
