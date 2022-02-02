@@ -9,4 +9,10 @@ resource "aws_lambda_function" "download" {
   # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
   source_code_hash = filebase64sha256(var.lambda_source)
   runtime = "nodejs12.x"
+  timeout = 15
+}
+
+resource "aws_cloudwatch_log_group" "example" {
+  name = "/aws/lambda/${aws_lambda_function.download.function_name}"
+  retention_in_days = 14
 }
