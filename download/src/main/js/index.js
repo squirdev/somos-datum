@@ -34,7 +34,7 @@ exports.handler = async function (event, context) {
         if (verified01) {
             const verified02 = await verifyOwnership(body.user)
             if (verified02) {
-                return formatResponse(serialize({verified: true}))
+                return formatResponse(serialize({verified: true, user: body.userDecoded}))
             } else {
                 return formatError({statusCode: "401", code: "401", message: "cannot prove ownership of user"})
             }

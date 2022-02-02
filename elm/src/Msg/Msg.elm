@@ -2,6 +2,8 @@ module Msg.Msg exposing (Msg(..), resetViewport)
 
 import Browser
 import Browser.Dom as Dom
+import Http
+import Http.Response as Download
 import Msg.Anchor exposing (FromAnchorMsg, ToAnchorMsg)
 import Msg.Phantom exposing (FromPhantomMsg, ToPhantomMsg)
 import Task
@@ -18,6 +20,8 @@ type Msg
       -- anchor sub
     | ToAnchor ToAnchorMsg
     | FromAnchor FromAnchorMsg
+      -- aws url pre-sign
+    | AwsPreSign (Result Http.Error Download.Response)
 
 
 resetViewport : Cmd Msg

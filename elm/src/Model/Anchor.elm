@@ -1,6 +1,8 @@
 module Model.Anchor exposing (Anchor(..), AnchorState, AnchorStateLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
+import Http.Response as Download
 import Json.Decode as Decode
+import Model.Phantom exposing (PhantomSignature)
 
 
 type Anchor
@@ -9,7 +11,8 @@ type Anchor
     | WaitingForProgramInit PublicKey
     | UserWithNoOwnership AnchorState
     | UserWithOwnershipBeforeDownload AnchorState Int
-    | UserWithOwnershipWaitingForUrlPreSign PublicKey
+    | UserWithOwnershipWaitingForPreSign PhantomSignature
+    | UserWithOwnershipWithDownloadUrl Download.Response
 
 
 type alias PublicKey =

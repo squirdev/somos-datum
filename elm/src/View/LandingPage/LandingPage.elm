@@ -132,12 +132,12 @@ body anchor =
                             ]
                         ]
 
-                UserWithOwnershipWaitingForUrlPreSign publicKey ->
+                UserWithOwnershipWaitingForPreSign signature ->
                     Html.div
                         []
                         [ Html.div
                             []
-                            [ Html.text publicKey
+                            [ Html.text signature.userDecoded
                             ]
                         , Html.div
                             []
@@ -145,6 +145,18 @@ body anchor =
                             ]
                         ]
 
+                UserWithOwnershipWithDownloadUrl response ->
+                    Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text response.user
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text "downloaded"
+                            ]
+                        ]
     in
     Html.div
         [ class "container"

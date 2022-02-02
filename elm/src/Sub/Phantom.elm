@@ -1,4 +1,4 @@
-port module Sub.Phantom exposing (connectFailureListener, connectSender, connectSuccessListener, signMessageSender, signMessageSuccessListener, signMessageFailureListener)
+port module Sub.Phantom exposing (connectFailureListener, connectSender, connectSuccessListener, signMessageFailureListener, signMessageSender, signMessageSuccessListener)
 
 -- senders
 

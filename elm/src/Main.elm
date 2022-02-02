@@ -4,9 +4,12 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Http.Download as Download
+import Http.Error
 import Json.Decode as Decode
 import Model.Anchor as Anchor exposing (Anchor(..), AnchorState, isAccountDoesNotExistError)
 import Model.Model as Model exposing (Model)
+import Model.Phantom as Phantom
 import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
@@ -63,13 +66,12 @@ update msg model =
                 Connect ->
                     ( model
                     , connectSender ()
-                     )
+                    )
 
                 SignMessage user ->
                     ( model
                     , signMessageSender user
                     )
-
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
@@ -83,18 +85,27 @@ update msg model =
                     , Cmd.none
                     )
 
-                Msg.Phantom.SuccessOnSignMessage json ->
-                    -- todo; decode json for message & user
-                    ( { model | state = LandingPage (UserWithOwnershipWaitingForUrlPreSign json) }
-                    , Cmd.none -- todo; pre-signed s3 url post request
-                    )
+                Msg.Phantom.SuccessOnSignMessage signatureString ->
+                    let
+                        maybeSignature : Result Decode.Error Phantom.PhantomSignature
+                        maybeSignature =
+                            Phantom.decodeSignature signatureString
+                    in
+                    case maybeSignature of
+                        Ok signature ->
+                            ( { model | state = LandingPage (UserWithOwnershipWaitingForPreSign signature) }
+                            , Download.post signature
+                            )
 
+                        Err error ->
+                            ( { model | state = State.Error (Decode.errorToString error) }
+                            , Cmd.none
+                            )
 
                 Msg.Phantom.FailureOnSignMessage error ->
                     ( { model | state = State.Error error }
                     , Cmd.none
                     )
-
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
@@ -173,6 +184,18 @@ update msg model =
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )
+
+        AwsPreSign result ->
+            case result of
+                Ok response ->
+                    ( { model | state = LandingPage (UserWithOwnershipWithDownloadUrl response) }
+                    , Cmd.none
+                    )
+
+                Err error ->
+                    ( { model | state = State.Error (Http.Error.toString error) }
+                    , Cmd.none
+                    )
 
 
 

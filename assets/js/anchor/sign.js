@@ -11,7 +11,8 @@ export async function sign(_phantom, _state, user) {
         const signedObj = {
             message: encodeBase64(encoded),
             signature: encodeBase64(signed.signature),
-            user: encodeBase64(new web3.PublicKey(user).toBytes())
+            user: encodeBase64(new web3.PublicKey(user).toBytes()),
+            userDecoded: user
         }
         const signedJson = JSON.stringify(signedObj)
         // send signature to elm
