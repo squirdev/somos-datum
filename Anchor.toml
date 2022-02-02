@@ -5,7 +5,7 @@ somos_solana = "AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN"
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/alex/.config/solana/id.json"
 
 [scripts]
