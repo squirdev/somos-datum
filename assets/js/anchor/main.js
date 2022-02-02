@@ -46,6 +46,10 @@ app.ports.purchasePrimarySender.subscribe(async function (user) {
 
 // sign message
 app.ports.signMessageSender.subscribe(async function (user) {
+    // get provider & program
+    const pp = getPP(phantom)
+    // invoke state request & send response to elm
+    const _state = await getCurrentState(pp.program, statePublicKey, user)
     // invoke sign message
-    await sign(phantom, user)
+    await sign(phantom, _state, user)
 });

@@ -2,25 +2,26 @@
 export async function getCurrentState(program, statePublicKey, user) {
     try {
         // fetch state
-        const state = await program.account.ledger.fetch(statePublicKey);
+        const _state = await program.account.ledger.fetch(statePublicKey);
         // define how to simplify for codec
         function simplify() {
-            const _purchased = state.purchased.map(_publicKey => _publicKey.toString());
-            const _secondaryMarket = state.secondaryMarket.map(_publicKey => _publicKey.toString());
-            const _state = {
-                originalSupplyRemaining: state.originalSupplyRemaining,
+            const _purchased = _state.purchased.map(_publicKey => _publicKey.toString());
+            const _secondaryMarket = _state.secondaryMarket.map(_publicKey => _publicKey.toString());
+            return {
+                originalSupplyRemaining: _state.originalSupplyRemaining,
                 purchased: _purchased,
                 secondaryMarket: _secondaryMarket,
                 user: user
             }
-            return JSON.stringify(_state)
         }
         // simplify
-        const simplified = simplify(state)
+        const state = simplify()
+        const simplified = JSON.stringify(state)
         // send state to elm
         app.ports.getCurrentStateSuccessListener.send(simplified);
         // log success
         console.log("program state retrieved & sent to elm");
+        return state
     } catch (error) {
         // log error
         console.log("could not get program state: ", error);
