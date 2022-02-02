@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+variable "deployment_id" {
+  ### increment to force deployment
+  default = "1"
+}
 resource "aws_api_gateway_rest_api" "api" {
   name = "SomosDownload"
 }
@@ -37,12 +41,14 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 resource "aws_api_gateway_deployment" "deploy" {
   depends_on = [
-    aws_api_gateway_resource.resource
+    aws_api_gateway_resource.resource,
+    aws_s3_bucket.lambda,
+    aws_lambda_function.download
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name = lower(terraform.workspace)
   variables = {
     // force deployment
-    "answer" = aws_s3_bucket_object.lambda.etag
+    "answer" = var.deployment_id
   }
 }
