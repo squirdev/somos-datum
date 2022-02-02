@@ -18,7 +18,7 @@ export default {
         ),
         resolve({
             browser: false,
-            preferBuiltins: false
+            preferBuiltins: true
         }),
         json()
     ]
