@@ -6,9 +6,10 @@
     "build": "rollup --config; sh zip.sh"
   },
   "dependencies": {
+    "@project-serum/anchor": "^0.16.1",
     "base58": "^2.0.1",
-    "tweetnacl": "^1.0.3",
-    "@project-serum/anchor": "^0.16.1"
+    "react-native-get-random-values": "^1.7.2",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "rollup": "^2.66.1",

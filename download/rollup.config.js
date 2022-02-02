@@ -1,6 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 import json from '@rollup/plugin-json';
 
 export default {
@@ -11,14 +10,9 @@ export default {
     },
     plugins: [
         commonjs(),
-        nodePolyfills(
-            {
-                include: ['buffer']
-            }
-        ),
         resolve({
             browser: false,
-            preferBuiltins: true
+            preferBuiltins: false,
         }),
         json()
     ]

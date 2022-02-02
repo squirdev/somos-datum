@@ -1,8 +1,10 @@
 // Handler
-import * as nacl from "tweetnacl";
-import {Buffer} from "buffer";
-import {web3, Wallet, Program} from "@project-serum/anchor";
-import idl from "./idl.json";
+const {nacl} = require("tweetnacl");
+
+const {Buffer} = require("buffer");
+const {web3, Wallet, Program, Provider} = require("@project-serum/anchor");
+const fs = require('fs')
+let idl = JSON.parse(fs.readFileSync('./idl.json', 'utf-8'))
 
 // generate keypair
 const keyPair = web3.Keypair.generate()
@@ -15,17 +17,20 @@ const connection = new web3.Connection(devnet, preflightCommitment);
 const provider = new Provider(connection, wallet, preflightCommitment);
 // build program
 const programID = new web3.PublicKey(idl.metadata.address);
+// const programID = new web3.PublicKey("AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN")
 const program = new Program(idl, programID, provider);
 // get program public key
 const textEncoder = new TextEncoder()
 const ACCOUNT_SEED = "hancock"
 let statePublicKey, bump = null;
+
 async function getStatePubKeyAndBump() {
     [statePublicKey, bump] = await web3.PublicKey.findProgramAddress(
         [textEncoder.encode(ACCOUNT_SEED)],
         programID
     );
 }
+
 // get ledger state
 async function getPurchasedList() {
     await getStatePubKeyAndBump()
@@ -40,7 +45,7 @@ exports.handler = async function (event, context) {
     // const _verified = verify(JSON.parse(event.body))
     const purchasedList = await getPurchasedList();
     try {
-        return formatResponse(serialize({purchased : purchasedList.toString()}))
+        return formatResponse(serialize({purchased: purchasedList.toString()}))
     } catch (error) {
         return formatError(error)
     }
