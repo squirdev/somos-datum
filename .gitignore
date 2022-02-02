@@ -19,14 +19,6 @@ deployment/post.sh
 .anchor
 test-ledger
 
-## scala
-project/project/target
-project/target
-download/target/streams
-download/target/scala-2.12
-download/target/terraform/dependencies.zip
-download/target/terraform/sources.jar
-
 ## js
 /node_modules
 assets/js/node_modules
