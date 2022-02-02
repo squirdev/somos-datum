@@ -34,7 +34,8 @@ exports.handler = async function (event, context) {
         if (verified01) {
             const verified02 = await verifyOwnership(body.user)
             if (verified02) {
-                return formatResponse(serialize({verified: true, user: body.userDecoded}))
+                const preSignedUrl = getPreSignedUrl()
+                return formatResponse(serialize({user: body.userDecoded, url: preSignedUrl}))
             } else {
                 return formatError({statusCode: "401", code: "401", message: "cannot prove ownership of user"})
             }
@@ -101,4 +102,17 @@ async function getPurchasedList() {
     await getStatePubKeyAndBump()
     const state = await program.account.ledger.fetch(statePublicKey);
     return state.purchased.map(_publicKey => _publicKey.toString());
+}
+
+function getPreSignedUrl() {
+    const AWS = require('aws-sdk')
+    const s3 = new AWS.S3()
+    const bucket = 'somos-download-artifacts'
+    const key = '01/01.zip'
+    const signedUrlExpireSeconds = 60
+    return s3.getSignedUrl('getObject', {
+        Bucket: bucket,
+        Key: key,
+        Expires: signedUrlExpireSeconds
+    })
 }

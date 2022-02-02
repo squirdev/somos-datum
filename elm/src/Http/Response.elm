@@ -4,13 +4,13 @@ import Json.Decode as Decode
 
 
 type alias Response =
-    { verified : Bool
-    , user : String
+    { user : String
+    , url: String
     }
 
 
 responseDecoder : Decode.Decoder Response
 responseDecoder =
     Decode.map2 Response
-        (Decode.field "verified" Decode.bool)
         (Decode.field "user" Decode.string)
+        (Decode.field "url" Decode.string)

@@ -151,6 +151,7 @@ body anchor =
                         [ Html.div
                             []
                             [ Html.text response.user
+                            , Html.text response.url
                             ]
                         , Html.div
                             []
