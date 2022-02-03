@@ -6,7 +6,9 @@ import Browser
 import Browser.Navigation as Nav
 import Http.Download as Download
 import Http.Error
+import Http.Response
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Model.Anchor as Anchor exposing (Anchor(..), AnchorState, isAccountDoesNotExistError)
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
@@ -15,7 +17,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Sub.Anchor exposing (initProgramSender, isConnectedSender, purchasePrimarySender)
-import Sub.Phantom exposing (connectSender, signMessageSender)
+import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
 import View.About.About
@@ -188,8 +190,20 @@ update msg model =
         AwsPreSign result ->
             case result of
                 Ok response ->
+                    let
+                        encoder : Encode.Value
+                        encoder =
+                            Encode.object
+                                [ ( "url", Encode.string response.url )
+                                , ( "user", Encode.string response.user )
+                                ]
+
+                        jsonString : String
+                        jsonString =
+                            Encode.encode 0 encoder
+                    in
                     ( { model | state = LandingPage (UserWithOwnershipWithDownloadUrl response) }
-                    , Cmd.none
+                    , openDownloadUrlSender jsonString
                     )
 
                 Err error ->

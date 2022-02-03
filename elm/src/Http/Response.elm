@@ -5,7 +5,7 @@ import Json.Decode as Decode
 
 type alias Response =
     { user : String
-    , url: String
+    , url : String
     }
 
 
