@@ -8,12 +8,6 @@ import {primary} from "./purchase/primary";
 import {sign} from "./sign";
 import {download} from "./download";
 
-// get program public key
-let statePublicKey, bump = null;
-[statePublicKey, bump] = await web3.PublicKey.findProgramAddress(
-    [textEncoder.encode(ACCOUNT_SEED)],
-    programID
-);
 
 // get phantom
 let phantom = null;
@@ -22,11 +16,17 @@ app.ports.connectSender.subscribe(async function () {
 });
 
 // get current state as soon as user logs in
+let statePublicKey, bump = null;
 app.ports.isConnectedSender.subscribe(async function (user) {
     // get provider & program
-    const pp = getPP(phantom)
+    const pp = getPP(phantom);
+    // get program public key
+    [statePublicKey, bump] = await web3.PublicKey.findProgramAddress(
+        [textEncoder.encode(ACCOUNT_SEED)],
+        programID
+    );
     // invoke state request & send response to elm
-    await getCurrentState(pp.program, statePublicKey, user)
+    await getCurrentState(pp.program, statePublicKey, user);
 });
 
 // init program
