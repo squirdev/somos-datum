@@ -36,7 +36,7 @@ dist/
 
 ## css
 assets/sass/node_modules
-assets/sass/custom.css
+assets/sass/custom.scss
 
 ## project
 .idea

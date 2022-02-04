@@ -10,7 +10,7 @@ import View.Header
 view : Html Msg -> Html Msg
 view body =
     Html.section
-        [ class "hero is-fullheight"
+        [ class "hero is-fullheight has-black"
         ]
         [ Html.div
             [ class "hero-head"

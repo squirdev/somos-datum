@@ -10,7 +10,7 @@ import Msg.Msg exposing (Msg)
 view : Html Msg
 view =
     Html.nav
-        [ class "level has-background-white-bis"
+        [ class "level"
         ]
         [ Html.div
             [ class "level-left"

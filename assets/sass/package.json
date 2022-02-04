@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "SCSS Build",
   "scripts": {
-    "build": "node-sass --output-style expanded --include-path=node_modules/bulma custom.scss custom.css",
+    "build": "node-sass --output-style expanded --include-path=node_modules/bulma custom.scss ../css/custom.css",
     "start": "npm run build --watch"
   },
   "author": "MrMizz",
