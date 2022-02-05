@@ -22,7 +22,7 @@ import Sub.Sub as Sub
 import Url
 import View.About.About
 import View.Error.Error
-import View.LandingPage.LandingPage
+import View.Market.Buy.Primary
 
 
 main : Program () Model Msg
@@ -78,7 +78,7 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection user ->
-                    ( { model | state = LandingPage (JustHasWallet user) }
+                    ( { model | state = Market (JustHasWallet user) }
                     , isConnectedSender user
                     )
 
@@ -95,7 +95,7 @@ update msg model =
                     in
                     case maybeSignature of
                         Ok signature ->
-                            ( { model | state = LandingPage (UserWithOwnershipWaitingForPreSign signature) }
+                            ( { model | state = Market (UserWithOwnershipWaitingForPreSign signature) }
                             , Download.post signature
                             )
 
@@ -150,7 +150,7 @@ update msg model =
                                                 False ->
                                                     UserWithNoOwnership anchorState
                                     in
-                                    LandingPage user
+                                    Market user
 
                                 Err jsonError ->
                                     State.Error (Decode.errorToString jsonError)
@@ -171,7 +171,7 @@ update msg model =
                                 Ok anchorStateLookupFailure ->
                                     case isAccountDoesNotExistError anchorStateLookupFailure.error of
                                         True ->
-                                            LandingPage (WaitingForProgramInit anchorStateLookupFailure.user)
+                                            Market (WaitingForProgramInit anchorStateLookupFailure.user)
 
                                         False ->
                                             State.Error error
@@ -202,7 +202,7 @@ update msg model =
                         jsonString =
                             Encode.encode 0 encoder
                     in
-                    ( { model | state = LandingPage (UserWithOwnershipWithDownloadUrl response) }
+                    ( { model | state = Market (UserWithOwnershipWithDownloadUrl response) }
                     , openDownloadUrlSender jsonString
                     )
 
@@ -221,8 +221,8 @@ view model =
     let
         html =
             case model.state of
-                LandingPage anchor ->
-                    View.LandingPage.LandingPage.view anchor
+                Market anchor ->
+                    View.Market.Buy.Primary.view anchor
 
                 About ->
                     View.About.About.view

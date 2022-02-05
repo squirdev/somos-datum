@@ -8,7 +8,7 @@ import Url.Parser as UrlParser
 
 
 type State
-    = LandingPage Anchor
+    = Market Anchor
     | About
     | Error String
 
@@ -16,8 +16,8 @@ type State
 urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
-        [ UrlParser.map (LandingPage WaitingForWallet) UrlParser.top
-        , UrlParser.map (LandingPage WaitingForWallet) (UrlParser.s "welcome")
+        [ UrlParser.map (Market WaitingForWallet) UrlParser.top
+        , UrlParser.map (Market WaitingForWallet) (UrlParser.s "welcome")
         , UrlParser.map About (UrlParser.s "about")
         ]
 
@@ -42,7 +42,7 @@ parse url =
 path : State -> String
 path state =
     case state of
-        LandingPage _ ->
+        Market _ ->
             "#/welcome"
 
         About ->

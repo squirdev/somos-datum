@@ -34,9 +34,9 @@ view =
                         , Html.li
                             []
                             [ Html.a
-                                [ State.href (LandingPage WaitingForWallet)
+                                [ State.href (Market WaitingForWallet)
                                 ]
-                                [ Html.text "Landing"
+                                [ Html.text "Buy"
                                 ]
                             ]
                         ]

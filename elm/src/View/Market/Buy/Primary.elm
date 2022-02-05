@@ -1,4 +1,4 @@
-module View.LandingPage.LandingPage exposing (view)
+module View.Market.Buy.Primary exposing (view)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)
