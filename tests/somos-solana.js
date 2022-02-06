@@ -84,6 +84,57 @@ describe("somos-solana", () => {
         assert.ok(actualLedger.originalSupplyRemaining === 2)
         assert.ok(diff === 100000000)
     });
+    // purchase primary sold out
+    it("purchase primary sold out", async () => {
+        let purchaser = await createUser();
+        let _program = programForUser(purchaser)
+        let balance = await provider.connection.getBalance(provider.wallet.publicKey)
+        await _program.rpc.purchasePrimary({
+            accounts: {
+                user: purchaser.key.publicKey,
+                boss: provider.wallet.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        await _program.rpc.purchasePrimary({
+            accounts: {
+                user: purchaser.key.publicKey,
+                boss: provider.wallet.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualLedger = await _program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        const newBalance = await provider.connection.getBalance(provider.wallet.publicKey);
+        const diff = newBalance - balance
+        console.log(diff)
+        console.log(newBalance)
+        console.log(balance)
+        // assertions
+        assert.ok(actualLedger.originalSupplyRemaining === 0)
+        assert.ok(diff === 200000000)
+    });
+    // throw error on sold out purchase
+    it("purchase primary sold out throws error", async () => {
+        let purchaser = await createUser();
+        let _program = programForUser(purchaser)
+        try {
+            await _program.rpc.purchasePrimary({
+                accounts: {
+                    user: purchaser.key.publicKey,
+                    boss: provider.wallet.publicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    });
     // failed purchase primary
     it("purchase primary failed without boss", async () => {
         let purchaser = await createUser();
