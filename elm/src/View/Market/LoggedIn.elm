@@ -1,4 +1,4 @@
-module View.Market.LoggedIn exposing (body, Args)
+module View.Market.LoggedIn exposing (Args, body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, style)
@@ -12,9 +12,10 @@ import View.Market.Ownership exposing (Ownership(..))
 
 
 type alias Args =
-    { ledger: Ledger
-    , ownership: Ownership
+    { ledger : Ledger
+    , ownership : Ownership
     }
+
 
 body : Args -> Html Msg
 body args =
@@ -65,20 +66,18 @@ body args =
                         [ class "my-2"
                         ]
                         [ Html.p
-                                []
-                                [ Html.text "your ownership: "
-                                , Html.b
-                                    [ class "has-border-2 px-1 py-1"
-                                    ]
-                                    [ Html.text (String.fromInt int)
-                                    ]
+                            []
+                            [ Html.text "your ownership: "
+                            , Html.b
+                                [ class "has-border-2 px-1 py-1"
                                 ]
+                                [ Html.text (String.fromInt int)
+                                ]
+                            ]
                         ]
 
                 No ->
                     Html.div [] []
-
-
 
         maybeDownload =
             case args.ownership of
@@ -148,14 +147,14 @@ body args =
                 [ class "my-2"
                 ]
                 [ Html.p
-                        []
-                        [ Html.text "original supply remaining: "
-                        , Html.b
-                            [ class "has-border-2 px-1 py-1"
-                            ]
-                            [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
-                            ]
+                    []
+                    [ Html.text "original supply remaining: "
+                    , Html.b
+                        [ class "has-border-2 px-1 py-1"
                         ]
+                        [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
+                        ]
+                    ]
                 ]
             , maybeCount
             , maybeDownload

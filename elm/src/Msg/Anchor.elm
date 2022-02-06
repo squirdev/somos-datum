@@ -1,7 +1,7 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
-
 import Model.PublicKey exposing (PublicKey)
+
 
 type ToAnchorMsg
     = InitProgram PublicKey

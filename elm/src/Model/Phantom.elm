@@ -11,7 +11,10 @@ type alias PhantomSignature =
     , userDecoded : PublicKey
     }
 
-type alias Base64 = String
+
+type alias Base64 =
+    String
+
 
 decodeSignature : String -> Result Decode.Error PhantomSignature
 decodeSignature string =

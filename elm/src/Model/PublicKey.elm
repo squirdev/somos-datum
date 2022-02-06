@@ -1,5 +1,6 @@
 module Model.PublicKey exposing (PublicKey, slice)
 
+
 type alias PublicKey =
     String
 

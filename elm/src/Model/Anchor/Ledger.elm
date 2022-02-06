@@ -7,6 +7,7 @@ import Model.PublicKey exposing (PublicKey)
 
 -- Success
 
+
 type alias Ledger =
     { originalSupplyRemaining : Int
     , purchased : List PublicKey
