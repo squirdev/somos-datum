@@ -98,26 +98,14 @@ a:link, a:visited {
   float: right !important;
 }
 
-.has-space-bottom-1 {
-  padding-bottom: 5px
-}
-
-.has-space-bottom-2 {
-  padding-bottom: 20px
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // borders /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 .has-border-1 {
   border-bottom: 1px solid #FDF9EF;
 }
 
-.has-border-2, .has-border-3 {
-  border: 1px dotted #4a4a4a;
-}
-
 .has-border-2 {
-  padding-top: 50px;
+  border: 1px dotted #4a4a4a;
 }
 
 .is-navbar {
