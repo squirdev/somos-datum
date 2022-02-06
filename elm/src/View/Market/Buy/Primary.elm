@@ -29,10 +29,10 @@ body anchor =
                                 ]
                     in
                     Html.div
-                        []
+                        [ class "has-border-2"
+                        ]
                         [ Html.div
                             [ style "float" "right"
-                            , class "mr-2"
                             ]
                             [ button
                             ]
@@ -129,30 +129,88 @@ body anchor =
                             ]
                         ]
 
-                UserWithNoOwnership anchorState ->
+                UserWithNoOwnership ledger ->
+                    let
+                        slice_ =
+                            Html.div
+                                [ class "has-border-2 has-font-2 px-2 py-2"
+                                , style "float" "right"
+                                ]
+                                [ Html.text (slice ledger.user)
+                                ]
+                    in
                     Html.div
-                        []
+                        [ class "has-font-1"
+                        ]
                         [ Html.div
-                            [ class "columns is-mobile"
+                            [ class "pl-2"
                             ]
                             [ Html.div
-                                [ class "column"
-                                ]
-                                [ Html.text
-                                    (String.join
-                                        ": "
-                                        [ "Original Supply Remaining"
-                                        , String.fromInt anchorState.originalSupplyRemaining
-                                        ]
-                                    )
+                                []
+                                [ Html.h2
+                                    []
+                                    [ Html.text "release 01"
+                                    ]
                                 ]
                             ]
                         , Html.div
-                            []
-                            [ Html.button
-                                [ onClick (ToAnchor (PurchasePrimary anchorState.user))
+                            [ class "has-border-2 px-2 py-2"
+                            ]
+                            [ slice_
+                            , Html.div
+                                [ class "has-font-2"
                                 ]
-                                [ Html.text "Purchase"
+                                [ Html.h3
+                                    []
+                                    [ Html.text
+                                        """
+                                        "DAY 02" (casa bola live session)
+                                        """
+                                    ]
+                                , Html.div
+                                    []
+                                    [ Html.b
+                                        [ class "mr-2"
+                                        ]
+                                        [ Html.text "\u{1F941}"
+                                        ]
+                                    , Html.text "audio file"
+                                    ]
+                                , Html.div
+                                    []
+                                    [ Html.b
+                                        [ class "mr-2"
+                                        ]
+                                        [ Html.text "📸"
+                                        ]
+                                    , Html.text "cover photo"
+                                    ]
+                                ]
+                            , Html.div
+                                [ class "columns is-mobile mt-2"
+                                ]
+                                [ Html.div
+                                    [ class "column"
+                                    ]
+                                    [ Html.p
+                                        []
+                                        [ Html.text "original supply remaining: "
+                                        , Html.b
+                                            [ class "has-border-2 px-1 py-1"
+                                            ]
+                                            [ Html.text (String.fromInt ledger.originalSupplyRemaining)
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            , Html.div
+                                []
+                                [ Html.button
+                                    [ class "is-button-2"
+                                    , onClick (ToAnchor (PurchasePrimary ledger.user))
+                                    ]
+                                    [ Html.text "Purchase"
+                                    ]
                                 ]
                             ]
                         ]
@@ -235,7 +293,7 @@ body anchor =
                                         ]
     in
     Html.div
-        [ class "container has-border-2"
+        [ class "container"
         ]
         [ html
         ]
@@ -250,5 +308,5 @@ slice publicKey =
     String.join
         "..."
         [ String.slice 0 4 publicKey
-        , String.slice -4 -1 publicKey
+        , String.slice -5 -1 publicKey
         ]
