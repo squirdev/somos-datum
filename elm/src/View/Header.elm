@@ -1,59 +1,130 @@
 module View.Header exposing (view)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, src, style, width)
+import Html.Events exposing (onClick)
 import Model.Anchor exposing (Anchor(..))
+import Model.Model exposing (Model)
 import Model.State as State exposing (State(..))
-import Msg.Msg exposing (Msg)
+import Msg.Msg exposing (Msg(..))
+import Msg.Phantom exposing (ToPhantomMsg(..))
 
 
-view : Html Msg
-view =
+view : Model -> Html Msg
+view model =
+    let
+        tab_ : Args -> Html Msg
+        tab_ =
+            tab model
+
+        maybePublicKey : Maybe String
+        maybePublicKey =
+            case model.state of
+                Market anchor ->
+                    case anchor of
+                        WaitingForWallet ->
+                            Nothing
+
+                        JustHasWallet publicKey ->
+                            Just publicKey
+
+                        WaitingForProgramInit publicKey ->
+                            Just publicKey
+
+                        UserWithNoOwnership anchorState ->
+                            Just anchorState.user
+
+                        UserWithOwnershipBeforeDownload anchorState _ ->
+                            Just anchorState.user
+
+                        UserWithOwnershipWaitingForPreSign phantomSignature ->
+                            Just phantomSignature.userDecoded
+
+                        UserWithOwnershipWithDownloadUrl response ->
+                            Just response.user
+
+                About ->
+                    Nothing
+
+                Error _ ->
+                    Nothing
+
+        market : Html Msg
+        market =
+            case maybePublicKey of
+                Just publicKey ->
+                    tab_
+                        { state = Market (JustHasWallet publicKey)
+                        , title = "MARKET"
+                        , msg = (ToPhantom Connect)
+                        }
+
+                Nothing ->
+                    tab_
+                        { state = Market WaitingForWallet
+                        , title = "MARKET"
+                        , msg = NoOp
+                        }
+    in
     Html.nav
-        [ class "level"
+        [ class "is-navbar"
         ]
-        [ Html.div
-            [ class "level-left"
-            ]
-            [ Html.div
-                [ class "level-item"
-                ]
-                [ Html.div
-                    [ class "tabs is-boxed is-large has-border-1"
-                    ]
-                    [ Html.ul
-                        []
-                        [ Html.li
-                            []
-                            [ Html.a
-                                [ State.href About
-                                ]
-                                [ Html.text "About"
-                                ]
-                            ]
-                        , Html.li
-                            []
-                            [ Html.a
-                                [ State.href (Market WaitingForWallet)
-                                ]
-                                [ Html.text "Buy"
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+        [ tab_
+            { state = About
+            , title = "ABOUT"
+            , msg = NoOp
+            }
+        , market
         , Html.div
-            [ class "level-right"
+            [ style "float" "right"
             ]
-            [ Html.div
-                [ class "level-item"
+            [ Html.a
+                [ State.href About
                 ]
-                [ Html.div
-                    [ class "title is-family-secondary is-3 px-2 pb-2"
+                [ Html.img
+                    [ src "images/logo/02_somos.png"
+                    , width 50
                     ]
-                    [ Html.text "Responsive Elm"
-                    ]
+                    []
                 ]
             ]
         ]
+
+
+type alias Args =
+    { state : State
+    , title : String
+    , msg: Msg
+    }
+
+
+tab : Model -> Args -> Html Msg
+tab model args =
+    Html.div
+        [ style "float" "left"
+        ]
+        [ Html.a
+            [ State.href args.state
+            , onClick args.msg
+            ]
+            [ Html.button
+                [ class (String.join " " [ "has-font-1", "is-button-1", isActive model args.state ])
+                ]
+                [ Html.text args.title
+                ]
+            ]
+        ]
+
+
+isActive : Model -> State -> String
+isActive model state =
+    let
+        class_ =
+            "is-active-header-tab"
+    in
+    case model.state == state of
+        True ->
+            class_
+
+        False ->
+            ""

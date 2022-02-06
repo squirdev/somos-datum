@@ -1,14 +1,8 @@
-module View.Error.Error exposing (view)
+module View.Error.Error exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Msg.Msg exposing (Msg)
-import View.Hero
-
-
-view : String -> Html Msg
-view error =
-    View.Hero.view (body error)
 
 
 body : String -> Html Msg

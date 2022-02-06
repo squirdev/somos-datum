@@ -17,7 +17,7 @@ urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
         [ UrlParser.map (Market WaitingForWallet) UrlParser.top
-        , UrlParser.map (Market WaitingForWallet) (UrlParser.s "welcome")
+        , UrlParser.map (Market WaitingForWallet) (UrlParser.s "buy")
         , UrlParser.map About (UrlParser.s "about")
         ]
 
@@ -43,7 +43,7 @@ path : State -> String
 path state =
     case state of
         Market _ ->
-            "#/welcome"
+            "#/buy"
 
         About ->
             "#/about"

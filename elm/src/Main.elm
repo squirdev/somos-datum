@@ -4,6 +4,7 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Html exposing (Html)
 import Http.Download as Download
 import Http.Error
 import Http.Response
@@ -22,6 +23,7 @@ import Sub.Sub as Sub
 import Url
 import View.About.About
 import View.Error.Error
+import View.Hero
 import View.Market.Buy.Primary
 
 
@@ -219,16 +221,20 @@ update msg model =
 view : Model -> Browser.Document Msg
 view model =
     let
+        hero : Html Msg -> Html Msg
+        hero =
+            View.Hero.view model
+
         html =
             case model.state of
                 Market anchor ->
-                    View.Market.Buy.Primary.view anchor
+                    hero (View.Market.Buy.Primary.body anchor)
 
                 About ->
-                    View.About.About.view
+                    hero View.About.About.body
 
                 Error error ->
-                    View.Error.Error.view error
+                    hero (View.Error.Error.body error)
     in
     { title = "Responsive Elm"
     , body =

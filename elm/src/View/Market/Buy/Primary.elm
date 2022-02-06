@@ -1,4 +1,4 @@
-module View.Market.Buy.Primary exposing (view)
+module View.Market.Buy.Primary exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)
@@ -7,12 +7,6 @@ import Model.Anchor exposing (Anchor(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Hero
-
-
-view : Anchor -> Html Msg
-view anchor =
-    View.Hero.view (body anchor)
 
 
 body : Anchor -> Html Msg
