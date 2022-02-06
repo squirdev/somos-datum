@@ -10,7 +10,10 @@ import Http.Error
 import Http.Response
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Model.Anchor as Anchor exposing (Anchor(..), AnchorState, isAccountDoesNotExistError)
+import Model.Anchor.Anchor exposing (Anchor(..))
+import Model.Anchor.AnchorState as AnchorState exposing (AnchorState)
+import Model.Anchor.DownloadStatus as DownloadStatus
+import Model.Anchor.Ownership as Ownership
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
 import Model.State as State exposing (State(..))
@@ -97,7 +100,7 @@ update msg model =
                     in
                     case maybeSignature of
                         Ok signature ->
-                            ( { model | state = Buy (UserWithOwnershipWaitingForPreSign signature) }
+                            ( { model | state = Buy (UserWithOwnership (Ownership.Download (DownloadStatus.InvokedAndWaiting signature))) }
                             , Download.post signature
                             )
 
@@ -129,7 +132,7 @@ update msg model =
                     let
                         maybeAnchorState : Result Decode.Error AnchorState
                         maybeAnchorState =
-                            Anchor.decodeSuccess jsonString
+                            AnchorState.decodeSuccess jsonString
 
                         update_ : State
                         update_ =
@@ -147,7 +150,7 @@ update msg model =
                                         user =
                                             case ownership > 0 of
                                                 True ->
-                                                    UserWithOwnershipBeforeDownload anchorState ownership
+                                                    UserWithOwnership (Ownership.Console anchorState ownership)
 
                                                 False ->
                                                     UserWithNoOwnership anchorState
@@ -163,15 +166,15 @@ update msg model =
 
                 Msg.Anchor.FailureOnStateLookup error ->
                     let
-                        maybeAnchorStateLookupFailure : Result Decode.Error Anchor.AnchorStateLookupFailure
+                        maybeAnchorStateLookupFailure : Result Decode.Error AnchorState.AnchorStateLookupFailure
                         maybeAnchorStateLookupFailure =
-                            Anchor.decodeFailure error
+                            AnchorState.decodeFailure error
 
                         update_ : State
                         update_ =
                             case maybeAnchorStateLookupFailure of
                                 Ok anchorStateLookupFailure ->
-                                    case isAccountDoesNotExistError anchorStateLookupFailure.error of
+                                    case AnchorState.isAccountDoesNotExistError anchorStateLookupFailure.error of
                                         True ->
                                             Buy (WaitingForProgramInit anchorStateLookupFailure.user)
 
@@ -204,7 +207,7 @@ update msg model =
                         jsonString =
                             Encode.encode 0 encoder
                     in
-                    ( { model | state = Buy (UserWithOwnershipWithDownloadUrl response) }
+                    ( { model | state = Buy (UserWithOwnership (Ownership.Download (DownloadStatus.Done response))) }
                     , openDownloadUrlSender jsonString
                     )
 

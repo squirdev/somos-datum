@@ -2,7 +2,7 @@ module Model.State exposing (State(..), href, parse)
 
 import Html
 import Html.Attributes
-import Model.Anchor exposing (Anchor(..))
+import Model.Anchor.Anchor exposing (Anchor(..))
 import Url
 import Url.Parser as UrlParser
 

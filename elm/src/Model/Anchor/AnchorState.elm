@@ -1,51 +1,14 @@
-module Model.Anchor exposing (Anchor(..), AnchorState, AnchorStateLookupFailure, decodeFailure, decodeSuccess, getPublicKey, isAccountDoesNotExistError)
+module Model.Anchor.AnchorState exposing (AnchorState, AnchorStateLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
-import Http.Response as Download
 import Json.Decode as Decode
-import Model.Phantom exposing (PhantomSignature)
-
-
-type Anchor
-    = WaitingForWallet
-    | JustHasWallet PublicKey
-    | WaitingForProgramInit PublicKey
-    | UserWithNoOwnership AnchorState
-    | UserWithOwnershipBeforeDownload AnchorState Int
-    | UserWithOwnershipWaitingForPreSign PhantomSignature
-    | UserWithOwnershipWithDownloadUrl Download.Response
-
-
-type alias PublicKey =
-    String
-
-
-getPublicKey : Anchor -> Maybe PublicKey
-getPublicKey anchor =
-    case anchor of
-        WaitingForWallet ->
-            Nothing
-
-        JustHasWallet publicKey ->
-            Just publicKey
-
-        WaitingForProgramInit publicKey ->
-            Just publicKey
-
-        UserWithNoOwnership anchorState ->
-            Just anchorState.user
-
-        UserWithOwnershipBeforeDownload anchorState _ ->
-            Just anchorState.user
-
-        UserWithOwnershipWaitingForPreSign phantomSignature ->
-            Just phantomSignature.userDecoded
-
-        UserWithOwnershipWithDownloadUrl response ->
-            Just response.user
 
 
 
 -- Success
+
+
+type alias PublicKey =
+    String
 
 
 type alias AnchorState =
