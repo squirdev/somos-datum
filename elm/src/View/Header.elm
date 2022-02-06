@@ -3,7 +3,7 @@ module View.Header exposing (view)
 import Html exposing (Html)
 import Html.Attributes exposing (class, src, style, width)
 import Html.Events exposing (onClick)
-import Model.Anchor exposing (Anchor(..))
+import Model.Anchor as Anchor exposing (Anchor(..))
 import Model.Model exposing (Model)
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg(..))
@@ -21,27 +21,7 @@ view model =
         maybePublicKey =
             case model.state of
                 Market anchor ->
-                    case anchor of
-                        WaitingForWallet ->
-                            Nothing
-
-                        JustHasWallet publicKey ->
-                            Just publicKey
-
-                        WaitingForProgramInit publicKey ->
-                            Just publicKey
-
-                        UserWithNoOwnership anchorState ->
-                            Just anchorState.user
-
-                        UserWithOwnershipBeforeDownload anchorState _ ->
-                            Just anchorState.user
-
-                        UserWithOwnershipWaitingForPreSign phantomSignature ->
-                            Just phantomSignature.userDecoded
-
-                        UserWithOwnershipWithDownloadUrl response ->
-                            Just response.user
+                    Anchor.getPublicKey anchor
 
                 About ->
                     Nothing
@@ -56,7 +36,7 @@ view model =
                     tab_
                         { state = Market (JustHasWallet publicKey)
                         , title = "MARKET"
-                        , msg = (ToPhantom Connect)
+                        , msg = ToPhantom Connect
                         }
 
                 Nothing ->
@@ -94,7 +74,7 @@ view model =
 type alias Args =
     { state : State
     , title : String
-    , msg: Msg
+    , msg : Msg
     }
 
 
