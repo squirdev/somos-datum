@@ -1,4 +1,4 @@
-module View.Market.Sell exposing (body)
+module View.Market.Sell.Sell exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, target)

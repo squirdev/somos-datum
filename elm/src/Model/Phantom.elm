@@ -1,15 +1,17 @@
 module Model.Phantom exposing (PhantomSignature, decodeSignature)
 
 import Json.Decode as Decode
+import Model.PublicKey exposing (PublicKey)
 
 
 type alias PhantomSignature =
-    { message : String
-    , signature : String
-    , user : String
-    , userDecoded : String
+    { message : Base64
+    , signature : Base64
+    , user : Base64
+    , userDecoded : PublicKey
     }
 
+type alias Base64 = String
 
 decodeSignature : String -> Result Decode.Error PhantomSignature
 decodeSignature string =

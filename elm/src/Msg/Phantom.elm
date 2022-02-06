@@ -1,6 +1,7 @@
 module Msg.Phantom exposing (FromPhantomMsg(..), ToPhantomMsg(..))
 
 
+import Model.PublicKey exposing (PublicKey)
 type
     ToPhantomMsg
     -- connection attempt
@@ -17,11 +18,6 @@ type
       -- sign message attempt
     | SuccessOnSignMessage Json
     | FailureOnSignMessage Error
-
-
-type alias PublicKey =
-    String
-
 
 type alias Json =
     String

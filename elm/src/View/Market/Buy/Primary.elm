@@ -6,10 +6,13 @@ import Html.Events exposing (onClick)
 import Model.Anchor.Anchor exposing (Anchor(..))
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ownership as Ownership
+import Model.PublicKey as PublicKey
 import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
+import View.Market.LoggedIn as LoggedIn
+import View.Market.Ownership
 
 
 body : Anchor -> Html Msg
@@ -96,7 +99,7 @@ body anchor =
                 JustHasWallet publicKey ->
                     let
                         slice_ =
-                            slice publicKey
+                            PublicKey.slice publicKey
                     in
                     Html.div
                         []
@@ -130,139 +133,12 @@ body anchor =
                         ]
 
                 UserWithNoOwnership ledger ->
-                    let
-                        slice_ =
-                            Html.div
-                                [ class "has-border-2 has-font-2 px-2 py-2"
-                                , style "float" "right"
-                                ]
-                                [ Html.text (slice ledger.user)
-                                ]
-                    in
-                    Html.div
-                        [ class "has-font-1"
-                        ]
-                        [ Html.div
-                            [ class "pl-2"
-                            ]
-                            [ Html.div
-                                []
-                                [ Html.h2
-                                    []
-                                    [ Html.text "release 01"
-                                    ]
-                                ]
-                            ]
-                        , Html.div
-                            [ class "has-border-2 px-2 py-2"
-                            ]
-                            [ slice_
-                            , Html.div
-                                [ class "has-font-2"
-                                ]
-                                [ Html.h3
-                                    []
-                                    [ Html.text
-                                        """
-                                        "DAY 02" (casa bola live session)
-                                        """
-                                    ]
-                                , Html.div
-                                    []
-                                    [ Html.b
-                                        [ class "mr-2"
-                                        ]
-                                        [ Html.text "\u{1F941}"
-                                        ]
-                                    , Html.text "audio file"
-                                    ]
-                                , Html.div
-                                    []
-                                    [ Html.b
-                                        [ class "mr-2"
-                                        ]
-                                        [ Html.text "📸"
-                                        ]
-                                    , Html.text "cover photo"
-                                    ]
-                                ]
-                            , Html.div
-                                [ class "columns is-mobile mt-2"
-                                ]
-                                [ Html.div
-                                    [ class "column"
-                                    ]
-                                    [ Html.p
-                                        []
-                                        [ Html.text "original supply remaining: "
-                                        , Html.b
-                                            [ class "has-border-2 px-1 py-1"
-                                            ]
-                                            [ Html.text (String.fromInt ledger.originalSupplyRemaining)
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            , Html.div
-                                []
-                                [ Html.button
-                                    [ class "is-button-2"
-                                    , onClick (ToAnchor (PurchasePrimary ledger.user))
-                                    ]
-                                    [ Html.text "Purchase"
-                                    ]
-                                ]
-                            ]
-                        ]
+                    LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.No }
 
                 UserWithOwnership ownership ->
                     case ownership of
-                        Ownership.Console anchorState count ->
-                            Html.div
-                                []
-                                [ Html.div
-                                    [ class "columns is-mobile"
-                                    ]
-                                    [ Html.div
-                                        [ class "column"
-                                        ]
-                                        [ Html.text
-                                            (String.join
-                                                ": "
-                                                [ "Original Supply Remaining"
-                                                , String.fromInt anchorState.originalSupplyRemaining
-                                                ]
-                                            )
-                                        ]
-                                    , Html.div
-                                        [ class "column"
-                                        ]
-                                        [ Html.text
-                                            (String.join
-                                                ": "
-                                                [ "Your Ownership"
-                                                , String.fromInt count
-                                                ]
-                                            )
-                                        ]
-                                    , Html.div
-                                        []
-                                        [ Html.button
-                                            [ onClick (ToPhantom (SignMessage anchorState.user))
-                                            ]
-                                            [ Html.text "Download"
-                                            ]
-                                        ]
-                                    ]
-                                , Html.div
-                                    []
-                                    [ Html.button
-                                        [ onClick (ToAnchor (PurchasePrimary anchorState.user))
-                                        ]
-                                        [ Html.text "Purchase More"
-                                        ]
-                                    ]
-                                ]
+                        Ownership.Console ledger count ->
+                            LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.Yes count }
 
                         Ownership.Download downloadStatus ->
                             case downloadStatus of
@@ -296,17 +172,4 @@ body anchor =
         [ class "container"
         ]
         [ html
-        ]
-
-
-type alias PublicKey =
-    String
-
-
-slice : PublicKey -> PublicKey
-slice publicKey =
-    String.join
-        "..."
-        [ String.slice 0 4 publicKey
-        , String.slice -5 -1 publicKey
         ]

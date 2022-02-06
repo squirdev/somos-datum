@@ -28,7 +28,7 @@ import View.About.About
 import View.Error.Error
 import View.Hero
 import View.Market.Buy.Primary
-import View.Market.Sell
+import View.Market.Sell.Sell
 
 
 main : Program () Model Msg
@@ -235,7 +235,7 @@ view model =
                     hero (View.Market.Buy.Primary.body anchor)
 
                 Sell ->
-                    hero View.Market.Sell.body
+                    hero View.Market.Sell.Sell.body
 
                 About ->
                     hero View.About.About.body

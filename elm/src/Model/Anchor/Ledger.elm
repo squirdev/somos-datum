@@ -1,15 +1,11 @@
 module Model.Anchor.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
 import Json.Decode as Decode
+import Model.PublicKey exposing (PublicKey)
 
 
 
 -- Success
-
-
-type alias PublicKey =
-    String
-
 
 type alias Ledger =
     { originalSupplyRemaining : Int

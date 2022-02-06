@@ -3,6 +3,7 @@ module Model.Anchor.Anchor exposing (Anchor(..), getPublicKey)
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ledger exposing (Ledger)
 import Model.Anchor.Ownership exposing (Ownership(..))
+import Model.PublicKey exposing (PublicKey)
 
 
 type Anchor
@@ -11,10 +12,6 @@ type Anchor
     | WaitingForProgramInit PublicKey
     | UserWithNoOwnership Ledger
     | UserWithOwnership Ownership
-
-
-type alias PublicKey =
-    String
 
 
 getPublicKey : Anchor -> Maybe PublicKey

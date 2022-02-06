@@ -1,13 +1,11 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
 
+import Model.PublicKey exposing (PublicKey)
+
 type ToAnchorMsg
     = InitProgram PublicKey
     | PurchasePrimary PublicKey
-
-
-type alias PublicKey =
-    String
 
 
 type
