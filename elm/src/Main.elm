@@ -28,6 +28,7 @@ import View.About.About
 import View.Error.Error
 import View.Hero
 import View.Market.Buy.Primary
+import View.Market.Sell
 
 
 main : Program () Model Msg
@@ -232,6 +233,9 @@ view model =
             case model.state of
                 Buy anchor ->
                     hero (View.Market.Buy.Primary.body anchor)
+
+                Sell ->
+                    hero View.Market.Sell.body
 
                 About ->
                     hero View.About.About.body

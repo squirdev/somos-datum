@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Model.Anchor.Anchor exposing (Anchor(..))
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ownership as Ownership
+import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -61,15 +62,24 @@ body anchor =
                                     [ class "mb-6"
                                     ]
                                     [ button
-                                    , Html.text " your wallet to sign-in & begin interacting with the marketplace"
+                                    , Html.text " your wallet to sign-in & begin interacting with the market place"
                                     ]
                                 , Html.div
                                     [ class "mb-6"
                                     ]
                                     [ Html.text
                                         """
-                                        where you can buy & sell the right-to-download of exclusive content from
-                                        some of your
+                                        where you can buy & sell the
+                                        """
+                                    , Html.a
+                                        [ class "has-sky-blue-text"
+                                        , State.href About
+                                        ]
+                                        [ Html.text "right-to-download"
+                                        ]
+                                    , Html.text
+                                        """
+                                         of exclusive content from some of your
                                         """
                                     , Html.a
                                         [ class "has-sky-blue-text"

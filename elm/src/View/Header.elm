@@ -23,6 +23,9 @@ view model =
                 Buy anchor ->
                     Anchor.getPublicKey anchor
 
+                Sell ->
+                    Nothing
+
                 About ->
                     Nothing
 
@@ -59,6 +62,11 @@ view model =
             , msg = NoOp
             }
         , buy
+        , tab_
+            { state = Sell
+            , title = "SELL"
+            , msg = NoOp
+            }
         , Html.div
             [ style "float" "right"
             ]

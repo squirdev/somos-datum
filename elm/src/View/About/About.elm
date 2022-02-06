@@ -44,7 +44,6 @@ body =
                     [ Html.a
                         [ class "has-sky-blue-text mb-6"
                         , State.href (Buy Anchor.WaitingForWallet)
-                        , target "_blank"
                         ]
                         [ Html.text "purchasing"
                         ]
@@ -92,7 +91,13 @@ body =
                         , Html.li
                             [ class "mb-3"
                             ]
-                            [ Html.text "☑️ can be re-generated as many times as you want as long as you don't sell your ownership"
+                            [ Html.text "☑️ can be re-generated as many times as you want as long as you don't "
+                            , Html.a
+                                [ class "has-sky-blue-text mb-6"
+                                , State.href Sell
+                                ]
+                                [ Html.text "sell your ownership"
+                                ]
                             ]
                         ]
                     ]
