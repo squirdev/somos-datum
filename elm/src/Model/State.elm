@@ -8,7 +8,7 @@ import Url.Parser as UrlParser
 
 
 type State
-    = Market Anchor
+    = Buy Anchor
     | About
     | Error String
 
@@ -16,8 +16,8 @@ type State
 urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
-        [ UrlParser.map (Market WaitingForWallet) UrlParser.top
-        , UrlParser.map (Market WaitingForWallet) (UrlParser.s "buy")
+        [ UrlParser.map (Buy WaitingForWallet) UrlParser.top
+        , UrlParser.map (Buy WaitingForWallet) (UrlParser.s "buy")
         , UrlParser.map About (UrlParser.s "about")
         ]
 
@@ -42,7 +42,7 @@ parse url =
 path : State -> String
 path state =
     case state of
-        Market _ ->
+        Buy _ ->
             "#/buy"
 
         About ->

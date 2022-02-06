@@ -20,7 +20,7 @@ view model =
         maybePublicKey : Maybe String
         maybePublicKey =
             case model.state of
-                Market anchor ->
+                Buy anchor ->
                     Anchor.getPublicKey anchor
 
                 About ->
@@ -29,20 +29,24 @@ view model =
                 Error _ ->
                     Nothing
 
-        market : Html Msg
-        market =
+        buy : Html Msg
+        buy =
+            let
+                title =
+                    "BUY"
+            in
             case maybePublicKey of
                 Just publicKey ->
                     tab_
-                        { state = Market (JustHasWallet publicKey)
-                        , title = "MARKET"
+                        { state = Buy (JustHasWallet publicKey)
+                        , title = title
                         , msg = ToPhantom Connect
                         }
 
                 Nothing ->
                     tab_
-                        { state = Market WaitingForWallet
-                        , title = "MARKET"
+                        { state = Buy WaitingForWallet
+                        , title = title
                         , msg = NoOp
                         }
     in
@@ -54,7 +58,7 @@ view model =
             , title = "ABOUT"
             , msg = NoOp
             }
-        , market
+        , buy
         , Html.div
             [ style "float" "right"
             ]

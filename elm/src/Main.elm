@@ -80,7 +80,7 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection user ->
-                    ( { model | state = Market (JustHasWallet user) }
+                    ( { model | state = Buy (JustHasWallet user) }
                     , isConnectedSender user
                     )
 
@@ -97,7 +97,7 @@ update msg model =
                     in
                     case maybeSignature of
                         Ok signature ->
-                            ( { model | state = Market (UserWithOwnershipWaitingForPreSign signature) }
+                            ( { model | state = Buy (UserWithOwnershipWaitingForPreSign signature) }
                             , Download.post signature
                             )
 
@@ -152,7 +152,7 @@ update msg model =
                                                 False ->
                                                     UserWithNoOwnership anchorState
                                     in
-                                    Market user
+                                    Buy user
 
                                 Err jsonError ->
                                     State.Error (Decode.errorToString jsonError)
@@ -173,7 +173,7 @@ update msg model =
                                 Ok anchorStateLookupFailure ->
                                     case isAccountDoesNotExistError anchorStateLookupFailure.error of
                                         True ->
-                                            Market (WaitingForProgramInit anchorStateLookupFailure.user)
+                                            Buy (WaitingForProgramInit anchorStateLookupFailure.user)
 
                                         False ->
                                             State.Error error
@@ -204,7 +204,7 @@ update msg model =
                         jsonString =
                             Encode.encode 0 encoder
                     in
-                    ( { model | state = Market (UserWithOwnershipWithDownloadUrl response) }
+                    ( { model | state = Buy (UserWithOwnershipWithDownloadUrl response) }
                     , openDownloadUrlSender jsonString
                     )
 
@@ -227,7 +227,7 @@ view model =
 
         html =
             case model.state of
-                Market anchor ->
+                Buy anchor ->
                     hero (View.Market.Buy.Primary.body anchor)
 
                 About ->
