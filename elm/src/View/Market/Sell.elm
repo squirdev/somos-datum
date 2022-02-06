@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class, href, target)
 import Msg.Msg exposing (Msg)
 
+
 body : Html Msg
 body =
     let
