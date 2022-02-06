@@ -1,4 +1,4 @@
-module Model.Anchor.AnchorState exposing (AnchorState, AnchorStateLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
+module Model.Anchor.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
 import Json.Decode as Decode
 
@@ -11,7 +11,7 @@ type alias PublicKey =
     String
 
 
-type alias AnchorState =
+type alias Ledger =
     { originalSupplyRemaining : Int
     , purchased : List PublicKey
     , secondaryMarket : List PublicKey
@@ -19,12 +19,12 @@ type alias AnchorState =
     }
 
 
-decodeSuccess : String -> Result Decode.Error AnchorState
+decodeSuccess : String -> Result Decode.Error Ledger
 decodeSuccess string =
     let
-        decoder : Decode.Decoder AnchorState
+        decoder : Decode.Decoder Ledger
         decoder =
-            Decode.map4 AnchorState
+            Decode.map4 Ledger
                 (Decode.field "originalSupplyRemaining" Decode.int)
                 (Decode.field "purchased" (Decode.list Decode.string))
                 (Decode.field "secondaryMarket" (Decode.list Decode.string))
@@ -37,17 +37,17 @@ decodeSuccess string =
 -- Failure
 
 
-type alias AnchorStateLookupFailure =
+type alias LedgerLookupFailure =
     { error : String
     , user : String
     }
 
 
-decodeFailure : String -> Result Decode.Error AnchorStateLookupFailure
+decodeFailure : String -> Result Decode.Error LedgerLookupFailure
 decodeFailure string =
     let
         decoder =
-            Decode.map2 AnchorStateLookupFailure
+            Decode.map2 LedgerLookupFailure
                 (Decode.field "error" Decode.string)
                 (Decode.field "user" Decode.string)
     in

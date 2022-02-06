@@ -11,8 +11,8 @@ import Http.Response
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Model.Anchor.Anchor exposing (Anchor(..))
-import Model.Anchor.AnchorState as AnchorState exposing (AnchorState)
 import Model.Anchor.DownloadStatus as DownloadStatus
+import Model.Anchor.Ledger as Ledger exposing (Ledger)
 import Model.Anchor.Ownership as Ownership
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
@@ -130,13 +130,13 @@ update msg model =
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup jsonString ->
                     let
-                        maybeAnchorState : Result Decode.Error AnchorState
-                        maybeAnchorState =
-                            AnchorState.decodeSuccess jsonString
+                        maybeLedger : Result Decode.Error Ledger
+                        maybeLedger =
+                            Ledger.decodeSuccess jsonString
 
                         update_ : State
                         update_ =
-                            case maybeAnchorState of
+                            case maybeLedger of
                                 Ok anchorState ->
                                     let
                                         ownership : Int
@@ -166,15 +166,15 @@ update msg model =
 
                 Msg.Anchor.FailureOnStateLookup error ->
                     let
-                        maybeAnchorStateLookupFailure : Result Decode.Error AnchorState.AnchorStateLookupFailure
-                        maybeAnchorStateLookupFailure =
-                            AnchorState.decodeFailure error
+                        maybeLedgerLookupFailure : Result Decode.Error Ledger.LedgerLookupFailure
+                        maybeLedgerLookupFailure =
+                            Ledger.decodeFailure error
 
                         update_ : State
                         update_ =
-                            case maybeAnchorStateLookupFailure of
+                            case maybeLedgerLookupFailure of
                                 Ok anchorStateLookupFailure ->
-                                    case AnchorState.isAccountDoesNotExistError anchorStateLookupFailure.error of
+                                    case Ledger.isAccountDoesNotExistError anchorStateLookupFailure.error of
                                         True ->
                                             Buy (WaitingForProgramInit anchorStateLookupFailure.user)
 

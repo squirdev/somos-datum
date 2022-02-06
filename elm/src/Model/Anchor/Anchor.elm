@@ -1,7 +1,7 @@
 module Model.Anchor.Anchor exposing (Anchor(..), getPublicKey)
 
-import Model.Anchor.AnchorState exposing (AnchorState)
 import Model.Anchor.DownloadStatus as DownloadStatus
+import Model.Anchor.Ledger exposing (Ledger)
 import Model.Anchor.Ownership exposing (Ownership(..))
 
 
@@ -9,7 +9,7 @@ type Anchor
     = WaitingForWallet
     | JustHasWallet PublicKey
     | WaitingForProgramInit PublicKey
-    | UserWithNoOwnership AnchorState
+    | UserWithNoOwnership Ledger
     | UserWithOwnership Ownership
 
 
