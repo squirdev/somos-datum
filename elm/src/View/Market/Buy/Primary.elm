@@ -94,16 +94,22 @@ body anchor =
                         ]
 
                 JustHasWallet publicKey ->
+                    let
+                        slice_ =
+                            slice publicKey
+                    in
                     Html.div
                         []
                         [ Html.div
-                            []
-                            [ Html.text publicKey
+                            [ class "has-border-2 has-font-2 px-2 py-2"
+                            , style "float" "right"
+                            ]
+                            [ Html.text slice_
                             ]
                         , Html.div
-                            []
-                            [ Html.text "what next?"
+                            [ class "is-loading"
                             ]
+                            []
                         ]
 
                 WaitingForProgramInit publicKey ->
@@ -232,4 +238,17 @@ body anchor =
         [ class "container has-border-2"
         ]
         [ html
+        ]
+
+
+type alias PublicKey =
+    String
+
+
+slice : PublicKey -> PublicKey
+slice publicKey =
+    String.join
+        "..."
+        [ String.slice 0 4 publicKey
+        , String.slice -4 -1 publicKey
         ]
