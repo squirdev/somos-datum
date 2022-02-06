@@ -143,16 +143,22 @@ body anchor =
                         Ownership.Download downloadStatus ->
                             case downloadStatus of
                                 DownloadStatus.InvokedAndWaiting phantomSignature ->
+                                    let
+                                        slice_ =
+                                            PublicKey.slice phantomSignature.userDecoded
+                                    in
                                     Html.div
                                         []
                                         [ Html.div
-                                            []
-                                            [ Html.text phantomSignature.userDecoded
+                                            [ class "has-border-2 has-font-2 px-2 py-2"
+                                            , style "float" "right"
+                                            ]
+                                            [ Html.text slice_
                                             ]
                                         , Html.div
-                                            []
-                                            [ Html.text "waiting for pre-signed url"
+                                            [ class "is-loading"
                                             ]
+                                            []
                                         ]
 
                                 DownloadStatus.Done response ->
