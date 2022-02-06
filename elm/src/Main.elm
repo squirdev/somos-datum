@@ -243,7 +243,7 @@ view model =
                 Error error ->
                     hero (View.Error.Error.body error)
     in
-    { title = "Responsive Elm"
+    { title = "store.somos.world"
     , body =
         [ html
         ]
