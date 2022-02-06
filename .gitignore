@@ -30,13 +30,12 @@ download/node_modules
 
 ## elm
 elm-stuff
-assets/css
 assets/elm.min.js
 dist/
 
 ## css
 assets/sass/node_modules
-assets/sass/custom.scss
+assets/css
 
 ## project
 .idea
