@@ -1,7 +1,7 @@
 module View.Market.Buy.Primary exposing (body)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
 import Model.Anchor.Anchor exposing (Anchor(..))
 import Model.Anchor.DownloadStatus as DownloadStatus
@@ -14,13 +14,73 @@ import Msg.Phantom exposing (ToPhantomMsg(..))
 body : Anchor -> Html Msg
 body anchor =
     let
-        state =
+        html =
             case anchor of
                 WaitingForWallet ->
-                    Html.button
-                        [ onClick (ToPhantom Connect)
-                        ]
-                        [ Html.text "Connect"
+                    let
+                        button : Html Msg
+                        button =
+                            Html.button
+                                [ class "is-button-1"
+                                , onClick (ToPhantom Connect)
+                                ]
+                                [ Html.text "Connect"
+                                ]
+                    in
+                    Html.div
+                        []
+                        [ Html.div
+                            [ style "float" "right"
+                            , class "mr-2"
+                            ]
+                            [ button
+                            ]
+                        , Html.div
+                            []
+                            [ Html.p
+                                [ class "has-font-1 ml-2 mt-2"
+                                ]
+                                [ Html.div
+                                    [ class "mb-6"
+                                    ]
+                                    [ Html.text "welcome to store.somos.*"
+                                    ]
+                                , Html.div
+                                    [ class "mb-6"
+                                    ]
+                                    [ Html.text "a decentralized market place built on the "
+                                    , Html.a
+                                        [ class "has-sky-blue-text"
+                                        , href "https://solana.com/"
+                                        , target "_blank"
+                                        ]
+                                        [ Html.text "solana blockchain"
+                                        ]
+                                    ]
+                                , Html.div
+                                    [ class "mb-6"
+                                    ]
+                                    [ button
+                                    , Html.text " your wallet to sign-in & begin interacting with the marketplace"
+                                    ]
+                                , Html.div
+                                    [ class "mb-6"
+                                    ]
+                                    [ Html.text
+                                        """
+                                        where you can buy & sell the right-to-download of exclusive content from
+                                        some of your
+                                        """
+                                    , Html.a
+                                        [ class "has-sky-blue-text"
+                                        , href "https://www.somos.world/"
+                                        , target "_blank"
+                                        ]
+                                        [ Html.text "favorite creatives"
+                                        ]
+                                    ]
+                                ]
+                            ]
                         ]
 
                 JustHasWallet publicKey ->
@@ -159,7 +219,7 @@ body anchor =
                                         ]
     in
     Html.div
-        [ class "container"
+        [ class "container has-border-2"
         ]
-        [ state
+        [ html
         ]
