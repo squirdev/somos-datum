@@ -71,8 +71,6 @@ pub struct Ledger {
 pub enum LedgerErrors {
     #[msg("we've already sold-out. check the secondary market.")]
     SoldOut,
-    #[msg("nothing is for sale. try reaching out to an owner directly.")]
-    NothingForSale,
     #[msg("you can only pay the boss for this track.")]
     BossUp,
 }
