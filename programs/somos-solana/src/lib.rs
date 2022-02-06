@@ -6,12 +6,15 @@ declare_id!("AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN");
 pub mod somos_solana {
     use super::*;
 
-    pub fn initialize_ledger(
-        ctx: Context<InitializeLedger>,
+    pub fn initialize_ledger_one(
+        ctx: Context<InitializeLedgerOne>,
         bump: u8,
+        n: u16,
+        price: u64,
     ) -> ProgramResult {
         let ledger = &mut ctx.accounts.ledger;
-        ledger.original_supply_remaining = ConstantsImpl::TOTAL_SUPPLY;
+        ledger.price = price;
+        ledger.original_supply_remaining = n;
         ledger.purchased = Vec::new();
         ledger.secondary_market = Vec::new();
         ledger.boss = ctx.accounts.user.key();
@@ -49,7 +52,7 @@ pub struct PurchasePrimary<'info> {
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
-pub struct InitializeLedger<'info> {
+pub struct InitializeLedgerOne<'info> {
     #[account(init, seeds = [b"hancock".as_ref()], bump = bump, payer = user, space = 10240)]
     pub ledger: Account<'info, Ledger>,
     #[account(mut)]
@@ -59,6 +62,9 @@ pub struct InitializeLedger<'info> {
 
 #[account]
 pub struct Ledger {
+    // supply
+    pub price: u64,
+    // market
     pub original_supply_remaining: u16,
     pub purchased: Vec<Pubkey>,
     pub secondary_market: Vec<Pubkey>,
@@ -75,15 +81,6 @@ pub enum LedgerErrors {
     BossUp,
 }
 
-trait Constants {
-    const TOTAL_SUPPLY: u16 = 1000;
-    const MIN: u64 = 2500000;
-}
-
-struct ConstantsImpl;
-
-impl Constants for ConstantsImpl {}
-
 impl Ledger {
     pub fn purchase_primary<'a>(
         purchaser: &AccountInfo<'a>,
@@ -93,7 +90,7 @@ impl Ledger {
     ) -> ProgramResult {
         match Ledger::validate_primary(ledger, boss, boss_pubkey) {
             Ok(_) => {
-                match Ledger::collect(purchaser, boss) {
+                match Ledger::collect(ledger.price, purchaser, boss) {
                     ok @ Ok(_) => {
                         ledger.purchased.push(purchaser.key());
                         ledger.original_supply_remaining = ledger.original_supply_remaining - 1;
@@ -118,11 +115,11 @@ impl Ledger {
         }
     }
 
-    pub fn collect<'a>(purchaser: &AccountInfo<'a>, boss: &AccountInfo<'a>) -> ProgramResult {
+    pub fn collect<'a>(price: u64, purchaser: &AccountInfo<'a>, boss: &AccountInfo<'a>) -> ProgramResult {
         let ix = anchor_lang::solana_program::system_instruction::transfer(
             &purchaser.key(),
             &boss.key(),
-            ConstantsImpl::MIN,
+            price,
         );
         let purchaser_copy = purchaser.clone();
         let boss_copy = boss.clone();

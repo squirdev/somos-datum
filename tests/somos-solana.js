@@ -1,6 +1,5 @@
 const assert = require("assert");
 const anchor = require("@project-serum/anchor");
-const {LAMPORTS_PER_SOL} = anchor.web3;
 
 describe("somos-solana", () => {
     // Configure the client
@@ -11,7 +10,7 @@ describe("somos-solana", () => {
 
     // create 2nd (or more) user
     async function createUser(airdropBalance) {
-        airdropBalance = airdropBalance ?? 10 * LAMPORTS_PER_SOL;
+        airdropBalance = airdropBalance ?? 10 * anchor.web3.LAMPORTS_PER_SOL;
         let user = anchor.web3.Keypair.generate();
         let sig = await provider.connection.requestAirdrop(user.publicKey, airdropBalance);
         await provider.connection.confirmTransaction(sig);
@@ -42,8 +41,8 @@ describe("somos-solana", () => {
     });
     // init
     it("initializes ledger with bump", async () => {
-        console.log(provider.wallet.publicKey)
-        await program.rpc.initializeLedger(new anchor.BN(bumpLedger), {
+        const price = 0.1 * anchor.web3.LAMPORTS_PER_SOL
+        await program.rpc.initializeLedgerOne(new anchor.BN(bumpLedger), new anchor.BN(3), new anchor.BN(price), {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
@@ -57,15 +56,13 @@ describe("somos-solana", () => {
         let balance = await provider.connection.getBalance(provider.wallet.publicKey);
         console.log(balance);
         // assertions
-        assert.ok(actualLedger.originalSupplyRemaining === 1000)
+        assert.ok(actualLedger.originalSupplyRemaining === 3)
     });
     // purchase primary
     it("purchase primary", async () => {
         let purchaser = await createUser();
         let _program = programForUser(purchaser)
-        console.log(provider.wallet.publicKey)
         let balance = await provider.connection.getBalance(provider.wallet.publicKey)
-        console.log(balance)
         await _program.rpc.purchasePrimary({
             accounts: {
                 user: purchaser.key.publicKey,
@@ -84,8 +81,8 @@ describe("somos-solana", () => {
         console.log(newBalance)
         console.log(balance)
         // assertions
-        assert.ok(actualLedger.originalSupplyRemaining === 999)
-        assert.ok(diff === 2499968)
+        assert.ok(actualLedger.originalSupplyRemaining === 2)
+        assert.ok(diff === 100000000)
     });
     // failed purchase primary
     it("purchase primary failed without boss", async () => {
