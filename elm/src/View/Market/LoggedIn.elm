@@ -40,7 +40,7 @@ body args =
                                     , style "width" "100%"
                                     , onClick (ToAnchor (PurchasePrimary args.ledger.user))
                                     ]
-                                    [ Html.text (String.join ": " ["Purchase 2nd Copy", "0.025 SOL"]) -- todo; from ledger
+                                    [ Html.text (String.join ": " [ "Purchase 2nd Copy", "0.025 SOL" ]) -- todo; from ledger
                                     ]
                                 ]
 
@@ -55,7 +55,7 @@ body args =
                             , style "width" "100%"
                             , onClick (ToAnchor (PurchasePrimary args.ledger.user))
                             ]
-                            [ Html.text (String.join ": " ["Purchase", "0.025 SOL"]) -- todo; from ledger
+                            [ Html.text (String.join ": " [ "Purchase", "0.025 SOL" ]) -- todo; from ledger
                             ]
                         ]
 
