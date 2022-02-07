@@ -12,9 +12,9 @@ const keyPair = web3.Keypair.generate()
 const wallet = new Wallet(keyPair)
 // build provider
 const preflightCommitment = "processed";
-const devnet = "https://psytrbhymqlkfrhudd.dev.genesysgo.net:8899/"
-// const mainnet = "https://ssc-dao.genesysgo.net/"
-const connection = new web3.Connection(devnet, preflightCommitment);
+// const devnet = "https://psytrbhymqlkfrhudd.dev.genesysgo.net:8899/"
+const mainnet = "https://ssc-dao.genesysgo.net/"
+const connection = new web3.Connection(mainnet, preflightCommitment);
 const provider = new Provider(connection, wallet, preflightCommitment);
 // build program
 const programID = new web3.PublicKey(idl.metadata.address);
