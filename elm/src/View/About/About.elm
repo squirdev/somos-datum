@@ -110,7 +110,7 @@ body =
                         [ Html.li
                             [ class "mb-3"
                             ]
-                            [ Html.text "☑️ you can burn the audio file(s) to a CD a drive around town with it"
+                            [ Html.text "☑️ you can burn the audio file(s) to a CD & drive around town with it"
                             ]
                         , Html.li
                             [ class "mb-3"
