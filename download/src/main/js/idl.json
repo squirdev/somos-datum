@@ -3,7 +3,7 @@
   "name": "somos_solana",
   "instructions": [
     {
-      "name": "initializeLedger",
+      "name": "initializeLedgerOne",
       "accounts": [
         {
           "name": "ledger",
@@ -25,6 +25,14 @@
         {
           "name": "bump",
           "type": "u8"
+        },
+        {
+          "name": "n",
+          "type": "u16"
+        },
+        {
+          "name": "price",
+          "type": "u64"
         }
       ]
     },
@@ -62,6 +70,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "price",
+            "type": "u64"
+          },
+          {
             "name": "originalSupplyRemaining",
             "type": "u16"
           },
@@ -97,16 +109,11 @@
     },
     {
       "code": 6001,
-      "name": "NothingForSale",
-      "msg": "nothing is for sale. try reaching out to an owner directly."
-    },
-    {
-      "code": 6002,
       "name": "BossUp",
       "msg": "you can only pay the boss for this track."
     }
   ],
   "metadata": {
-    "address": "AgxH9tmJsyVHiN7c6mMwkPh77dzgQxWQv1o1GgeSHFtN"
+    "address": "ETsHd2t2ZE5NEPa1GnrAvjuy8mFayXETxf6kCQib479G"
   }
 }
