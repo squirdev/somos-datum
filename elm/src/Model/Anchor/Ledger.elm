@@ -8,6 +8,7 @@ import Model.PublicKey exposing (PublicKey)
 -- Success
 
 
+-- TODO: decode price
 type alias Ledger =
     { originalSupplyRemaining : Int
     , purchased : List PublicKey
