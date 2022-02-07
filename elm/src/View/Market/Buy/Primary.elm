@@ -162,15 +162,50 @@ body anchor =
                                         ]
 
                                 DownloadStatus.Done response ->
+                                    let
+                                        slice_ =
+                                            Html.div
+                                                [ class "has-border-2 has-font-2 px-2 py-2"
+                                                , style "float" "right"
+                                                ]
+                                                [ Html.text (PublicKey.slice response.user)
+                                                ]
+                                    in
                                     Html.div
-                                        []
-                                        [ Html.div
-                                            []
-                                            [ Html.text response.user
+                                        [ class "has-border-2 px-2 pt-2"
+                                        ]
+                                        [ slice_
+                                        , Html.div
+                                            [ class "mb-3"
+                                            ]
+                                            [ Html.h2
+                                                []
+                                                [ Html.text "authentication complete"
+                                                ]
                                             ]
                                         , Html.div
-                                            []
-                                            [ Html.text "downloaded"
+                                            [ class "mb-3"
+                                            ]
+                                            [ Html.text "the download starts automatically in a new tab"
+                                            ]
+                                        , Html.div
+                                            [ class "mb-3"
+                                            ]
+                                            [ Html.text
+                                                """
+                                                if a new tab did not open, disable your ad / pop-up blocker for this site
+                                                and click download again 😎
+                                                """
+                                            ]
+                                        , Html.div
+                                            [ class "mb-3"
+                                            ]
+                                            [ Html.button
+                                                [ class "is-button-2"
+                                                , onClick (ToPhantom Connect)
+                                                ]
+                                                [ Html.text "Refresh"
+                                                ]
                                             ]
                                         ]
     in

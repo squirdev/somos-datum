@@ -60,8 +60,4 @@ app.ports.openDownloadUrlSender.subscribe(async function (json) {
     const obj = JSON.parse(json)
     // download
     download(obj.url)
-    // get provider & program
-    const pp = getPP(phantom)
-    // invoke state request & send response to elm
-    await getCurrentState(pp.program, statePublicKey, obj.user)
 });
