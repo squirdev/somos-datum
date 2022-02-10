@@ -199,9 +199,9 @@ $navbar-height: 4.00rem;
 
 .has-spacing-1 {
   @include until($tablet) {
-    margin-right: 0.25rem !important;
+    margin-right: 3px !important;
   }
   @include from($tablet) {
-    margin-right: 0.5rem !important;
+    margin-right: 6px !important;
   }
 }
