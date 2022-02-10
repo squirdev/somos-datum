@@ -15,7 +15,7 @@ body =
                 [ class "has-font-1"
                 ]
                 [ Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.div
                         [ class "mb-3"
@@ -39,7 +39,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.a
                         [ class "has-sky-blue-text mb-6"
@@ -65,7 +65,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.text "the download URL of a given digital asset"
                     , Html.ul
@@ -109,7 +109,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.text "because this is a download"
                     , Html.ul
@@ -135,7 +135,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.text "each digital asset is limited in number"
                     , Html.ul
@@ -155,7 +155,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.text "you can sell your right-to-download"
                     , Html.ul
@@ -189,7 +189,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2 mb-3"
+                    [ class "has-border-2 px-2 pt-2 mb-3"
                     ]
                     [ Html.text "because we license all of our music"
                     , Html.ul
@@ -205,7 +205,7 @@ body =
                         ]
                     ]
                 , Html.p
-                    [ class "has-border-2 pl-2 pt-2"
+                    [ class "has-border-2 px-2 pt-2"
                     ]
                     [ Html.div
                         [ class "mb-3"
