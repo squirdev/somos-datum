@@ -114,9 +114,19 @@ isActive model state =
         class_ =
             "is-active-header-tab"
     in
-    case model.state == state of
-        True ->
-            class_
+    case state of
+        Buy _ ->
+            case model.state of
+                Buy _ ->
+                    class_
 
-        False ->
-            ""
+                _ ->
+                    ""
+
+        _ ->
+            case model.state == state of
+                True ->
+                    class_
+
+                False ->
+                    ""
