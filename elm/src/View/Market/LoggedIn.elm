@@ -1,7 +1,7 @@
 module View.Market.LoggedIn exposing (Args, body)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
 import Model.Anchor.Ledger exposing (Ledger)
 import Model.PublicKey as PublicKey
@@ -100,6 +100,49 @@ body args =
         [ class "has-font-1"
         ]
         [ Html.div
+            [ class "py-6"
+            ]
+            [ Html.div
+                [ class "has-border-2 px-2 py-2"
+                ]
+                [ Html.div
+                    [ class "pb-2"
+                    ]
+                    [ Html.h2
+                        []
+                        [ Html.text
+                            """all releases found here are exclusively available via this marketplace
+                            """
+                        ]
+                    ]
+                , Html.div
+                    [ class "has-font-2"
+                    ]
+                    [ Html.h3
+                        []
+                        [ Html.text
+                            """these digital assets typically capture moments such as
+                            """
+                        ]
+                    , Html.div
+                        []
+                        [ check
+                        , Html.text "singles/EPs intended for our most loyal fans"
+                        ]
+                    , Html.div
+                        []
+                        [ check
+                        , Html.text "live performances"
+                        ]
+                    , Html.div
+                        []
+                        [ check
+                        , Html.text "rough studio takes & footage"
+                        ]
+                    ]
+                ]
+            ]
+        , Html.div
             [ class "pl-2"
             ]
             [ Html.div
@@ -119,9 +162,16 @@ body args =
                 ]
                 [ Html.h3
                     []
-                    [ Html.text
+                    [ Html.a
+                        [ class "has-sky-blue-text"
+                        , href "https://open.spotify.com/track/2rH6YR5GHba1bPdBlkpmkM?si=8037923a61f34b92"
+                        , target "_blank"
+                        ]
+                        [ Html.text "DAY 02"
+                        ]
+                    , Html.text
                         """
-                        "DAY 02" (casa bola live session)
+                         (casa bola live session)
                         """
                     ]
                 , Html.div
@@ -142,6 +192,13 @@ body args =
                         ]
                     , Html.text "cover photo"
                     ]
+                , Html.div
+                    []
+                    [ Html.text
+                        """this live performance of our debut single was recorded (and filmed)
+                        at Casa Bola in São Paulo, Brasil.
+                        """
+                    ]
                 ]
             , Html.div
                 [ class "my-2"
@@ -160,4 +217,13 @@ body args =
             , maybeDownload
             , purchase
             ]
+        ]
+
+
+check : Html msg
+check =
+    Html.b
+        [ class "has-spacing-1"
+        ]
+        [ Html.text "☑️"
         ]

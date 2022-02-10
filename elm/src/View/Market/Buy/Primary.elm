@@ -43,7 +43,7 @@ body anchor =
                         , Html.div
                             []
                             [ Html.p
-                                [ class "has-font-1 ml-2 mt-2"
+                                [ class "has-font-1 mx-2 mt-2"
                                 ]
                                 [ Html.div
                                     [ class "mb-6"
@@ -61,12 +61,6 @@ body anchor =
                                         ]
                                         [ Html.text "solana blockchain"
                                         ]
-                                    ]
-                                , Html.div
-                                    [ class "mb-6"
-                                    ]
-                                    [ button
-                                    , Html.text " your wallet to sign-in & begin interacting with the market place"
                                     ]
                                 , Html.div
                                     [ class "mb-6"
@@ -92,6 +86,12 @@ body anchor =
                                         ]
                                         [ Html.text "favorite creatives"
                                         ]
+                                    ]
+                                , Html.div
+                                    [ class "mb-6"
+                                    ]
+                                    [ button
+                                    , Html.text " your wallet to sign-in & begin interacting with the market place"
                                     ]
                                 ]
                             ]
