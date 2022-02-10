@@ -35,7 +35,8 @@ body anchor =
                         [ class "has-border-2"
                         ]
                         [ Html.div
-                            [ style "float" "right"
+                            [ class "mr-2 mt-2"
+                            , style "float" "right"
                             ]
                             [ button
                             ]
