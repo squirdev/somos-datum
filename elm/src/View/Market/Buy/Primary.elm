@@ -53,7 +53,7 @@ body anchor =
                                 , Html.div
                                     [ class "mb-6"
                                     ]
-                                    [ Html.text "a decentralized market place built on the "
+                                    [ Html.text "a decentralized marketplace built on the "
                                     , Html.a
                                         [ class "has-sky-blue-text"
                                         , href "https://solana.com/"
@@ -91,7 +91,7 @@ body anchor =
                                     [ class "mb-6"
                                     ]
                                     [ button
-                                    , Html.text " your wallet to sign-in & begin interacting with the market place"
+                                    , Html.text " your wallet to sign-in"
                                     ]
                                 ]
                             ]
