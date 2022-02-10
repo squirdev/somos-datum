@@ -196,3 +196,12 @@ $navbar-height: 4.00rem;
     width: 455px;
   }
 }
+
+.has-spacing-1 {
+  @include until($tablet) {
+    margin-right: 0.25rem !important;
+  }
+  @include from($tablet) {
+    margin-right: 0.5rem !important;
+  }
+}
