@@ -44,12 +44,10 @@ a:link, a:visited {
 
 .has-font-1 {
   font-family: WorkSans, sans-serif;
-  font-size: medium;
 }
 
 .has-font-2 {
   font-family: Imbue, sans-serif;
-  font-size: medium;
 }
 
 .has-opacity {
@@ -175,7 +173,7 @@ $navbar-height: 4.00rem;
     font-size: small;
   }
   @include from($tablet) {
-    font-size: medium;
+    font-size: large;
   }
 }
 
