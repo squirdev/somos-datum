@@ -3,7 +3,7 @@
   "name": "somos_solana",
   "instructions": [
     {
-      "name": "initializeLedgerOne",
+      "name": "initializeLedger",
       "accounts": [
         {
           "name": "ledger",
@@ -22,6 +22,15 @@
         }
       ],
       "args": [
+        {
+          "name": "seed",
+          "type": {
+            "array": [
+              "u8",
+              16
+            ]
+          }
+        },
         {
           "name": "bump",
           "type": "u8"
@@ -92,10 +101,6 @@
           {
             "name": "boss",
             "type": "publicKey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
           }
         ]
       }
