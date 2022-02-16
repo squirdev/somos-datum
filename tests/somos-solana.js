@@ -31,18 +31,20 @@ describe("somos-solana", () => {
     }
 
     // derive pda key
+    let seed = Buffer.from("hancockhancockha");
     let pdaLedgerPublicKey, bumpLedger;
     before(async () => {
         [pdaLedgerPublicKey, bumpLedger] =
             await anchor.web3.PublicKey.findProgramAddress(
-                [Buffer.from("hancock")],
+                [seed],
                 program.programId
             );
     });
     // init
-    it("initializes ledger with bump", async () => {
+    it("initializes ledger", async () => {
         const price = 0.1 * anchor.web3.LAMPORTS_PER_SOL
-        await program.rpc.initializeLedgerOne(new anchor.BN(bumpLedger), new anchor.BN(3), new anchor.BN(price), {
+        console.log(seed)
+        await program.rpc.initializeLedger(seed, new anchor.BN(bumpLedger), new anchor.BN(3), new anchor.BN(price), {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,

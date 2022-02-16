@@ -6,9 +6,10 @@ declare_id!("ETsHd2t2ZE5NEPa1GnrAvjuy8mFayXETxf6kCQib479G");
 pub mod somos_solana {
     use super::*;
 
-    pub fn initialize_ledger_one(
-        ctx: Context<InitializeLedgerOne>,
-        bump: u8,
+    pub fn initialize_ledger(
+        ctx: Context<InitializeLedger>,
+        _seed: [u8; 16],
+        _bump: u8,
         n: u16,
         price: u64,
     ) -> ProgramResult {
@@ -18,7 +19,6 @@ pub mod somos_solana {
         ledger.purchased = Vec::new();
         ledger.secondary_market = Vec::new();
         ledger.boss = ctx.accounts.user.key();
-        ledger.bump = bump;
         Ok(())
     }
 
@@ -45,15 +45,15 @@ pub struct PurchasePrimary<'info> {
     #[account(mut)]
     // used to validate against persisted boss
     pub boss: AccountInfo<'info>,
-    #[account(mut, seeds = [b"hancock".as_ref()], bump = ledger.bump)]
+    #[account(mut)]
     pub ledger: Account<'info, Ledger>,
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
-pub struct InitializeLedgerOne<'info> {
-    #[account(init, seeds = [b"hancock".as_ref()], bump = bump, payer = user, space = 10240)]
+#[instruction(_seed: [u8; 16], _bump: u8)]
+pub struct InitializeLedger<'info> {
+    #[account(init, seeds = [&_seed], bump = _bump, payer = user, space = 10240)]
     pub ledger: Account<'info, Ledger>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -69,8 +69,7 @@ pub struct Ledger {
     pub purchased: Vec<Pubkey>,
     pub secondary_market: Vec<Pubkey>,
     // persist boss for validation
-    pub boss: Pubkey,
-    pub bump: u8,
+    pub boss: Pubkey
 }
 
 #[error]
