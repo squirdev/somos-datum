@@ -3,21 +3,23 @@ import anchor from "@project-serum/anchor";
 import {provider, program, createUser, programForUser} from "./util.js";
 
 describe("somos-solana", () => {
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // PURCHASE (PRIMARY) //////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // derive pda key
-    let seed = Buffer.from("hancockhancockha");
+    let ledgerSeed = Buffer.from("hancockhancockha");
     let pdaLedgerPublicKey, _;
     before(async () => {
         [pdaLedgerPublicKey, _] =
             await anchor.web3.PublicKey.findProgramAddress(
-                [seed],
+                [ledgerSeed],
                 program.programId
             );
     });
     // init
     it("initializes ledger", async () => {
         const price = 0.1 * anchor.web3.LAMPORTS_PER_SOL
-        console.log(seed)
-        await program.rpc.initializeLedger(seed, new anchor.BN(3), new anchor.BN(price), {
+        await program.rpc.initializeLedger(ledgerSeed, new anchor.BN(3), new anchor.BN(price), {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
@@ -127,5 +129,51 @@ describe("somos-solana", () => {
             console.log(error)
         }
     });
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ESCROW //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // derive pda key
+    let escrowSeed = Buffer.from("grovergrovergrov");
+    let pdaEscrowPublicKey, __;
+    before(async () => {
+        [pdaEscrowPublicKey, __] =
+            await anchor.web3.PublicKey.findProgramAddress(
+                [escrowSeed],
+                program.programId
+            );
+    });
+    // init
+    it("initializes escrow", async () => {
+        await program.rpc.initializeEscrow(escrowSeed, {
+            accounts: {
+                user: provider.wallet.publicKey,
+                escrow: pdaEscrowPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualEscrow = await program.account.escrow.fetch(
+            pdaEscrowPublicKey
+        );
+        console.log(actualEscrow)
+        // assertions
+        assert.ok(actualEscrow.items.length === 0)
+    });
+    // submit
+    it("submit to escrow", async () => {
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
+        await program.rpc.submitToEscrow(new anchor.BN(price), {
+            accounts: {
+                seller: provider.wallet.publicKey,
+                escrow: pdaEscrowPublicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualEscrow = await program.account.escrow.fetch(
+            pdaEscrowPublicKey
+        );
+        console.log(actualEscrow)
+        // assertions
+        assert.ok(actualEscrow.items.length === 1)
+    });
 });

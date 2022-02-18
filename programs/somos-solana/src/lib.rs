@@ -26,6 +26,21 @@ pub mod somos_solana {
         Ok(())
     }
 
+    pub fn initialize_escrow(
+        ctx: Context<InitializeEscrow>,
+        seed: [u8; 16],
+    ) -> ProgramResult {
+        let escrow = &mut ctx.accounts.escrow;
+        // init escrow
+        escrow.items = Vec::new();
+        // persist boss for validation
+        escrow.boss = ctx.accounts.user.key();
+        // pda
+        escrow.seed = seed;
+        escrow.bump = *ctx.bumps.get("escrow").unwrap();
+        Ok(())
+    }
+
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
     ) -> ProgramResult {
@@ -40,6 +55,30 @@ pub mod somos_solana {
             ledger,
         )
     }
+
+    pub fn submit_to_escrow(
+        ctx: Context<SubmitToEscrow>,
+        price: u64,
+    ) -> ProgramResult {
+        let seller = &mut ctx.accounts.seller;
+        let escrow = &mut ctx.accounts.escrow;
+        // build item
+        // TODO; method, validation, collection, etc
+        let escrow_item = EscrowItem { price, seller: *seller.key };
+        // add item to escrow
+        escrow.items.push(escrow_item);
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+#[instruction(seed: [u8; 16])]
+pub struct InitializeLedger<'info> {
+    #[account(init, seeds = [& seed], bump, payer = user, space = 10240)]
+    pub ledger: Account<'info, Ledger>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
@@ -56,12 +95,39 @@ pub struct PurchasePrimary<'info> {
 
 #[derive(Accounts)]
 #[instruction(seed: [u8; 16])]
-pub struct InitializeLedger<'info> {
+pub struct InitializeEscrow<'info> {
     #[account(init, seeds = [& seed], bump, payer = user, space = 10240)]
-    pub ledger: Account<'info, Ledger>,
+    pub escrow: Account<'info, Escrow>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct SubmitToEscrow<'info> {
+    #[account(mut, seeds = [& escrow.seed], bump = escrow.bump)]
+    pub escrow: Account<'info, Escrow>,
+    #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
+    pub ledger: Account<'info, Ledger>,
+    // pubkey on ledger
+    pub seller: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[account]
+pub struct Escrow {
+    pub items: Vec<EscrowItem>,
+    // persist boss for validation
+    pub boss: Pubkey,
+    // pda
+    pub seed: [u8; 16],
+    pub bump: u8,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct EscrowItem {
+    pub price: u64,
+    pub seller: Pubkey,
 }
 
 #[account]
