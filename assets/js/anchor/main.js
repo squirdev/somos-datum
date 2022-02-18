@@ -16,12 +16,12 @@ app.ports.connectSender.subscribe(async function () {
 });
 
 // get current state as soon as user logs in
-let statePublicKey, bump = null;
+let statePublicKey, _ = null;
 app.ports.isConnectedSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom);
     // get program public key
-    [statePublicKey, bump] = await web3.PublicKey.findProgramAddress(
+    [statePublicKey, _] = await web3.PublicKey.findProgramAddress(
         [textEncoder.encode(ACCOUNT_SEED)],
         programID
     );
@@ -34,7 +34,7 @@ app.ports.initProgramSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
     // invoke init request
-    await init(pp.program, pp.provider, statePublicKey, bump, user)
+    await init(pp.program, pp.provider, statePublicKey, user)
 });
 
 // primary purchase

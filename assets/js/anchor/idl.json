@@ -32,10 +32,6 @@
           }
         },
         {
-          "name": "bump",
-          "type": "u8"
-        },
-        {
           "name": "n",
           "type": "u16"
         },
@@ -101,6 +97,19 @@
           {
             "name": "boss",
             "type": "publicKey"
+          },
+          {
+            "name": "seed",
+            "type": {
+              "array": [
+                "u8",
+                16
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

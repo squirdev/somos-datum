@@ -2,10 +2,10 @@ import {web3, BN} from "@project-serum/anchor";
 import {getCurrentState} from "./state";
 import {ACCOUNT_SEED} from "./config";
 
-export async function init(program, provider, statePublicKey, bump, user) {
+export async function init(program, provider, statePublicKey, user) {
     try {
         const price = 0.025 * web3.LAMPORTS_PER_SOL
-        await program.rpc.initializeLedger(ACCOUNT_SEED, new BN(bump), new BN(100), new BN(price), {
+        await program.rpc.initializeLedger(ACCOUNT_SEED, new BN(100), new BN(price), {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: statePublicKey,
