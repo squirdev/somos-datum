@@ -37,18 +37,16 @@ describe("somos-solana", () => {
     });
     // purchase primary
     it("purchase primary", async () => {
-        let purchaser = await createUser();
-        let _program = programForUser(purchaser)
         let balance = await provider.connection.getBalance(provider.wallet.publicKey)
-        await _program.rpc.purchasePrimary({
+        await program.rpc.purchasePrimary({
             accounts: {
-                user: purchaser.key.publicKey,
+                user: provider.wallet.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualLedger = await _program.account.ledger.fetch(
+        let actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
@@ -59,7 +57,7 @@ describe("somos-solana", () => {
         console.log(balance)
         // assertions
         assert.ok(actualLedger.originalSupplyRemaining === 2)
-        assert.ok(diff === 100000000)
+        assert.ok(diff === 0) // purchaser is boss
     });
     // purchase primary sold out
     it("purchase primary sold out", async () => {
@@ -173,6 +171,29 @@ describe("somos-solana", () => {
             pdaEscrowPublicKey
         );
         console.log(actualEscrow)
+        // assertions
+        assert.ok(actualEscrow.items.length === 1)
+    });
+    // submit
+    it("submit to escrow failed without ledger ownership", async () => {
+        let seller = await createUser();
+        let _program = programForUser(seller)
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
+        try {
+            await _program.rpc.submitToEscrow(new anchor.BN(price), {
+                accounts: {
+                    seller: seller.key.publicKey,
+                    escrow: pdaEscrowPublicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        let actualEscrow = await _program.account.escrow.fetch(
+            pdaEscrowPublicKey
+        );
         // assertions
         assert.ok(actualEscrow.items.length === 1)
     });

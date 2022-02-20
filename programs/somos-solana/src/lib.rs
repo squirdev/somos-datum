@@ -62,12 +62,8 @@ pub mod somos_solana {
     ) -> ProgramResult {
         let seller = &mut ctx.accounts.seller;
         let escrow = &mut ctx.accounts.escrow;
-        // build item
-        // TODO; method, validation, collection, etc
-        let escrow_item = EscrowItem { price, seller: *seller.key };
-        // add item to escrow
-        escrow.items.push(escrow_item);
-        Ok(())
+        let ledger = &ctx.accounts.ledger;
+        Escrow::submit_to_escrow(seller, price, escrow, ledger)
     }
 }
 
@@ -117,6 +113,8 @@ pub enum LedgerErrors {
     SoldOut,
     #[msg("you can only pay the boss for this track.")]
     BossUp,
+    #[msg("your public-key is not on the ledger.")]
+    SellerNotOnLedger,
 }
 
 impl Ledger {
@@ -209,4 +207,28 @@ pub struct Escrow {
 pub struct EscrowItem {
     pub price: u64,
     pub seller: Pubkey,
+}
+
+impl Escrow {
+    pub fn submit_to_escrow(seller: &mut Signer, price: u64, escrow: &mut Escrow, ledger: &Ledger) -> ProgramResult {
+        // validate seller
+        match Escrow::validate_seller(seller, ledger) {
+            Ok(_) => {
+                // build item
+                // TODO; validation, collection, etc
+                let escrow_item = EscrowItem { price, seller: *seller.key };
+                // add item to escrow
+                escrow.items.push(escrow_item);
+                Ok(())
+            }
+            err @ Err(_) => { err }
+        }
+    }
+
+    fn validate_seller(seller: &mut Signer, ledger: &Ledger) -> ProgramResult {
+        match ledger.purchased.contains(seller.key) {
+            true => { Ok(()) }
+            false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
+        }
+    }
 }
