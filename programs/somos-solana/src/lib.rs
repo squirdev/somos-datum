@@ -72,7 +72,7 @@ pub mod somos_solana {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// LEDGER //////////////////////////////////////////////////////////////////////////////////////////
+// PRIMARY MARKET //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #[derive(Accounts)]
 #[instruction(seed: [u8; 16])]
@@ -81,6 +81,18 @@ pub struct InitializeLedger<'info> {
     pub ledger: Account<'info, Ledger>,
     #[account(mut)]
     pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct PurchasePrimary<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+    #[account(mut)]
+    // used to validate against persisted boss
+    pub boss: AccountInfo<'info>,
+    #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
+    pub ledger: Account<'info, Ledger>,
     pub system_program: Program<'info, System>,
 }
 
@@ -157,21 +169,6 @@ impl Ledger {
             ],
         )
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// PRIMARY MARKET //////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-#[derive(Accounts)]
-pub struct PurchasePrimary<'info> {
-    #[account(mut)]
-    pub user: Signer<'info>,
-    #[account(mut)]
-    // used to validate against persisted boss
-    pub boss: AccountInfo<'info>,
-    #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
-    pub ledger: Account<'info, Ledger>,
-    pub system_program: Program<'info, System>,
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
