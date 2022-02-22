@@ -1,6 +1,6 @@
 import assert from "assert";
 import anchor from "@project-serum/anchor";
-import {provider, program, createUser, programForUser} from "./util.js";
+import {provider, program, createUser, programForUser, encodeBase64} from "./util.js";
 
 describe("somos-solana", () => {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,5 +196,30 @@ describe("somos-solana", () => {
         );
         // assertions
         assert.ok(actualEscrow.items.length === 1)
+    });
+    // purchase secondary
+    it("purchase secondary", async () => {
+        const buyer = await createUser();
+        let _program = programForUser(buyer)
+        const seller = provider.wallet.publicKey;
+        const boss = provider.wallet.publicKey; // same as seller
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
+        const escrowItem = {price: new anchor.BN(price), seller: seller};
+        await _program.rpc.purchaseSecondary(escrowItem, {
+            accounts: {
+                buyer: buyer.key.publicKey,
+                seller: seller,
+                boss: boss,
+                escrow: pdaEscrowPublicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        let actualEscrow = await program.account.escrow.fetch(
+            pdaEscrowPublicKey
+        );
+        console.log(actualEscrow)
+        // assertions
+        assert.ok(actualEscrow.items.length === 0)
     });
 });

@@ -1,4 +1,5 @@
 import anchor from "@project-serum/anchor"
+import {Buffer} from "buffer";
 
 // Configure the client
 export const provider = anchor.Provider.env();
@@ -26,4 +27,8 @@ export async function createUser(airdropBalance) {
 // create program from secondary user
 export function programForUser(user) {
     return new anchor.Program(program.idl, program.programId, user.provider);
+}
+
+export function encodeBase64(u8) {
+    return Buffer.from(u8).toString('base64')
 }
