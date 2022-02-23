@@ -200,7 +200,7 @@ describe("somos-solana", () => {
     // purchase secondary
     it("purchase secondary", async () => {
         const buyer = await createUser();
-        let _program = programForUser(buyer)
+        const _program = programForUser(buyer)
         const seller = provider.wallet.publicKey;
         const boss = provider.wallet.publicKey; // same as seller
         const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
@@ -215,11 +215,17 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualEscrow = await program.account.escrow.fetch(
+        const actualEscrow = await program.account.escrow.fetch(
             pdaEscrowPublicKey
         );
         console.log(actualEscrow)
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        )
+        console.log(actualLedger)
         // assertions
         assert.ok(actualEscrow.items.length === 0)
+        const purchased = actualLedger.purchased.map(_publicKey => _publicKey.toString())
+        assert.ok(purchased.includes(buyer.key.publicKey.toString()))
     });
 });
