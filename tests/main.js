@@ -153,9 +153,14 @@ describe("somos-solana", () => {
         let actualEscrow = await program.account.escrow.fetch(
             pdaEscrowPublicKey
         );
+        let actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
         console.log(actualEscrow)
+        console.log(actualLedger)
         // assertions
         assert.ok(actualEscrow.items.length === 0)
+        assert.ok(actualEscrow.boss.toString() === actualLedger.boss.toString())
     });
     // submit
     it("submit to escrow", async () => {
