@@ -146,6 +146,7 @@ describe("somos-solana", () => {
             accounts: {
                 user: provider.wallet.publicKey,
                 escrow: pdaEscrowPublicKey,
+                ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });

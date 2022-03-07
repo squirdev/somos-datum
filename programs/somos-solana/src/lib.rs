@@ -31,10 +31,11 @@ pub mod somos_solana {
         seed: [u8; 16],
     ) -> ProgramResult {
         let escrow = &mut ctx.accounts.escrow;
+        let ledger = &mut ctx.accounts.ledger;
         // init escrow
         escrow.items = Vec::new();
-        // persist boss for validation
-        escrow.boss = ctx.accounts.user.key();
+        // grab boss from ledger
+        escrow.boss = ledger.boss;
         // pda
         escrow.seed = seed;
         escrow.bump = *ctx.bumps.get("escrow").unwrap();
@@ -201,6 +202,8 @@ impl Ledger {
 pub struct InitializeEscrow<'info> {
     #[account(init, seeds = [& seed], bump, payer = user, space = 10240)]
     pub escrow: Account<'info, Escrow>,
+    #[account(seeds = [& ledger.seed], bump = ledger.bump)]
+    pub ledger: Account<'info, Ledger>,
     #[account(mut)]
     pub user: Signer<'info>,
     // system
