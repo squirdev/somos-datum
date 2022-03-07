@@ -26,7 +26,7 @@ pub mod somos_solana {
         Ok(())
     }
 
-    // TODO; ledger dependencyg
+    // TODO; ledger dependency
     pub fn initialize_escrow(
         ctx: Context<InitializeEscrow>,
         seed: [u8; 16],
