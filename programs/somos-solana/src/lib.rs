@@ -16,8 +16,7 @@ pub mod somos_solana {
         // init ledger
         ledger.price = price;
         ledger.original_supply_remaining = n;
-        ledger.purchased = Vec::new();
-        ledger.secondary_market = Vec::new();
+        ledger.owners = Vec::new();
         // persist boss for validation
         ledger.boss = ctx.accounts.user.key();
         // pda
@@ -118,10 +117,9 @@ pub struct PurchasePrimary<'info> {
 pub struct Ledger {
     // supply
     pub price: u64,
-    // market
     pub original_supply_remaining: u16,
-    pub purchased: Vec<Pubkey>,
-    pub secondary_market: Vec<Pubkey>,
+    // owners
+    pub owners: Vec<Pubkey>,
     // persist boss for validation
     pub boss: Pubkey,
     // pda
@@ -154,7 +152,7 @@ impl Ledger {
             Ok(_) => {
                 match Ledger::collect(ledger.price, purchaser, boss) {
                     ok @ Ok(_) => {
-                        ledger.purchased.push(purchaser.key());
+                        ledger.owners.push(purchaser.key());
                         ledger.original_supply_remaining = ledger.original_supply_remaining - 1;
                         ok
                     }
@@ -297,7 +295,7 @@ impl Escrow {
                 match Escrow::pop_escrow_item(escrow_item, escrow, ledger) {
                     Ok(_) => {
                         // push
-                        ledger.purchased.push(buyer.key());
+                        ledger.owners.push(buyer.key());
                         // collect
                         Escrow::collect(escrow_item, buyer, seller, boss)
                     }
@@ -309,7 +307,7 @@ impl Escrow {
     }
 
     fn validate_seller(seller: &mut Signer, ledger: &Ledger) -> ProgramResult {
-        match ledger.purchased.contains(seller.key) {
+        match ledger.owners.contains(seller.key) {
             true => { Ok(()) }
             false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
         }
@@ -340,7 +338,7 @@ impl Escrow {
         match Escrow::remove_from_vec(&mut escrow.items, escrow_item) {
             Ok(_) => {
                 // remove from ledger
-                Escrow::remove_from_vec(&mut ledger.purchased, &escrow_item.seller)
+                Escrow::remove_from_vec(&mut ledger.owners, &escrow_item.seller)
             }
             err @ Err(_) => { err }
         }

@@ -225,7 +225,7 @@ describe("somos-solana", () => {
         console.log(actualLedger)
         // assertions
         assert.ok(actualEscrow.items.length === 0)
-        const purchased = actualLedger.purchased.map(_publicKey => _publicKey.toString())
-        assert.ok(purchased.includes(buyer.key.publicKey.toString()))
+        const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
+        assert.ok(owners.includes(buyer.key.publicKey.toString()))
     });
 });
