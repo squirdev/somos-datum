@@ -30,7 +30,7 @@ body =
                             ]
                         , Html.text
                             """
-                             & will be live before the end of February, 2022
+                             & will be live before the end of March, 2022
                             """
                         ]
                     ]
