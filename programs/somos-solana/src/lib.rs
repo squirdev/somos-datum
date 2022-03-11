@@ -117,7 +117,8 @@ pub struct PurchasePrimary<'info> {
 #[account]
 pub struct Ledger {
     // supply
-    pub price: u64, // TODO; specify resale on ledger init
+    pub price: u64,
+    // TODO; specify resale on ledger init
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,
@@ -338,10 +339,18 @@ impl Escrow {
         ledger: &mut Ledger,
     ) -> ProgramResult {
         // remove from escrow
-        match Escrow::remove_from_vec(&mut escrow.items, escrow_item) {
+        match Escrow::remove_from_vec(
+            &mut escrow.items,
+            escrow_item,
+            LedgerErrors::ItemNotForSale
+        ) {
             Ok(_) => {
                 // remove from ledger
-                Escrow::remove_from_vec(&mut ledger.owners, &escrow_item.seller)
+                Escrow::remove_from_vec(
+                    &mut ledger.owners,
+                    &escrow_item.seller,
+                    LedgerErrors::SellerNotOnLedger
+                )
             }
             err @ Err(_) => { err }
         }
@@ -351,10 +360,11 @@ impl Escrow {
     fn remove_from_vec<T: std::cmp::PartialEq>(
         vec: &mut Vec<T>,
         item: &T,
+        err: LedgerErrors,
     ) -> ProgramResult {
         let maybe_ix = vec.iter().position(|x| x == item);
         match maybe_ix {
-            None => { Err(LedgerErrors::ItemNotForSale.into()) }
+            None => { Err(err.into()) }
             Some(ix) => {
                 vec.remove(ix);
                 Ok(())
