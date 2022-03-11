@@ -10,6 +10,9 @@ export const program = anchor.workspace.SomosSolana;
 // instantiate user02
 export const user02 = await createUser();
 export const program02 = programForUser(user02)
+// instantiate user03
+export const user03 = await createUser();
+export const program03 = programForUser(user03)
 
 // create 2nd (or more) user
 export async function createUser(airdropBalance) {
