@@ -355,8 +355,7 @@ impl Escrow {
             err @ Err(_) => { err }
         }
     }
-
-    // todo; err as arg
+    
     fn remove_from_vec<T: std::cmp::PartialEq>(
         vec: &mut Vec<T>,
         item: &T,
