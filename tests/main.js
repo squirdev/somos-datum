@@ -105,6 +105,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
+            assert.ok(error.code === 6000)
             console.log(error)
         }
     });
@@ -122,6 +123,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
+            assert.ok(error.code === 6001)
             console.log(error)
         }
     });
@@ -193,6 +195,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
+            assert.ok(error.code === 6002)
             console.log(error);
         }
         let actualEscrow = await _program.account.escrow.fetch(
@@ -200,6 +203,54 @@ describe("somos-solana", () => {
         );
         // assertions
         assert.ok(actualEscrow.items.length === 1)
+    });
+    // purchase secondary
+    it("fail on purchase secondary when item is not on escrow", async () => {
+        const buyer = await createUser();
+        const _program = programForUser(buyer)
+        const seller = provider.wallet.publicKey; // boss never submitted for escrow
+        const boss = provider.wallet.publicKey; // same as seller
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
+        const escrowItem = {price: new anchor.BN(price), seller: seller};
+        try {
+            await _program.rpc.purchaseSecondary(escrowItem, {
+                accounts: {
+                    buyer: buyer.key.publicKey,
+                    seller: seller,
+                    boss: boss,
+                    escrow: pdaEscrowPublicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            assert.ok(error.code === 6003)
+            console.log(error);
+        }
+    });
+    // purchase secondary
+    it("fail on purchase secondary when item is on escrow but specified seller does not match", async () => {
+        const buyer = await createUser();
+        const _program = programForUser(buyer)
+        const seller = user02.key.publicKey; // boss never submitted for escrow
+        const boss = provider.wallet.publicKey; // same as seller
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
+        const escrowItem = {price: new anchor.BN(price), seller: seller};
+        try {
+            await _program.rpc.purchaseSecondary(escrowItem, {
+                accounts: {
+                    buyer: buyer.key.publicKey,
+                    seller: boss,
+                    boss: boss,
+                    escrow: pdaEscrowPublicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            assert.ok(error.code === 6004)
+            console.log(error);
+        }
     });
     // purchase secondary
     it("purchase secondary at listed price", async () => {
@@ -248,29 +299,5 @@ describe("somos-solana", () => {
         assert.ok(actualEscrow.items.length === 0)
         const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         assert.ok(owners.includes(buyer.key.publicKey.toString()))
-    });
-    // purchase secondary
-    it("fail on purchase secondary when item is not on escrow", async () => {
-        const buyer = await createUser();
-        const _program = programForUser(buyer)
-        const seller = provider.wallet.publicKey; // boss never submitted for escrow
-        const boss = provider.wallet.publicKey; // same as seller
-        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem = {price: new anchor.BN(price), seller: seller};
-        try {
-            await _program.rpc.purchaseSecondary(escrowItem, {
-                accounts: {
-                    buyer: buyer.key.publicKey,
-                    seller: seller,
-                    boss: boss,
-                    escrow: pdaEscrowPublicKey,
-                    ledger: pdaLedgerPublicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                }
-            });
-        } catch (error) {
-            assert.ok(error.code === 6003) // TODO; assert code everywhere else
-            console.log(error);
-        }
     });
 });
