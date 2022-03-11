@@ -1,6 +1,6 @@
 import assert from "assert";
 import anchor from "@project-serum/anchor";
-import {provider, program, createUser, programForUser, encodeBase64} from "./util.js";
+import {provider, program, createUser, programForUser, user02, program02} from "./util.js";
 
 describe("somos-solana", () => {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,26 +61,24 @@ describe("somos-solana", () => {
     });
     // purchase primary sold out
     it("purchase primary sold out", async () => {
-        let purchaser = await createUser();
-        let _program = programForUser(purchaser)
         let balance = await provider.connection.getBalance(provider.wallet.publicKey)
-        await _program.rpc.purchasePrimary({
+        await program02.rpc.purchasePrimary({
             accounts: {
-                user: purchaser.key.publicKey,
+                user: user02.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        await _program.rpc.purchasePrimary({
+        await program02.rpc.purchasePrimary({
             accounts: {
-                user: purchaser.key.publicKey,
+                user: user02.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualLedger = await _program.account.ledger.fetch(
+        let actualLedger = await program02.account.ledger.fetch(
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
@@ -165,9 +163,9 @@ describe("somos-solana", () => {
     // submit
     it("submit to escrow", async () => {
         const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
-        await program.rpc.submitToEscrow(new anchor.BN(price), {
+        await program02.rpc.submitToEscrow(new anchor.BN(price), {
             accounts: {
-                seller: provider.wallet.publicKey,
+                seller: user02.key.publicKey,
                 escrow: pdaEscrowPublicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
@@ -204,14 +202,31 @@ describe("somos-solana", () => {
         assert.ok(actualEscrow.items.length === 1)
     });
     // purchase secondary
-    it("purchase secondary", async () => {
+    it("purchase secondary at listed price", async () => {
         const buyer = await createUser();
         const _program = programForUser(buyer)
-        const seller = provider.wallet.publicKey;
+        const seller = user02.key.publicKey
         const boss = provider.wallet.publicKey; // same as seller
-        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem = {price: new anchor.BN(price), seller: seller};
-        await _program.rpc.purchaseSecondary(escrowItem, {
+        const price1 = 0.20 * anchor.web3.LAMPORTS_PER_SOL;
+        const price2 = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
+        const escrowItem1 = {price: new anchor.BN(price1), seller: seller};
+        const escrowItem2 = {price: new anchor.BN(price2), seller: seller};
+        try {
+            await _program.rpc.purchaseSecondary(escrowItem1, {
+                accounts: {
+                    buyer: buyer.key.publicKey,
+                    seller: seller,
+                    boss: boss,
+                    escrow: pdaEscrowPublicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            assert.ok(error.code === 6003)
+            console.log(error);
+        }
+        await _program.rpc.purchaseSecondary(escrowItem2, {
             accounts: {
                 buyer: buyer.key.publicKey,
                 seller: seller,
@@ -233,5 +248,29 @@ describe("somos-solana", () => {
         assert.ok(actualEscrow.items.length === 0)
         const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         assert.ok(owners.includes(buyer.key.publicKey.toString()))
+    });
+    // purchase secondary
+    it("fail on purchase secondary when item is not on escrow", async () => {
+        const buyer = await createUser();
+        const _program = programForUser(buyer)
+        const seller = provider.wallet.publicKey; // boss never submitted for escrow
+        const boss = provider.wallet.publicKey; // same as seller
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
+        const escrowItem = {price: new anchor.BN(price), seller: seller};
+        try {
+            await _program.rpc.purchaseSecondary(escrowItem, {
+                accounts: {
+                    buyer: buyer.key.publicKey,
+                    seller: seller,
+                    boss: boss,
+                    escrow: pdaEscrowPublicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            assert.ok(error.code === 6003) // TODO; assert code everywhere else
+            console.log(error);
+        }
     });
 });

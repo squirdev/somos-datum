@@ -7,6 +7,10 @@ anchor.setProvider(provider);
 // fetch program
 export const program = anchor.workspace.SomosSolana;
 
+// instantiate user02
+export const user02 = await createUser();
+export const program02 = programForUser(user02)
+
 // create 2nd (or more) user
 export async function createUser(airdropBalance) {
     airdropBalance = airdropBalance ?? 10 * anchor.web3.LAMPORTS_PER_SOL;
