@@ -299,5 +299,6 @@ describe("somos-solana", () => {
         assert.ok(actualEscrow.items.length === 0)
         const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         assert.ok(owners.includes(buyer.key.publicKey.toString()))
+        assert.ok(owners.filter(pk => pk === seller.toString()).length === 1) // used to have ownership of 2
     });
 });
