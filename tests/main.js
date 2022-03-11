@@ -105,7 +105,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6000)
+            assert.ok(error.logs[2].includes("Error Number: 6000"))
             console.log(error)
         }
     });
@@ -123,7 +123,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6001)
+            assert.ok(error.logs[2].includes("Error Number: 6001"))
             console.log(error)
         }
     });
@@ -195,7 +195,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6002)
+            assert.ok(error.logs[2].includes("Error Number: 6002"))
             console.log(error);
         }
         let actualEscrow = await _program.account.escrow.fetch(
@@ -224,7 +224,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6003)
+            assert.ok(error.logs[2].includes("Error Number: 6003"))
             console.log(error);
         }
     });
@@ -248,7 +248,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6004)
+            assert.ok(error.logs[2].includes("Error Number: 6004"))
             console.log(error);
         }
     });
@@ -274,7 +274,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6003)
+            assert.ok(error.logs[2].includes("Error Number: 6003"))
             console.log(error);
         }
         await _program.rpc.purchaseSecondary(escrowItem2, {

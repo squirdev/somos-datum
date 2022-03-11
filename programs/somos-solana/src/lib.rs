@@ -11,7 +11,7 @@ pub mod somos_solana {
         seed: [u8; 16],
         n: u16,
         price: u64,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let ledger = &mut ctx.accounts.ledger;
         // init ledger
         ledger.price = price;
@@ -29,7 +29,7 @@ pub mod somos_solana {
     pub fn initialize_escrow(
         ctx: Context<InitializeEscrow>,
         seed: [u8; 16],
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let escrow = &mut ctx.accounts.escrow;
         let ledger = &mut ctx.accounts.ledger;
         // init escrow
@@ -44,7 +44,7 @@ pub mod somos_solana {
 
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let user = &mut ctx.accounts.user;
         let boss = &mut ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
@@ -60,7 +60,7 @@ pub mod somos_solana {
     pub fn submit_to_escrow(
         ctx: Context<SubmitToEscrow>,
         price: u64,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let seller = &mut ctx.accounts.seller;
         let escrow = &mut ctx.accounts.escrow;
         let ledger = &ctx.accounts.ledger;
@@ -70,7 +70,7 @@ pub mod somos_solana {
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let escrow = &mut ctx.accounts.escrow;
         let ledger = &mut ctx.accounts.ledger;
         let buyer = &mut ctx.accounts.buyer;
@@ -107,7 +107,7 @@ pub struct PurchasePrimary<'info> {
     pub user: Signer<'info>,
     // used to validate against persisted boss
     #[account(mut)]
-    pub boss: AccountInfo<'info>,
+    pub boss: SystemAccount<'info>,
     #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
     pub ledger: Account<'info, Ledger>,
     // system
@@ -129,7 +129,7 @@ pub struct Ledger {
     pub bump: u8,
 }
 
-#[error]
+#[error_code]
 pub enum LedgerErrors {
     #[msg("we've already sold-out. check the secondary market.")]
     SoldOut,
@@ -145,11 +145,11 @@ pub enum LedgerErrors {
 
 impl Ledger {
     pub fn purchase_primary<'a>(
-        purchaser: &AccountInfo<'a>,
-        boss: &mut AccountInfo<'a>,
+        purchaser: &mut Signer<'a>,
+        boss: &mut SystemAccount<'a>,
         boss_pubkey: &Pubkey,
         ledger: &mut Ledger,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         match Ledger::validate_primary(ledger, boss, boss_pubkey) {
             Ok(_) => {
                 match Ledger::collect(ledger.price, purchaser, boss) {
@@ -165,7 +165,7 @@ impl Ledger {
         }
     }
 
-    pub fn validate_primary(ledger: &Ledger, boss: &mut AccountInfo, boss_pubkey: &Pubkey) -> ProgramResult {
+    pub fn validate_primary(ledger: &Ledger, boss: &mut SystemAccount, boss_pubkey: &Pubkey) -> Result<()> {
         match boss.key == boss_pubkey {
             true => {
                 match ledger.original_supply_remaining > 0 {
@@ -177,21 +177,19 @@ impl Ledger {
         }
     }
 
-    pub fn collect<'a>(price: u64, purchaser: &AccountInfo<'a>, boss: &AccountInfo<'a>) -> ProgramResult {
+    pub fn collect<'a>(price: u64, purchaser: &Signer<'a>, boss: &SystemAccount<'a>) -> Result<()> {
         let ix = anchor_lang::solana_program::system_instruction::transfer(
             &purchaser.key(),
             &boss.key(),
             price,
         );
-        let purchaser_copy = purchaser.clone();
-        let boss_copy = boss.clone();
         anchor_lang::solana_program::program::invoke(
             &ix,
             &[
-                purchaser_copy,
-                boss_copy
+                purchaser.to_account_info(),
+                boss.to_account_info()
             ],
-        )
+        ).map_err(Into::into)
     }
 }
 
@@ -270,7 +268,7 @@ impl Escrow {
         price: u64,
         escrow: &mut Escrow,
         ledger: &Ledger,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         // validate seller
         match Escrow::validate_seller(seller, ledger) {
             Ok(_) => {
@@ -291,7 +289,7 @@ impl Escrow {
         buyer: &mut Signer<'a>,
         seller: &mut SystemAccount<'a>,
         boss: &mut SystemAccount<'a>,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         // validate
         match Escrow::validate_escrow_item(escrow_item, escrow, seller) {
             Ok(_) => {
@@ -310,7 +308,7 @@ impl Escrow {
         }
     }
 
-    fn validate_seller(seller: &mut Signer, ledger: &Ledger) -> ProgramResult {
+    fn validate_seller(seller: &mut Signer, ledger: &Ledger) -> Result<()> {
         match ledger.owners.contains(seller.key) {
             true => { Ok(()) }
             false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
@@ -321,7 +319,7 @@ impl Escrow {
         escrow_item: &EscrowItem,
         escrow: &Escrow,
         seller: &SystemAccount<'a>,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         match escrow.items.contains(escrow_item) {
             true => {
                 match &escrow_item.seller == seller.key {
@@ -337,30 +335,30 @@ impl Escrow {
         escrow_item: &EscrowItem,
         escrow: &mut Escrow,
         ledger: &mut Ledger,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         // remove from escrow
         match Escrow::remove_from_vec(
             &mut escrow.items,
             escrow_item,
-            LedgerErrors::ItemNotForSale
+            LedgerErrors::ItemNotForSale,
         ) {
             Ok(_) => {
                 // remove from ledger
                 Escrow::remove_from_vec(
                     &mut ledger.owners,
                     &escrow_item.seller,
-                    LedgerErrors::SellerNotOnLedger
+                    LedgerErrors::SellerNotOnLedger,
                 )
             }
             err @ Err(_) => { err }
         }
     }
-    
+
     fn remove_from_vec<T: std::cmp::PartialEq>(
         vec: &mut Vec<T>,
         item: &T,
         err: LedgerErrors,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let maybe_ix = vec.iter().position(|x| x == item);
         match maybe_ix {
             None => { Err(err.into()) }
@@ -376,7 +374,7 @@ impl Escrow {
         buyer: &Signer<'a>,
         seller: &SystemAccount<'a>,
         boss: &SystemAccount<'a>,
-    ) -> ProgramResult {
+    ) -> Result<()> {
         let seller_split: u64 = Escrow::split(0.95, escrow_item.price);
         let tx_seller = Escrow::_collect(seller_split, buyer, seller);
         match tx_seller {
@@ -389,7 +387,7 @@ impl Escrow {
         }
     }
 
-    fn _collect<'a>(price: u64, from: &Signer<'a>, to: &SystemAccount<'a>) -> ProgramResult {
+    fn _collect<'a>(price: u64, from: &Signer<'a>, to: &SystemAccount<'a>) -> Result<()> {
         let ix = anchor_lang::solana_program::system_instruction::transfer(
             &from.key(),
             &to.key(),
@@ -401,7 +399,7 @@ impl Escrow {
                 from.to_account_info(),
                 to.to_account_info()
             ],
-        )
+        ).map_err(Into::into)
     }
 
     fn split(percentage: f64, price: u64) -> u64 {
