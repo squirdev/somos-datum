@@ -117,7 +117,7 @@ pub struct PurchasePrimary<'info> {
 #[account]
 pub struct Ledger {
     // supply
-    pub price: u64,
+    pub price: u64, // TODO; specify resale on ledger init
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,
