@@ -1,5 +1,5 @@
 [programs.localnet]
-somos_solana = "ETsHd2t2ZE5NEPa1GnrAvjuy8mFayXETxf6kCQib479G"
+somos_solana = "A2UL8cJAGZWetZJRgHizdGJGmsrCGR6ELBtwjj8kGeXp"
 
 [registry]
 url = "https://anchor.projectserum.com"

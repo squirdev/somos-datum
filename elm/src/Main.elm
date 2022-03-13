@@ -144,7 +144,7 @@ update msg model =
                                         ownership =
                                             List.filter
                                                 (\pk -> pk == anchorState.user)
-                                                anchorState.purchased
+                                                anchorState.owners
                                                 |> List.length
 
                                         user : Anchor

@@ -16,6 +16,7 @@ app.ports.connectSender.subscribe(async function () {
 });
 
 // get current state as soon as user logs in
+// TODO; release01pubkey
 let statePublicKey, _ = null;
 app.ports.isConnectedSender.subscribe(async function (user) {
     // get provider & program
@@ -30,11 +31,12 @@ app.ports.isConnectedSender.subscribe(async function (user) {
 });
 
 // init program
+// TODO; elm sends PDA pubkey (clicked on by user)
 app.ports.initProgramSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
-    // invoke init request
-    await init(pp.program, pp.provider, statePublicKey, user)
+    // invoke init: release 01
+    await init(pp.program, pp.provider, statePublicKey, user, 0.025, 0.05, 100)
 });
 
 // primary purchase
@@ -49,10 +51,8 @@ app.ports.purchasePrimarySender.subscribe(async function (user) {
 app.ports.signMessageSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
-    // invoke state request & send response to elm
-    const _state = await getCurrentState(pp.program, statePublicKey, user)
     // invoke sign message
-    await sign(phantom, _state, user)
+    await sign(phantom, user)
 });
 
 // open download url

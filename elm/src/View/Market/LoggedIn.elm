@@ -5,6 +5,7 @@ import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
 import Model.Anchor.Ledger exposing (Ledger)
 import Model.PublicKey as PublicKey
+import Model.Sol as Sol
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -40,7 +41,14 @@ body args =
                                     , style "width" "100%"
                                     , onClick (ToAnchor (PurchasePrimary args.ledger.user))
                                     ]
-                                    [ Html.text (String.join ": " [ "Purchase 2nd Copy", "0.025 SOL" ]) -- todo; from ledger
+                                    [ Html.text
+                                        (String.join
+                                            " "
+                                            [ "Purchase 2nd Copy:"
+                                            , String.fromFloat (Sol.fromLamports args.ledger.price)
+                                            , "SOL"
+                                            ]
+                                        )
                                     ]
                                 ]
 
@@ -55,7 +63,14 @@ body args =
                             , style "width" "100%"
                             , onClick (ToAnchor (PurchasePrimary args.ledger.user))
                             ]
-                            [ Html.text (String.join ": " [ "Purchase", "0.025 SOL" ]) -- todo; from ledger
+                            [ Html.text
+                                (String.join
+                                    " "
+                                    [ "Purchase:"
+                                    , String.fromFloat (Sol.fromLamports args.ledger.price)
+                                    , "SOL"
+                                    ]
+                                )
                             ]
                         ]
 

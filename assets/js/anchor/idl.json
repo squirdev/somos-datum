@@ -38,6 +38,46 @@
         {
           "name": "price",
           "type": "u64"
+        },
+        {
+          "name": "resale",
+          "type": "f64"
+        }
+      ]
+    },
+    {
+      "name": "initializeEscrow",
+      "accounts": [
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ledger",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "seed",
+          "type": {
+            "array": [
+              "u8",
+              16
+            ]
+          }
         }
       ]
     },
@@ -66,6 +106,80 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "submitToEscrow",
+      "accounts": [
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ledger",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "seller",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "purchaseSecondary",
+      "accounts": [
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ledger",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "buyer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "seller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "boss",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "escrowItem",
+          "type": {
+            "defined": "EscrowItem"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -79,17 +193,15 @@
             "type": "u64"
           },
           {
+            "name": "resale",
+            "type": "f64"
+          },
+          {
             "name": "originalSupplyRemaining",
             "type": "u16"
           },
           {
-            "name": "purchased",
-            "type": {
-              "vec": "publicKey"
-            }
-          },
-          {
-            "name": "secondaryMarket",
+            "name": "owners",
             "type": {
               "vec": "publicKey"
             }
@@ -113,6 +225,57 @@
           }
         ]
       }
+    },
+    {
+      "name": "Escrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "items",
+            "type": {
+              "vec": {
+                "defined": "EscrowItem"
+              }
+            }
+          },
+          {
+            "name": "boss",
+            "type": "publicKey"
+          },
+          {
+            "name": "seed",
+            "type": {
+              "array": [
+                "u8",
+                16
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "EscrowItem",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "seller",
+            "type": "publicKey"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -125,9 +288,24 @@
       "code": 6001,
       "name": "BossUp",
       "msg": "you can only pay the boss for this track."
+    },
+    {
+      "code": 6002,
+      "name": "SellerNotOnLedger",
+      "msg": "your public-key is not on the ledger."
+    },
+    {
+      "code": 6003,
+      "name": "ItemNotForSale",
+      "msg": "the item you've requested is not for sale."
+    },
+    {
+      "code": 6004,
+      "name": "UnauthorizedSeller",
+      "msg": "seller unauthorized to sell this item."
     }
   ],
   "metadata": {
-    "address": "ETsHd2t2ZE5NEPa1GnrAvjuy8mFayXETxf6kCQib479G"
+    "address": "A2UL8cJAGZWetZJRgHizdGJGmsrCGR6ELBtwjj8kGeXp"
   }
 }
