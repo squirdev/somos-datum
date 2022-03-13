@@ -1,8 +1,8 @@
 // get ledger state
-export async function getCurrentState(program, statePublicKey, user) {
+export async function getCurrentState(program, release01PubKey, user) {
     try {
         // fetch state
-        const _state = await program.account.ledger.fetch(statePublicKey);
+        const _state = await program.account.ledger.fetch(release01PubKey);
         // simplify for codec
         function simplify() {
             // TODO; send pubkey to elm
