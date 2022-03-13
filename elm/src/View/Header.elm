@@ -23,8 +23,8 @@ view model =
                 Buy anchor ->
                     Anchor.getPublicKey anchor
 
-                Sell ->
-                    Nothing
+                Sell anchor ->
+                    Anchor.getPublicKey anchor
 
                 About ->
                     Nothing
@@ -63,7 +63,7 @@ view model =
             }
         , buy
         , tab_
-            { state = Sell
+            { state = Sell WaitingForWallet
             , title = "SELL"
             , msg = NoOp
             }

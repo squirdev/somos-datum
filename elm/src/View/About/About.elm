@@ -35,7 +35,15 @@ body =
                         [ Html.text
                             """
                             providing what we are calling the "right-to-download"
+                            of exclusive audio & video releases from
                             """
+                        , Html.a
+                            [ class "has-sky-blue-text mb-6"
+                            , href "https://somos.world/"
+                            , target "_blank"
+                            ]
+                            [ Html.text "somos*"
+                            ]
                         ]
                     ]
                 , Html.p
@@ -101,7 +109,7 @@ body =
                             , Html.text "can be re-generated as many times as you want as long as you don't "
                             , Html.a
                                 [ class "has-sky-blue-text mb-6"
-                                , State.href Sell
+                                , State.href (Sell Anchor.WaitingForWallet)
                                 ]
                                 [ Html.text "sell your ownership"
                                 ]

@@ -1,4 +1,4 @@
-module View.Market.LoggedIn exposing (Args, body)
+module View.Market.Sell.LoggedIn exposing (body, Args)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
@@ -10,7 +10,6 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Ownership exposing (Ownership(..))
-
 
 type alias Args =
     { ledger : Ledger

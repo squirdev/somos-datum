@@ -1,4 +1,4 @@
-module View.Market.Buy.Primary exposing (body)
+module View.Market.Buy.Buy exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
@@ -11,7 +11,7 @@ import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.LoggedIn as LoggedIn
+import View.Market.Buy.LoggedIn as LoggedIn
 import View.Market.Ownership
 
 
@@ -77,14 +77,14 @@ body anchor =
                                         ]
                                     , Html.text
                                         """
-                                         of exclusive content from some of your
+                                         of exclusive releases from your
                                         """
                                     , Html.a
                                         [ class "has-sky-blue-text"
                                         , href "https://www.somos.world/"
                                         , target "_blank"
                                         ]
-                                        [ Html.text "favorite creatives"
+                                        [ Html.text "favorite band"
                                         ]
                                     ]
                                 , Html.div

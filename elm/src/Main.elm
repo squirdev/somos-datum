@@ -27,7 +27,7 @@ import Url
 import View.About.About
 import View.Error.Error
 import View.Hero
-import View.Market.Buy.Primary
+import View.Market.Buy.Buy
 import View.Market.Sell.Sell
 
 
@@ -232,10 +232,10 @@ view model =
         html =
             case model.state of
                 Buy anchor ->
-                    hero (View.Market.Buy.Primary.body anchor)
+                    hero (View.Market.Buy.Buy.body anchor)
 
-                Sell ->
-                    hero View.Market.Sell.Sell.body
+                Sell anchor ->
+                    hero (View.Market.Sell.Sell.body anchor)
 
                 About ->
                     hero View.About.About.body
