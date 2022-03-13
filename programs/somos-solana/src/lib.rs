@@ -11,10 +11,12 @@ pub mod somos_solana {
         seed: [u8; 16],
         n: u16,
         price: u64,
+        resale: f64,
     ) -> Result<()> {
         let ledger = &mut ctx.accounts.ledger;
         // init ledger
         ledger.price = price;
+        ledger.resale = resale;
         ledger.original_supply_remaining = n;
         ledger.owners = Vec::new();
         // persist boss for validation
@@ -25,7 +27,6 @@ pub mod somos_solana {
         Ok(())
     }
 
-    // TODO; ledger dependency
     pub fn initialize_escrow(
         ctx: Context<InitializeEscrow>,
         seed: [u8; 16],
@@ -118,7 +119,7 @@ pub struct PurchasePrimary<'info> {
 pub struct Ledger {
     // supply
     pub price: u64,
-    // TODO; specify resale on ledger init
+    pub resale: f64,
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,
@@ -299,7 +300,7 @@ impl Escrow {
                         // push
                         ledger.owners.push(buyer.key());
                         // collect
-                        Escrow::collect(escrow_item, buyer, seller, boss)
+                        Escrow::collect(escrow_item, buyer, seller, boss, ledger.resale)
                     }
                     err @ Err(_) => { err }
                 }
@@ -374,12 +375,13 @@ impl Escrow {
         buyer: &Signer<'a>,
         seller: &SystemAccount<'a>,
         boss: &SystemAccount<'a>,
+        resale: f64,
     ) -> Result<()> {
-        let seller_split: u64 = Escrow::split(0.95, escrow_item.price);
+        let seller_split: u64 = Escrow::split(1.0 - resale, escrow_item.price);
         let tx_seller = Escrow::_collect(seller_split, buyer, seller);
         match tx_seller {
             Ok(_) => {
-                let boss_split: u64 = Escrow::split(0.05, escrow_item.price);
+                let boss_split: u64 = Escrow::split(resale, escrow_item.price);
                 let boss_tx = Escrow::_collect(boss_split, buyer, boss);
                 boss_tx
             }

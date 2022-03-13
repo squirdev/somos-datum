@@ -19,7 +19,7 @@ describe("somos-solana", () => {
     // init
     it("initializes ledger", async () => {
         const price = 0.1 * anchor.web3.LAMPORTS_PER_SOL
-        await program.rpc.initializeLedger(ledgerSeed, new anchor.BN(3), new anchor.BN(price), {
+        await program.rpc.initializeLedger(ledgerSeed, new anchor.BN(3), new anchor.BN(price), 0.10, {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
@@ -105,7 +105,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6000"))
+            assert.ok(error.code === 6000)
             console.log(error)
         }
     });
@@ -123,7 +123,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6001"))
+            assert.ok(error.code === 6001)
             console.log(error)
         }
     });
@@ -195,7 +195,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6002"))
+            assert.ok(error.code === 6002)
             console.log(error);
         }
         let actualEscrow = await _program.account.escrow.fetch(
@@ -224,7 +224,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6003"))
+            assert.ok(error.code === 6003)
             console.log(error);
         }
     });
@@ -248,20 +248,26 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6004"))
+            assert.ok(error.code === 6004)
             console.log(error);
         }
     });
     // purchase secondary
     it("purchase secondary at listed price", async () => {
+        // players
         const buyer = await createUser();
-        const _program = programForUser(buyer)
-        const seller = user02.key.publicKey
+        const _program = programForUser(buyer);
+        const seller = user02.key.publicKey;
         const boss = provider.wallet.publicKey;
+        // balances
+        let balanceSeller = await provider.connection.getBalance(seller);
+        let balanceBoss = await provider.connection.getBalance(boss);
+        // items
         const price1 = 0.20 * anchor.web3.LAMPORTS_PER_SOL;
         const price2 = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
         const escrowItem1 = {price: new anchor.BN(price1), seller: seller}; // seller is valid but price is invalid
         const escrowItem2 = {price: new anchor.BN(price2), seller: seller};
+        // failure at wrong price
         try {
             await _program.rpc.purchaseSecondary(escrowItem1, {
                 accounts: {
@@ -274,9 +280,10 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.logs[2].includes("Error Number: 6003"))
+            assert.ok(error.code === 6003)
             console.log(error);
         }
+        // success at correct price
         await _program.rpc.purchaseSecondary(escrowItem2, {
             accounts: {
                 buyer: buyer.key.publicKey,
@@ -287,6 +294,7 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
+        // PDAs
         const actualEscrow = await program.account.escrow.fetch(
             pdaEscrowPublicKey
         );
@@ -295,10 +303,17 @@ describe("somos-solana", () => {
             pdaLedgerPublicKey
         )
         console.log(actualLedger)
+        // balances
+        // balances
+        let newBalanceBuyer = await provider.connection.getBalance(buyer.key.publicKey);
+        let newBalanceSeller = await provider.connection.getBalance(seller);
+        let newBalanceBoss = await provider.connection.getBalance(boss);
         // assertions
         assert.ok(actualEscrow.items.length === 0)
         const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         assert.ok(owners.includes(buyer.key.publicKey.toString()))
         assert.ok(owners.filter(pk => pk === seller.toString()).length === 1) // used to have ownership of 2
+        assert.ok(newBalanceSeller - balanceSeller === 225000000)
+        assert.ok(newBalanceBoss - balanceBoss === 25000000)
     });
 });
