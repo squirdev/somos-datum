@@ -304,8 +304,6 @@ describe("somos-solana", () => {
         )
         console.log(actualLedger)
         // balances
-        // balances
-        let newBalanceBuyer = await provider.connection.getBalance(buyer.key.publicKey);
         let newBalanceSeller = await provider.connection.getBalance(seller);
         let newBalanceBoss = await provider.connection.getBalance(boss);
         // assertions
