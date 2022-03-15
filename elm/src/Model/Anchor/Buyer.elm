@@ -1,4 +1,4 @@
-module Model.Anchor.Anchor exposing (Anchor(..), getPublicKey)
+module Model.Anchor.Buyer exposing (Buyer(..), getPublicKey)
 
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ledger exposing (Ledger)
@@ -6,30 +6,30 @@ import Model.Anchor.Ownership exposing (Ownership(..))
 import Model.PublicKey exposing (PublicKey)
 
 
-type Anchor
+type Buyer
     = WaitingForWallet
-    | JustHasWallet PublicKey
-    | WaitingForProgramInit PublicKey
-    | UserWithNoOwnership Ledger
-    | UserWithOwnership Ownership
+    | WaitingForStateLookup PublicKey
+    | NeedsToInitProgram PublicKey
+    | WithoutOwnership Ledger
+    | WithOwnership Ownership
 
 
-getPublicKey : Anchor -> Maybe PublicKey
+getPublicKey : Buyer -> Maybe PublicKey
 getPublicKey anchor =
     case anchor of
         WaitingForWallet ->
             Nothing
 
-        JustHasWallet publicKey ->
+        WaitingForStateLookup publicKey ->
             Just publicKey
 
-        WaitingForProgramInit publicKey ->
+        NeedsToInitProgram publicKey ->
             Just publicKey
 
-        UserWithNoOwnership anchorState ->
+        WithoutOwnership anchorState ->
             Just anchorState.user
 
-        UserWithOwnership ownership ->
+        WithOwnership ownership ->
             case ownership of
                 Console anchorState _ ->
                     Just anchorState.user

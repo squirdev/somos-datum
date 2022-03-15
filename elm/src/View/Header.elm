@@ -3,7 +3,8 @@ module View.Header exposing (view)
 import Html exposing (Html)
 import Html.Attributes exposing (class, src, style, width)
 import Html.Events exposing (onClick)
-import Model.Anchor.Anchor as Anchor exposing (Anchor(..))
+import Model.Anchor.Buyer as Buyer exposing (Buyer(..))
+import Model.Anchor.Seller as Seller
 import Model.Model exposing (Model)
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg(..))
@@ -20,11 +21,11 @@ view model =
         maybePublicKey : Maybe String
         maybePublicKey =
             case model.state of
-                Buy anchor ->
-                    Anchor.getPublicKey anchor
+                Buy buyer ->
+                    Buyer.getPublicKey buyer
 
-                Sell anchor ->
-                    Anchor.getPublicKey anchor
+                Sell seller ->
+                    Seller.getPublicKey seller
 
                 About ->
                     Nothing
@@ -41,17 +42,39 @@ view model =
             case maybePublicKey of
                 Just publicKey ->
                     tab_
-                        { state = Buy (JustHasWallet publicKey)
+                        { state = Buy (Buyer.WaitingForStateLookup publicKey)
                         , title = title
                         , msg = ToPhantom Connect
                         }
 
                 Nothing ->
                     tab_
-                        { state = Buy WaitingForWallet
+                        { state = Buy Buyer.WaitingForWallet
                         , title = title
                         , msg = NoOp
                         }
+
+        sell : Html Msg
+        sell =
+            let
+                title =
+                    "SELL"
+            in
+            case maybePublicKey of
+                Just publicKey ->
+                    tab_
+                        { state = Sell (Seller.WaitingForStateLookup publicKey)
+                        , title = title
+                        , msg = ToPhantom Connect
+                        }
+
+                Nothing ->
+                    tab_
+                        { state = Sell Seller.WaitingForWallet
+                        , title = title
+                        , msg = NoOp
+                        }
+
     in
     Html.nav
         [ class "is-navbar"
@@ -62,11 +85,7 @@ view model =
             , msg = NoOp
             }
         , buy
-        , tab_
-            { state = Sell WaitingForWallet
-            , title = "SELL"
-            , msg = NoOp
-            }
+        , sell
         , Html.div
             [ style "float" "right"
             ]
@@ -120,6 +139,13 @@ isActive model state =
                 Buy _ ->
                     class_
 
+                _ ->
+                    ""
+
+        Sell _ ->
+            case model.state of
+                Sell _ ->
+                    class_
                 _ ->
                     ""
 

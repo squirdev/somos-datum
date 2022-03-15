@@ -10,10 +10,12 @@ import Http.Error
 import Http.Response
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Model.Anchor.Anchor exposing (Anchor(..))
+import Model.Anchor.Buyer as Buyer exposing (Buyer)
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ledger as Ledger exposing (Ledger)
 import Model.Anchor.Ownership as Ownership
+import Model.Anchor.Seller as Seller
+import Model.Anchor.StateLookup as StateLookup
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
 import Model.State as State exposing (State(..))
@@ -84,7 +86,7 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection user ->
-                    ( { model | state = Buy (JustHasWallet user) }
+                    ( { model | state = Buy (Buyer.WaitingForStateLookup user) }
                     , isConnectedSender user
                     )
 
@@ -101,7 +103,7 @@ update msg model =
                     in
                     case maybeSignature of
                         Ok signature ->
-                            ( { model | state = Buy (UserWithOwnership (Ownership.Download (DownloadStatus.InvokedAndWaiting signature))) }
+                            ( { model | state = Buy (Buyer.WithOwnership (Ownership.Download (DownloadStatus.InvokedAndWaiting signature))) }
                             , Download.post signature
                             )
 
@@ -131,35 +133,51 @@ update msg model =
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup jsonString ->
                     let
-                        maybeLedger : Result Decode.Error Ledger
-                        maybeLedger =
-                            Ledger.decodeSuccess jsonString
+                        maybeIndicated : Result String StateLookup.Indicated
+                        maybeIndicated =
+                           StateLookup.decode jsonString
 
                         update_ : State
                         update_ =
-                            case maybeLedger of
-                                Ok anchorState ->
-                                    let
-                                        ownership : Int
-                                        ownership =
-                                            List.filter
-                                                (\pk -> pk == anchorState.user)
-                                                anchorState.owners
-                                                |> List.length
+                            case maybeIndicated of
+                                -- client connected via buy or sell pages
+                                -- we don't know yet which page it was
+                                Ok indicated ->
+                                    case indicated of
+                                        -- it was the buy page
+                                        StateLookup.Buy moreJson ->
+                                            case Ledger.decodeSuccess moreJson of
+                                                 Ok anchorState ->
+                                                     let
+                                                         ownership : Int
+                                                         ownership =
+                                                             List.filter
+                                                                 (\pk -> pk == anchorState.user)
+                                                                 anchorState.owners
+                                                                 |> List.length
 
-                                        user : Anchor
-                                        user =
-                                            case ownership > 0 of
-                                                True ->
-                                                    UserWithOwnership (Ownership.Console anchorState ownership)
+                                                         user : Buyer
+                                                         user =
+                                                             case ownership > 0 of
+                                                                 True ->
+                                                                     Buyer.WithOwnership (Ownership.Console anchorState ownership)
 
-                                                False ->
-                                                    UserWithNoOwnership anchorState
-                                    in
-                                    Buy user
+                                                                 False ->
+                                                                     Buyer.WithoutOwnership anchorState
+                                                     in
+                                                     Buy user
 
-                                Err jsonError ->
-                                    State.Error (Decode.errorToString jsonError)
+                                                 Err jsonError ->
+                                                     State.Error (Decode.errorToString jsonError)
+
+                                        -- it was the sell page
+                                        StateLookup.Sell moreJson ->
+                                            -- TODO; Escrow model
+                                            State.Sell (Seller.WithoutOwnership "pubkey")
+
+                                Err error ->
+                                    State.Error error
+
                     in
                     ( { model | state = update_ }
                     , Cmd.none
@@ -177,7 +195,7 @@ update msg model =
                                 Ok anchorStateLookupFailure ->
                                     case Ledger.isAccountDoesNotExistError anchorStateLookupFailure.error of
                                         True ->
-                                            Buy (WaitingForProgramInit anchorStateLookupFailure.user)
+                                            Buy (Buyer.NeedsToInitProgram anchorStateLookupFailure.user)
 
                                         False ->
                                             State.Error error
@@ -208,7 +226,7 @@ update msg model =
                         jsonString =
                             Encode.encode 0 encoder
                     in
-                    ( { model | state = Buy (UserWithOwnership (Ownership.Download (DownloadStatus.Done response))) }
+                    ( { model | state = Buy (Buyer.WithOwnership (Ownership.Download (DownloadStatus.Done response))) }
                     , openDownloadUrlSender jsonString
                     )
 
@@ -231,11 +249,11 @@ view model =
 
         html =
             case model.state of
-                Buy anchor ->
-                    hero (View.Market.Buy.Buy.body anchor)
+                Buy buyer ->
+                    hero (View.Market.Buy.Buy.body buyer)
 
-                Sell anchor ->
-                    hero (View.Market.Sell.Sell.body anchor)
+                Sell seller ->
+                    hero (View.Market.Sell.Sell.body seller)
 
                 About ->
                     hero View.About.About.body

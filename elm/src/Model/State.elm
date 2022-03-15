@@ -2,14 +2,15 @@ module Model.State exposing (State(..), href, parse)
 
 import Html
 import Html.Attributes
-import Model.Anchor.Anchor exposing (Anchor(..))
+import Model.Anchor.Buyer as Buyer exposing (Buyer)
+import Model.Anchor.Seller as Seller exposing (Seller)
 import Url
 import Url.Parser as UrlParser
 
 
 type State
-    = Buy Anchor
-    | Sell Anchor
+    = Buy Buyer
+    | Sell Seller
     | About
     | Error String
 
@@ -17,9 +18,9 @@ type State
 urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
-        [ UrlParser.map (Buy WaitingForWallet) UrlParser.top
-        , UrlParser.map (Buy WaitingForWallet) (UrlParser.s "buy")
-        , UrlParser.map (Sell WaitingForWallet) (UrlParser.s "sell")
+        [ UrlParser.map (Buy Buyer.WaitingForWallet) UrlParser.top
+        , UrlParser.map (Buy Buyer.WaitingForWallet) (UrlParser.s "buy")
+        , UrlParser.map (Sell Seller.WaitingForWallet) (UrlParser.s "sell")
         , UrlParser.map About (UrlParser.s "about")
         ]
 

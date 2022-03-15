@@ -1,25 +1,21 @@
 module View.Market.Sell.Sell exposing (body)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, href, style, target)
+import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
-import Model.Anchor.Anchor as Anchor exposing (Anchor(..))
-import Model.Anchor.DownloadStatus as DownloadStatus
-import Model.Anchor.Ownership as Ownership
+import Model.Anchor.Seller exposing (Seller(..))
 import Model.PublicKey as PublicKey
 import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.Ownership
-import View.Market.Sell.LoggedIn as LoggedIn
 
 
-body : Anchor -> Html Msg
-body anchor =
+body : Seller -> Html Msg
+body seller =
     let
         html =
-            case anchor of
+            case seller of
                 WaitingForWallet ->
                     let
                         button : Html Msg
@@ -123,7 +119,7 @@ body anchor =
                             ]
                         ]
 
-                JustHasWallet publicKey ->
+                WaitingForStateLookup publicKey ->
                     let
                         slice_ =
                             PublicKey.slice publicKey
@@ -142,7 +138,7 @@ body anchor =
                             []
                         ]
 
-                WaitingForProgramInit publicKey ->
+                NeedsToInitProgram publicKey ->
                     Html.div
                         []
                         [ Html.div
@@ -159,82 +155,25 @@ body anchor =
                             ]
                         ]
 
-                UserWithNoOwnership ledger ->
-                    LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.No }
+                WithoutOwnership publicKey ->
+                    let
+                        slice_ =
+                            PublicKey.slice publicKey
+                    in
+                    Html.div
+                        []
+                        [ Html.div
+                            [ class "has-border-2 has-font-2 px-2 py-2"
+                            , style "float" "right"
+                            ]
+                            [ Html.text slice_
+                            ]
+                        , Html.text
+                            """
+                            now what
+                            """
+                        ]
 
-                UserWithOwnership ownership ->
-                    case ownership of
-                        Ownership.Console ledger count ->
-                            LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.Yes count }
-
-                        Ownership.Download downloadStatus ->
-                            case downloadStatus of
-                                DownloadStatus.InvokedAndWaiting phantomSignature ->
-                                    let
-                                        slice_ =
-                                            PublicKey.slice phantomSignature.userDecoded
-                                    in
-                                    Html.div
-                                        []
-                                        [ Html.div
-                                            [ class "has-border-2 has-font-2 px-2 py-2"
-                                            , style "float" "right"
-                                            ]
-                                            [ Html.text slice_
-                                            ]
-                                        , Html.div
-                                            [ class "is-loading"
-                                            ]
-                                            []
-                                        ]
-
-                                DownloadStatus.Done response ->
-                                    let
-                                        slice_ =
-                                            Html.div
-                                                [ class "has-border-2 has-font-2 px-2 py-2"
-                                                , style "float" "right"
-                                                ]
-                                                [ Html.text (PublicKey.slice response.user)
-                                                ]
-                                    in
-                                    Html.div
-                                        [ class "has-border-2 px-2 pt-2"
-                                        ]
-                                        [ slice_
-                                        , Html.div
-                                            [ class "mb-3"
-                                            ]
-                                            [ Html.h2
-                                                []
-                                                [ Html.text "authentication complete"
-                                                ]
-                                            ]
-                                        , Html.div
-                                            [ class "mb-3"
-                                            ]
-                                            [ Html.text "the download starts automatically in a new tab"
-                                            ]
-                                        , Html.div
-                                            [ class "mb-3"
-                                            ]
-                                            [ Html.text
-                                                """
-                                                if a new tab did not open, disable your ad / pop-up blocker for this site
-                                                and click download again 😎
-                                                """
-                                            ]
-                                        , Html.div
-                                            [ class "mb-3"
-                                            ]
-                                            [ Html.button
-                                                [ class "is-button-2"
-                                                , onClick (ToPhantom Connect)
-                                                ]
-                                                [ Html.text "Refresh"
-                                                ]
-                                            ]
-                                        ]
     in
     Html.div
         [ class "container"

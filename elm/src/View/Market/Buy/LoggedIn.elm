@@ -12,12 +12,14 @@ import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Ownership exposing (Ownership(..))
 
 
+-- TODO; as buy/sell ADT
 type alias Args =
     { ledger : Ledger
     , ownership : Ownership
     }
 
 
+-- TODO; move to root
 body : Args -> Html Msg
 body args =
     let

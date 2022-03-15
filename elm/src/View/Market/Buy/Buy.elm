@@ -3,7 +3,7 @@ module View.Market.Buy.Buy exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
-import Model.Anchor.Anchor exposing (Anchor(..))
+import Model.Anchor.Buyer exposing (Buyer(..))
 import Model.Anchor.DownloadStatus as DownloadStatus
 import Model.Anchor.Ownership as Ownership
 import Model.PublicKey as PublicKey
@@ -15,11 +15,11 @@ import View.Market.Buy.LoggedIn as LoggedIn
 import View.Market.Ownership
 
 
-body : Anchor -> Html Msg
-body anchor =
+body : Buyer -> Html Msg
+body buyer =
     let
         html =
-            case anchor of
+            case buyer of
                 WaitingForWallet ->
                     let
                         button : Html Msg
@@ -97,7 +97,7 @@ body anchor =
                             ]
                         ]
 
-                JustHasWallet publicKey ->
+                WaitingForStateLookup publicKey ->
                     let
                         slice_ =
                             PublicKey.slice publicKey
@@ -116,7 +116,7 @@ body anchor =
                             []
                         ]
 
-                WaitingForProgramInit publicKey ->
+                NeedsToInitProgram publicKey ->
                     Html.div
                         []
                         [ Html.div
@@ -133,10 +133,10 @@ body anchor =
                             ]
                         ]
 
-                UserWithNoOwnership ledger ->
+                WithoutOwnership ledger ->
                     LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.No }
 
-                UserWithOwnership ownership ->
+                WithOwnership ownership ->
                     case ownership of
                         Ownership.Console ledger count ->
                             LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.Yes count }
