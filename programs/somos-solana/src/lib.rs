@@ -43,6 +43,7 @@ pub mod somos_solana {
         Ok(())
     }
 
+    // TODO; assert against more than one purchase per client
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
     ) -> Result<()> {
@@ -68,6 +69,7 @@ pub mod somos_solana {
         Escrow::submit_to_escrow(seller, price, escrow, ledger)
     }
 
+    // TODO; assert against more than one purchase per client
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,
