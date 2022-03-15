@@ -3,10 +3,12 @@ module View.Header exposing (view)
 import Html exposing (Html)
 import Html.Attributes exposing (class, src, style, width)
 import Html.Events exposing (onClick)
-import Model.Anchor.Buyer as Buyer exposing (Buyer(..))
-import Model.Anchor.Seller as Seller
+import Model.Admin as Admin
+import Model.Buyer as Buyer exposing (Buyer(..))
+import Model.Seller as Seller
 import Model.Model exposing (Model)
 import Model.State as State exposing (State(..))
+import Model.User as User
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 
@@ -30,6 +32,9 @@ view model =
                 About ->
                     Nothing
 
+                Admin admin ->
+                    Admin.getPublicKey admin
+
                 Error _ ->
                     Nothing
 
@@ -44,7 +49,7 @@ view model =
                     tab_
                         { state = Buy (Buyer.WaitingForStateLookup publicKey)
                         , title = title
-                        , msg = ToPhantom Connect
+                        , msg = ToPhantom (Connect User.Buyer)
                         }
 
                 Nothing ->
@@ -65,7 +70,7 @@ view model =
                     tab_
                         { state = Sell (Seller.WaitingForStateLookup publicKey)
                         , title = title
-                        , msg = ToPhantom Connect
+                        , msg = ToPhantom (Connect User.Seller)
                         }
 
                 Nothing ->

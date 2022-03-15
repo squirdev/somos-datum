@@ -2,8 +2,8 @@ module View.About.About exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, target)
-import Model.Anchor.Buyer as Buyer
-import Model.Anchor.Seller as Seller
+import Model.Buyer as Buyer
+import Model.Seller as Seller
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg)
 

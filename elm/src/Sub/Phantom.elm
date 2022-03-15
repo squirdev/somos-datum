@@ -3,7 +3,7 @@ port module Sub.Phantom exposing (connectFailureListener, connectSender, connect
 -- senders
 
 
-port connectSender : () -> Cmd msg
+port connectSender : String -> Cmd msg
 
 
 port signMessageSender : String -> Cmd msg

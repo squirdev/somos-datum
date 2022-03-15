@@ -1,8 +1,8 @@
-module Model.Anchor.Buyer exposing (Buyer(..), getPublicKey)
+module Model.Buyer exposing (Buyer(..), getPublicKey)
 
-import Model.Anchor.DownloadStatus as DownloadStatus
-import Model.Anchor.Ledger exposing (Ledger)
-import Model.Anchor.Ownership exposing (Ownership(..))
+import Model.DownloadStatus as DownloadStatus
+import Model.Ledger exposing (Ledger)
+import Model.Ownership exposing (Ownership(..))
 import Model.PublicKey exposing (PublicKey)
 
 

@@ -1,12 +1,13 @@
 module Msg.Phantom exposing (FromPhantomMsg(..), ToPhantomMsg(..))
 
 import Model.PublicKey exposing (PublicKey)
+import Model.User exposing (User)
 
 
 type
     ToPhantomMsg
     -- connection attempt
-    = Connect
+    = Connect User
       -- sign message attempt
     | SignMessage PublicKey
 
@@ -14,7 +15,7 @@ type
 type
     FromPhantomMsg
     -- connection attempt
-    = SuccessOnConnection PublicKey
+    = SuccessOnConnection Json
     | ErrorOnConnection Error
       -- sign message attempt
     | SuccessOnSignMessage Json

@@ -1,4 +1,4 @@
-module Model.Anchor.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
+module Model.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)

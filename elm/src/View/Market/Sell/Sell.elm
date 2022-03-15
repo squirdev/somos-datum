@@ -3,9 +3,10 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
-import Model.Anchor.Seller exposing (Seller(..))
+import Model.Seller exposing (Seller(..))
 import Model.PublicKey as PublicKey
 import Model.State as State exposing (State(..))
+import Model.User as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -22,7 +23,7 @@ body seller =
                         button =
                             Html.button
                                 [ class "is-button-1"
-                                , onClick (ToPhantom Connect)
+                                , onClick (ToPhantom (Connect User.Seller))
                                 ]
                                 [ Html.text "Connect"
                                 ]

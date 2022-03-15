@@ -8,11 +8,14 @@ export async function getCurrentState(program, release01PubKey, user) {
             // TODO; send pubkey to elm
             const _owners = _state.owners.map(_publicKey => _publicKey.toString());
             return {
-                price: Number(_state.price.toString()),
-                resale: _state.resale, // not a BN type
-                originalSupplyRemaining: Number(_state.originalSupplyRemaining.toString()),
-                owners: _owners,
-                user: user
+                user: user.user,
+                more: {
+                    price: Number(_state.price.toString()),
+                    resale: _state.resale, // not a BN type
+                    originalSupplyRemaining: Number(_state.originalSupplyRemaining.toString()),
+                    owners: _owners,
+                    user: user.more
+                }
             }
         }
         const state = simplify()

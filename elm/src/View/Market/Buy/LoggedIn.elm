@@ -3,7 +3,7 @@ module View.Market.Buy.LoggedIn exposing (Args, body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
-import Model.Anchor.Ledger exposing (Ledger)
+import Model.Ledger exposing (Ledger)
 import Model.PublicKey as PublicKey
 import Model.Sol as Sol
 import Msg.Anchor exposing (ToAnchorMsg(..))

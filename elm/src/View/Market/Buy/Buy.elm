@@ -3,11 +3,12 @@ module View.Market.Buy.Buy exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
-import Model.Anchor.Buyer exposing (Buyer(..))
-import Model.Anchor.DownloadStatus as DownloadStatus
-import Model.Anchor.Ownership as Ownership
+import Model.Buyer exposing (Buyer(..))
+import Model.DownloadStatus as DownloadStatus
+import Model.Ownership as Ownership
 import Model.PublicKey as PublicKey
 import Model.State as State exposing (State(..))
+import Model.User as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -26,7 +27,7 @@ body buyer =
                         button =
                             Html.button
                                 [ class "is-button-1"
-                                , onClick (ToPhantom Connect)
+                                , onClick (ToPhantom (Connect User.Buyer))
                                 ]
                                 [ Html.text "Connect"
                                 ]
@@ -203,7 +204,7 @@ body buyer =
                                             ]
                                             [ Html.button
                                                 [ class "is-button-2"
-                                                , onClick (ToPhantom Connect)
+                                                , onClick (ToPhantom (Connect User.Buyer))
                                                 ]
                                                 [ Html.text "Refresh"
                                                 ]

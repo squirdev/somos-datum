@@ -10,12 +10,13 @@ import Http.Error
 import Http.Response
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Model.Anchor.Buyer as Buyer exposing (Buyer)
-import Model.Anchor.DownloadStatus as DownloadStatus
-import Model.Anchor.Ledger as Ledger exposing (Ledger)
-import Model.Anchor.Ownership as Ownership
-import Model.Anchor.Seller as Seller
-import Model.Anchor.StateLookup as StateLookup
+import Model.Admin as Admin
+import Model.Buyer as Buyer exposing (Buyer)
+import Model.DownloadStatus as DownloadStatus
+import Model.Ledger as Ledger exposing (Ledger)
+import Model.Ownership as Ownership
+import Model.Seller as Seller
+import Model.User as User exposing (User, WithContext)
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
 import Model.State as State exposing (State(..))
@@ -27,6 +28,7 @@ import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSe
 import Sub.Sub as Sub
 import Url
 import View.About.About
+import View.Admin.Admin
 import View.Error.Error
 import View.Hero
 import View.Market.Buy.Buy
@@ -73,9 +75,9 @@ update msg model =
 
         ToPhantom toPhantomMsg ->
             case toPhantomMsg of
-                Connect ->
+                Connect user ->
                     ( model
-                    , connectSender ()
+                    , connectSender (User.toString user)
                     )
 
                 SignMessage user ->
@@ -85,10 +87,29 @@ update msg model =
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
-                Msg.Phantom.SuccessOnConnection user ->
-                    ( { model | state = Buy (Buyer.WaitingForStateLookup user) }
-                    , isConnectedSender user
-                    )
+                Msg.Phantom.SuccessOnConnection json ->
+                    case User.decode json of
+                        Ok user ->
+                            case user of
+                                User.BuyerWith publicKey ->
+                                    ( { model | state = Buy (Buyer.WaitingForStateLookup publicKey) }
+                                    , isConnectedSender json
+                                    )
+
+                                User.SellerWith publicKey ->
+                                    ( { model | state = Sell (Seller.WaitingForStateLookup publicKey) }
+                                    , isConnectedSender json
+                                    )
+
+                                User.AdminWith publicKey ->
+                                    ( { model | state = Admin (Admin.HasWallet publicKey) }
+                                    , Cmd.none
+                                    )
+
+                        Err error ->
+                            ( { model | state = State.Error error }
+                            , Cmd.none
+                            )
 
                 Msg.Phantom.ErrorOnConnection string ->
                     ( { model | state = State.Error string }
@@ -131,21 +152,21 @@ update msg model =
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
-                Msg.Anchor.SuccessOnStateLookup jsonString ->
+                Msg.Anchor.SuccessOnStateLookup json ->
                     let
-                        maybeIndicated : Result String StateLookup.Indicated
-                        maybeIndicated =
-                           StateLookup.decode jsonString
+                        maybeUser : Result String User.WithContext
+                        maybeUser =
+                           User.decode json
 
                         update_ : State
                         update_ =
-                            case maybeIndicated of
+                            case maybeUser of
                                 -- client connected via buy or sell pages
                                 -- we don't know yet which page it was
-                                Ok indicated ->
-                                    case indicated of
+                                Ok user ->
+                                    case user of
                                         -- it was the buy page
-                                        StateLookup.Buy moreJson ->
+                                        User.BuyerWith moreJson ->
                                             case Ledger.decodeSuccess moreJson of
                                                  Ok anchorState ->
                                                      let
@@ -156,8 +177,8 @@ update msg model =
                                                                  anchorState.owners
                                                                  |> List.length
 
-                                                         user : Buyer
-                                                         user =
+                                                         buyer : Buyer
+                                                         buyer =
                                                              case ownership > 0 of
                                                                  True ->
                                                                      Buyer.WithOwnership (Ownership.Console anchorState ownership)
@@ -165,15 +186,18 @@ update msg model =
                                                                  False ->
                                                                      Buyer.WithoutOwnership anchorState
                                                      in
-                                                     Buy user
+                                                     Buy buyer
 
                                                  Err jsonError ->
                                                      State.Error (Decode.errorToString jsonError)
 
                                         -- it was the sell page
-                                        StateLookup.Sell moreJson ->
+                                        User.SellerWith moreJson ->
                                             -- TODO; Escrow model
                                             State.Sell (Seller.WithoutOwnership "pubkey")
+
+                                        User.AdminWith publicKey ->
+                                            State.Admin (Admin.HasWallet publicKey)
 
                                 Err error ->
                                     State.Error error
@@ -258,8 +282,12 @@ view model =
                 About ->
                     hero View.About.About.body
 
+                Admin admin ->
+                    hero (View.Admin.Admin.body admin)
+
                 Error error ->
                     hero (View.Error.Error.body error)
+
     in
     { title = "store.somos.world"
     , body =

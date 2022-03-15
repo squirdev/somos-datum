@@ -1,4 +1,4 @@
-module Model.Anchor.Seller exposing (Seller(..), getPublicKey)
+module Model.Seller exposing (Seller(..), getPublicKey)
 
 import Model.PublicKey exposing (PublicKey)
 

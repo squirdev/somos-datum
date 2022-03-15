@@ -11,8 +11,8 @@ import {download} from "./download";
 
 // get phantom
 let phantom = null;
-app.ports.connectSender.subscribe(async function () {
-    phantom = await getPhantom()
+app.ports.connectSender.subscribe(async function (user) {
+    phantom = await getPhantom(user)
 });
 
 // get current state as soon as user logs in
