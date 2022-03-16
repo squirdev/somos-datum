@@ -48,8 +48,6 @@ app.ports.purchasePrimarySender.subscribe(async function (user) {
 
 // sign message
 app.ports.signMessageSender.subscribe(async function (user) {
-    // get provider & program
-    const pp = getPP(phantom)
     // invoke sign message
     await sign(phantom, user)
 });

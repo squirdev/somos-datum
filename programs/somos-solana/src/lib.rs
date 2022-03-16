@@ -51,7 +51,7 @@ pub mod somos_solana {
         let ledger = &mut ctx.accounts.ledger;
         EscrowItem::submit_to_escrow(seller, price, ledger)
     }
-    
+
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,

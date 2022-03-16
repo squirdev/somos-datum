@@ -2,18 +2,18 @@ import {web3} from "@project-serum/anchor";
 import {getCurrentState} from "../state";
 import {BOSS} from "../config";
 
-export async function primary(program, provider, release01PubKey, user) {
+export async function primary(program, provider, ledger, user) {
     try {
         await program.rpc.purchasePrimary({
             accounts: {
                 user: provider.wallet.publicKey,
                 boss: BOSS,
-                ledger: release01PubKey,
+                ledger: ledger,
                 systemProgram: web3.SystemProgram.programId,
             },
         });
         // get state after transaction
-        await getCurrentState(program, release01PubKey, user);
+        await getCurrentState(program, ledger, user);
         // log success
         console.log("primary purchase success");
     } catch (error) {
