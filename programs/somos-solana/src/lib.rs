@@ -19,27 +19,12 @@ pub mod somos_solana {
         ledger.resale = resale;
         ledger.original_supply_remaining = n;
         ledger.owners = Vec::new();
+        ledger.escrow = Vec::new();
         // persist boss for validation
         ledger.boss = ctx.accounts.user.key();
         // pda
         ledger.seed = seed;
         ledger.bump = *ctx.bumps.get("ledger").unwrap();
-        Ok(())
-    }
-
-    pub fn initialize_escrow(
-        ctx: Context<InitializeEscrow>,
-        seed: [u8; 16],
-    ) -> Result<()> {
-        let escrow = &mut ctx.accounts.escrow;
-        let ledger = &mut ctx.accounts.ledger;
-        // init escrow
-        escrow.items = Vec::new();
-        // grab boss from ledger
-        escrow.boss = ledger.boss;
-        // pda
-        escrow.seed = seed;
-        escrow.bump = *ctx.bumps.get("escrow").unwrap();
         Ok(())
     }
 
@@ -64,10 +49,9 @@ pub mod somos_solana {
         ctx: Context<SubmitToEscrow>,
         price: u64,
     ) -> Result<()> {
-        let seller = &mut ctx.accounts.seller;
-        let escrow = &mut ctx.accounts.escrow;
-        let ledger = &ctx.accounts.ledger;
-        Escrow::submit_to_escrow(seller, price, escrow, ledger)
+        let seller = &ctx.accounts.seller;
+        let ledger = &mut ctx.accounts.ledger;
+        EscrowItem::submit_to_escrow(seller, price, ledger)
     }
 
     // TODO; assert against more than one purchase per client
@@ -75,14 +59,12 @@ pub mod somos_solana {
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,
     ) -> Result<()> {
-        let escrow = &mut ctx.accounts.escrow;
         let ledger = &mut ctx.accounts.ledger;
         let buyer = &mut ctx.accounts.buyer;
         let seller = &mut ctx.accounts.seller;
         let boss = &mut ctx.accounts.boss;
-        Escrow::purchase_secondary(
+        EscrowItem::purchase_secondary(
             &escrow_item,
-            escrow,
             ledger,
             buyer,
             seller,
@@ -126,6 +108,8 @@ pub struct Ledger {
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,
+    // escrow
+    pub escrow: Vec<EscrowItem>,
     // persist boss for validation
     pub boss: Pubkey,
     // pda
@@ -201,22 +185,7 @@ impl Ledger {
 // SECONDARY MARKET ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #[derive(Accounts)]
-#[instruction(seed: [u8; 16])]
-pub struct InitializeEscrow<'info> {
-    #[account(init, seeds = [& seed], bump, payer = user, space = 10240)]
-    pub escrow: Account<'info, Escrow>,
-    #[account(seeds = [& ledger.seed], bump = ledger.bump)]
-    pub ledger: Account<'info, Ledger>,
-    #[account(mut)]
-    pub user: Signer<'info>,
-    // system
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(Accounts)]
 pub struct SubmitToEscrow<'info> {
-    #[account(mut, seeds = [& escrow.seed], bump = escrow.bump)]
-    pub escrow: Account<'info, Escrow>,
     #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
     pub ledger: Account<'info, Ledger>,
     // pubkey on ledger
@@ -227,8 +196,6 @@ pub struct SubmitToEscrow<'info> {
 
 #[derive(Accounts)]
 pub struct PurchaseSecondary<'info> {
-    #[account(mut, seeds = [& escrow.seed], bump = escrow.bump)]
-    pub escrow: Account<'info, Escrow>,
     #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
     pub ledger: Account<'info, Ledger>,
     // buyer
@@ -244,16 +211,6 @@ pub struct PurchaseSecondary<'info> {
     pub system_program: Program<'info, System>,
 }
 
-#[account]
-pub struct Escrow {
-    pub items: Vec<EscrowItem>,
-    // persist boss for validation
-    pub boss: Pubkey,
-    // pda
-    pub seed: [u8; 16],
-    pub bump: u8,
-}
-
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct EscrowItem {
     pub price: u64,
@@ -266,20 +223,19 @@ impl PartialEq for EscrowItem {
     }
 }
 
-impl Escrow {
+impl EscrowItem {
     pub fn submit_to_escrow(
-        seller: &mut Signer,
+        seller: &Signer,
         price: u64,
-        escrow: &mut Escrow,
-        ledger: &Ledger,
+        ledger: &mut Ledger,
     ) -> Result<()> {
         // validate seller
-        match Escrow::validate_seller(seller, ledger) {
+        match EscrowItem::validate_seller(seller, ledger) {
             Ok(_) => {
                 // build item
                 let escrow_item = EscrowItem { price, seller: *seller.key };
                 // add item to escrow
-                escrow.items.push(escrow_item);
+                ledger.escrow.push(escrow_item);
                 Ok(())
             }
             err @ Err(_) => { err }
@@ -288,22 +244,21 @@ impl Escrow {
 
     pub fn purchase_secondary<'a>(
         escrow_item: &EscrowItem,
-        escrow: &mut Escrow,
         ledger: &mut Ledger,
         buyer: &mut Signer<'a>,
         seller: &mut SystemAccount<'a>,
         boss: &mut SystemAccount<'a>,
     ) -> Result<()> {
         // validate
-        match Escrow::validate_escrow_item(escrow_item, escrow, seller) {
+        match EscrowItem::validate_escrow_item(escrow_item, ledger, seller) {
             Ok(_) => {
                 // pop
-                match Escrow::pop_escrow_item(escrow_item, escrow, ledger) {
+                match EscrowItem::pop_escrow_item(escrow_item, ledger) {
                     Ok(_) => {
                         // push
                         ledger.owners.push(buyer.key());
                         // collect
-                        Escrow::collect(escrow_item, buyer, seller, boss, ledger.resale)
+                        EscrowItem::collect(escrow_item, buyer, seller, boss, ledger.resale)
                     }
                     err @ Err(_) => { err }
                 }
@@ -312,7 +267,7 @@ impl Escrow {
         }
     }
 
-    fn validate_seller(seller: &mut Signer, ledger: &Ledger) -> Result<()> {
+    fn validate_seller(seller: &Signer, ledger: &Ledger) -> Result<()> {
         match ledger.owners.contains(seller.key) {
             true => { Ok(()) }
             false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
@@ -321,10 +276,10 @@ impl Escrow {
 
     fn validate_escrow_item<'a>(
         escrow_item: &EscrowItem,
-        escrow: &Escrow,
+        ledger: &Ledger,
         seller: &SystemAccount<'a>,
     ) -> Result<()> {
-        match escrow.items.contains(escrow_item) {
+        match ledger.escrow.contains(escrow_item) {
             true => {
                 match &escrow_item.seller == seller.key {
                     true => { Ok(()) }
@@ -337,18 +292,17 @@ impl Escrow {
 
     fn pop_escrow_item(
         escrow_item: &EscrowItem,
-        escrow: &mut Escrow,
         ledger: &mut Ledger,
     ) -> Result<()> {
         // remove from escrow
-        match Escrow::remove_from_vec(
-            &mut escrow.items,
+        match EscrowItem::remove_from_vec(
+            &mut ledger.escrow,
             escrow_item,
             LedgerErrors::ItemNotForSale,
         ) {
             Ok(_) => {
                 // remove from ledger
-                Escrow::remove_from_vec(
+                EscrowItem::remove_from_vec(
                     &mut ledger.owners,
                     &escrow_item.seller,
                     LedgerErrors::SellerNotOnLedger,
@@ -380,12 +334,12 @@ impl Escrow {
         boss: &SystemAccount<'a>,
         resale: f64,
     ) -> Result<()> {
-        let seller_split: u64 = Escrow::split(1.0 - resale, escrow_item.price);
-        let tx_seller = Escrow::_collect(seller_split, buyer, seller);
+        let seller_split: u64 = EscrowItem::split(1.0 - resale, escrow_item.price);
+        let tx_seller = EscrowItem::_collect(seller_split, buyer, seller);
         match tx_seller {
             Ok(_) => {
-                let boss_split: u64 = Escrow::split(resale, escrow_item.price);
-                let boss_tx = Escrow::_collect(boss_split, buyer, boss);
+                let boss_split: u64 = EscrowItem::split(resale, escrow_item.price);
+                let boss_tx = EscrowItem::_collect(boss_split, buyer, boss);
                 boss_tx
             }
             err @ Err(_) => { err }

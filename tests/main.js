@@ -26,18 +26,18 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualLedger = await program.account.ledger.fetch(
+        const actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
-        let balance = await provider.connection.getBalance(provider.wallet.publicKey);
+        const balance = await provider.connection.getBalance(provider.wallet.publicKey);
         console.log(balance);
         // assertions
         assert.ok(actualLedger.originalSupplyRemaining === 3)
     });
     // purchase primary
     it("purchase primary", async () => {
-        let balance = await provider.connection.getBalance(provider.wallet.publicKey)
+        const balance = await provider.connection.getBalance(provider.wallet.publicKey)
         await program03.rpc.purchasePrimary({
             accounts: {
                 user: user03.key.publicKey,
@@ -46,7 +46,7 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualLedger = await program03.account.ledger.fetch(
+        const actualLedger = await program03.account.ledger.fetch(
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
@@ -61,7 +61,7 @@ describe("somos-solana", () => {
     });
     // purchase primary sold out
     it("purchase primary sold out", async () => {
-        let balance = await provider.connection.getBalance(provider.wallet.publicKey)
+        const balance = await provider.connection.getBalance(provider.wallet.publicKey)
         await program02.rpc.purchasePrimary({
             accounts: {
                 user: user02.key.publicKey,
@@ -78,7 +78,7 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualLedger = await program02.account.ledger.fetch(
+        const actualLedger = await program02.account.ledger.fetch(
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
@@ -93,8 +93,8 @@ describe("somos-solana", () => {
     });
     // throw error on sold out purchase
     it("purchase primary sold out throws error", async () => {
-        let purchaser = await createUser();
-        let _program = programForUser(purchaser)
+        const purchaser = await createUser();
+        const _program = programForUser(purchaser)
         try {
             await _program.rpc.purchasePrimary({
                 accounts: {
@@ -111,8 +111,8 @@ describe("somos-solana", () => {
     });
     // failed purchase primary
     it("purchase primary failed without boss", async () => {
-        let purchaser = await createUser();
-        let _program = programForUser(purchaser)
+        const purchaser = await createUser();
+        const _program = programForUser(purchaser)
         try {
             await _program.rpc.purchasePrimary({
                 accounts: {
@@ -130,66 +130,32 @@ describe("somos-solana", () => {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // ESCROW //////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // derive pda key
-    let escrowSeed = Buffer.from("grovergrovergrov");
-    let pdaEscrowPublicKey, __;
-    before(async () => {
-        [pdaEscrowPublicKey, __] =
-            await anchor.web3.PublicKey.findProgramAddress(
-                [escrowSeed],
-                program.programId
-            );
-    });
-    // init
-    it("initializes escrow", async () => {
-        await program.rpc.initializeEscrow(escrowSeed, {
-            accounts: {
-                user: provider.wallet.publicKey,
-                escrow: pdaEscrowPublicKey,
-                ledger: pdaLedgerPublicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
-            }
-        });
-        let actualEscrow = await program.account.escrow.fetch(
-            pdaEscrowPublicKey
-        );
-        let actualLedger = await program.account.ledger.fetch(
-            pdaLedgerPublicKey
-        );
-        console.log(actualEscrow)
-        console.log(actualLedger)
-        // assertions
-        assert.ok(actualEscrow.items.length === 0)
-        assert.ok(actualEscrow.boss.toString() === actualLedger.boss.toString())
-    });
     // submit
     it("submit to escrow", async () => {
         const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
         await program02.rpc.submitToEscrow(new anchor.BN(price), {
             accounts: {
                 seller: user02.key.publicKey,
-                escrow: pdaEscrowPublicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
-        let actualEscrow = await program.account.escrow.fetch(
-            pdaEscrowPublicKey
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
         );
-        console.log(actualEscrow)
+        console.log(actualLedger)
         // assertions
-        assert.ok(actualEscrow.items.length === 1)
+        assert.ok(actualLedger.escrow.length === 1)
     });
     // submit
     it("submit to escrow failed without ledger ownership", async () => {
-        let seller = await createUser();
-        let _program = programForUser(seller)
+        const seller = await createUser();
+        const _program = programForUser(seller)
         const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
         try {
             await _program.rpc.submitToEscrow(new anchor.BN(price), {
                 accounts: {
                     seller: seller.key.publicKey,
-                    escrow: pdaEscrowPublicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 }
@@ -198,11 +164,11 @@ describe("somos-solana", () => {
             assert.ok(error.code === 6002)
             console.log(error);
         }
-        let actualEscrow = await _program.account.escrow.fetch(
-            pdaEscrowPublicKey
+        const actualLedger = await _program.account.ledger.fetch(
+            pdaLedgerPublicKey
         );
         // assertions
-        assert.ok(actualEscrow.items.length === 1)
+        assert.ok(actualLedger.escrow.length === 1)
     });
     // purchase secondary
     it("fail on purchase secondary when item is not on escrow", async () => {
@@ -218,7 +184,6 @@ describe("somos-solana", () => {
                     buyer: buyer.key.publicKey,
                     seller: seller,
                     boss: boss,
-                    escrow: pdaEscrowPublicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 }
@@ -242,7 +207,6 @@ describe("somos-solana", () => {
                     buyer: buyer.key.publicKey,
                     seller: boss, // should be user02 (seller)
                     boss: boss,
-                    escrow: pdaEscrowPublicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 }
@@ -260,8 +224,8 @@ describe("somos-solana", () => {
         const seller = user02.key.publicKey;
         const boss = provider.wallet.publicKey;
         // balances
-        let balanceSeller = await provider.connection.getBalance(seller);
-        let balanceBoss = await provider.connection.getBalance(boss);
+        const balanceSeller = await provider.connection.getBalance(seller);
+        const balanceBoss = await provider.connection.getBalance(boss);
         // items
         const price1 = 0.20 * anchor.web3.LAMPORTS_PER_SOL;
         const price2 = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
@@ -274,7 +238,6 @@ describe("somos-solana", () => {
                     buyer: buyer.key.publicKey,
                     seller: seller,
                     boss: boss,
-                    escrow: pdaEscrowPublicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 }
@@ -289,25 +252,20 @@ describe("somos-solana", () => {
                 buyer: buyer.key.publicKey,
                 seller: seller,
                 boss: boss,
-                escrow: pdaEscrowPublicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
         // PDAs
-        const actualEscrow = await program.account.escrow.fetch(
-            pdaEscrowPublicKey
-        );
-        console.log(actualEscrow)
         const actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
         )
         console.log(actualLedger)
         // balances
-        let newBalanceSeller = await provider.connection.getBalance(seller);
-        let newBalanceBoss = await provider.connection.getBalance(boss);
+        const newBalanceSeller = await provider.connection.getBalance(seller);
+        const newBalanceBoss = await provider.connection.getBalance(boss);
         // assertions
-        assert.ok(actualEscrow.items.length === 0)
+        assert.ok(actualLedger.escrow.length === 0)
         const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         assert.ok(owners.includes(buyer.key.publicKey.toString()))
         assert.ok(owners.filter(pk => pk === seller.toString()).length === 1) // used to have ownership of 2
