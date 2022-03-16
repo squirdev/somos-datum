@@ -129,6 +129,8 @@ pub enum LedgerErrors {
     ItemNotForSale,
     #[msg("seller unauthorized to sell this item.")]
     UnauthorizedSeller,
+    #[msg("items still available in primary market.")]
+    PrimarySaleStillOn,
 }
 
 impl Ledger {
@@ -229,14 +231,20 @@ impl EscrowItem {
         price: u64,
         ledger: &mut Ledger,
     ) -> Result<()> {
-        // validate seller
-        match EscrowItem::validate_seller(seller, ledger) {
+        // validate ledger
+        match EscrowItem::validate_ledger(ledger) {
             Ok(_) => {
-                // build item
-                let escrow_item = EscrowItem { price, seller: *seller.key };
-                // add item to escrow
-                ledger.escrow.push(escrow_item);
-                Ok(())
+                // validate seller
+                match EscrowItem::validate_seller(seller, ledger) {
+                    Ok(_) => {
+                        // build item
+                        let escrow_item = EscrowItem { price, seller: *seller.key };
+                        // add item to escrow
+                        ledger.escrow.push(escrow_item);
+                        Ok(())
+                    }
+                    err @ Err(_) => { err }
+                }
             }
             err @ Err(_) => { err }
         }
@@ -271,6 +279,14 @@ impl EscrowItem {
         match ledger.owners.contains(seller.key) {
             true => { Ok(()) }
             false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
+        }
+    }
+
+    fn validate_ledger(ledger: &Ledger) -> Result<()> {
+        // primary market should be sold out first
+        match ledger.original_supply_remaining == 0 {
+            true => { Ok(()) }
+            false => { Err(LedgerErrors::PrimarySaleStillOn.into()) }
         }
     }
 

@@ -59,6 +59,28 @@ describe("somos-solana", () => {
         assert.ok(actualLedger.originalSupplyRemaining === 2)
         assert.ok(diff === 100000000)
     });
+    // submit escrow
+    it("submit to escrow should fail when primary market is not sold out", async () => {
+        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
+        try {
+            await program02.rpc.submitToEscrow(new anchor.BN(price), {
+                accounts: {
+                    seller: user02.key.publicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            assert.ok(error.code === 6005)
+            console.log(error)
+        }
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        // assertions
+        assert.ok(actualLedger.escrow.length === 0)
+    });
     // purchase primary sold out
     it("purchase primary sold out", async () => {
         const balance = await provider.connection.getBalance(provider.wallet.publicKey)
