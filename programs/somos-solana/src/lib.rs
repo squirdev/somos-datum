@@ -43,8 +43,7 @@ pub mod somos_solana {
             ledger,
         )
     }
-
-    // TODO; assert ledger is empty
+    
     pub fn submit_to_escrow(
         ctx: Context<SubmitToEscrow>,
         price: u64,
