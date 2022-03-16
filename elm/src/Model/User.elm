@@ -66,19 +66,19 @@ encode withContext =
             case withContext of
                 BuyerWith json ->
                     Encode.object
-                        [ ("user", Encode.string "buyer")
+                        [ ("user", Encode.string (toString Buyer))
                         , ("more", Encode.string json)
                         ]
 
                 SellerWith json ->
                     Encode.object
-                        [ ("user", Encode.string "seller")
+                        [ ("user", Encode.string (toString Seller))
                         , ("more", Encode.string json)
                         ]
 
                 AdminWith json ->
                     Encode.object
-                        [ ("user", Encode.string "admin")
+                        [ ("user", Encode.string (toString Admin))
                         , ("more", Encode.string json)
                         ]
 

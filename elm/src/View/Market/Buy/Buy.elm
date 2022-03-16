@@ -127,7 +127,7 @@ body buyer =
                         , Html.div
                             []
                             [ Html.button
-                                [ onClick (ToAnchor (InitProgram publicKey))
+                                [ onClick (ToAnchor (InitProgram (User.BuyerWith publicKey)))
                                 ]
                                 [ Html.text "Init"
                                 ]

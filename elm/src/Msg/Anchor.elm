@@ -1,10 +1,11 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
 import Model.PublicKey exposing (PublicKey)
+import Model.User as User exposing (User)
 
 
 type ToAnchorMsg
-    = InitProgram PublicKey
+    = InitProgram User.WithContext
     | PurchasePrimary PublicKey
 
 

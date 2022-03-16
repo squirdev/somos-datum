@@ -23,7 +23,7 @@ import Model.State as State exposing (State(..))
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import Sub.Anchor exposing (initProgramSender, isConnectedSender, purchasePrimarySender)
+import Sub.Anchor exposing (initProgramSender, getCurrentStateSender, purchasePrimarySender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
@@ -93,12 +93,12 @@ update msg model =
                             case user of
                                 User.BuyerWith publicKey ->
                                     ( { model | state = Buy (Buyer.WaitingForStateLookup publicKey) }
-                                    , isConnectedSender json
+                                    , getCurrentStateSender json
                                     )
 
                                 User.SellerWith publicKey ->
                                     ( { model | state = Sell (Seller.WaitingForStateLookup publicKey) }
-                                    , isConnectedSender json
+                                    , getCurrentStateSender json
                                     )
 
                                 User.AdminWith publicKey ->
@@ -142,7 +142,7 @@ update msg model =
             case toAnchorMsg of
                 InitProgram user ->
                     ( model
-                    , initProgramSender user
+                    , initProgramSender (User.encode user)
                     )
 
                 PurchasePrimary user ->

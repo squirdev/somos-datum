@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Model.Admin exposing (Admin(..))
 import Model.PublicKey exposing (PublicKey)
 import Model.User as User
+import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 
@@ -41,13 +42,9 @@ body admin =
                                         ]
                                     , Html.button
                                         [ class "is-button-1"
+                                        , onClick (ToAnchor (InitProgram (User.AdminWith publicKey)))
                                         ]
-                                        [ Html.text "init ledger"
-                                        ]
-                                    , Html.button
-                                        [ class "is-button-1"
-                                        ]
-                                        [ Html.text "init escrow"
+                                        [ Html.text "init"
                                         ]
                                     ]
                                 ]

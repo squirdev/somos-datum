@@ -11,20 +11,21 @@ import {download} from "./download";
 
 // get phantom
 let phantom = null;
-app.ports.connectSender.subscribe(async function (user) {
-    phantom = await getPhantom(user)
-});
-
-// get current state as soon as user logs in
 let release01PubKey, _ = null;
-app.ports.isConnectedSender.subscribe(async function (user) {
-    // get provider & program
-    const pp = getPP(phantom);
+app.ports.connectSender.subscribe(async function (user) {
+    // get phantom
+    phantom = await getPhantom(user);
     // get program public key
     [release01PubKey, _] = await web3.PublicKey.findProgramAddress(
         [textEncoder.encode(ACCOUNT_SEED)],
         programID
     );
+});
+
+// get current state as soon as user logs in
+app.ports.getCurrentStateSender.subscribe(async function (user) {
+    // get provider & program
+    const pp = getPP(phantom);
     // invoke state request & send response to elm
     await getCurrentState(pp.program, release01PubKey, user);
 });
@@ -35,7 +36,7 @@ app.ports.initProgramSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom)
     // invoke init: release 01
-    await init(pp.program, pp.provider, release01PubKey, user, 0.025, 0.05, 100)
+    await init(pp.program, pp.provider, release01PubKey, user, 100, 0.025, 0.05)
 });
 
 // primary purchase

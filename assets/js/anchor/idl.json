@@ -46,42 +46,6 @@
       ]
     },
     {
-      "name": "initializeEscrow",
-      "accounts": [
-        {
-          "name": "escrow",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ledger",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "user",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "seed",
-          "type": {
-            "array": [
-              "u8",
-              16
-            ]
-          }
-        }
-      ]
-    },
-    {
       "name": "purchasePrimary",
       "accounts": [
         {
@@ -111,11 +75,6 @@
       "name": "submitToEscrow",
       "accounts": [
         {
-          "name": "escrow",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "ledger",
           "isMut": true,
           "isSigner": false
@@ -141,11 +100,6 @@
     {
       "name": "purchaseSecondary",
       "accounts": [
-        {
-          "name": "escrow",
-          "isMut": true,
-          "isSigner": false
-        },
         {
           "name": "ledger",
           "isMut": true,
@@ -207,32 +161,7 @@
             }
           },
           {
-            "name": "boss",
-            "type": "publicKey"
-          },
-          {
-            "name": "seed",
-            "type": {
-              "array": [
-                "u8",
-                16
-              ]
-            }
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Escrow",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "items",
+            "name": "escrow",
             "type": {
               "vec": {
                 "defined": "EscrowItem"
@@ -303,6 +232,16 @@
       "code": 6004,
       "name": "UnauthorizedSeller",
       "msg": "seller unauthorized to sell this item."
+    },
+    {
+      "code": 6005,
+      "name": "PrimarySaleStillOn",
+      "msg": "items still available in primary market."
+    },
+    {
+      "code": 6006,
+      "name": "DontBeGreedy",
+      "msg": "you've already purchased this item. don't be greedy."
     }
   ],
   "metadata": {
