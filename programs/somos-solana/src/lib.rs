@@ -28,7 +28,6 @@ pub mod somos_solana {
         Ok(())
     }
 
-    // TODO; assert against more than one purchase per client
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
     ) -> Result<()> {
@@ -43,7 +42,7 @@ pub mod somos_solana {
             ledger,
         )
     }
-    
+
     pub fn submit_to_escrow(
         ctx: Context<SubmitToEscrow>,
         price: u64,
@@ -52,8 +51,7 @@ pub mod somos_solana {
         let ledger = &mut ctx.accounts.ledger;
         EscrowItem::submit_to_escrow(seller, price, ledger)
     }
-
-    // TODO; assert against more than one purchase per client
+    
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,
@@ -130,6 +128,8 @@ pub enum LedgerErrors {
     UnauthorizedSeller,
     #[msg("items still available in primary market.")]
     PrimarySaleStillOn,
+    #[msg("you've already purchased this item. don't be greedy.")]
+    DontBeGreedy,
 }
 
 impl Ledger {
@@ -139,7 +139,7 @@ impl Ledger {
         boss_pubkey: &Pubkey,
         ledger: &mut Ledger,
     ) -> Result<()> {
-        match Ledger::validate_primary(ledger, boss, boss_pubkey) {
+        match Ledger::validate(ledger, purchaser, boss, boss_pubkey) {
             Ok(_) => {
                 match Ledger::collect(ledger.price, purchaser, boss) {
                     ok @ Ok(_) => {
@@ -154,15 +154,39 @@ impl Ledger {
         }
     }
 
-    pub fn validate_primary(ledger: &Ledger, boss: &mut SystemAccount, boss_pubkey: &Pubkey) -> Result<()> {
+    pub fn validate(
+        ledger: &Ledger,
+        purchaser: &mut Signer,
+        boss: &mut SystemAccount,
+        boss_pubkey: &Pubkey,
+    ) -> Result<()> {
+        // validate boss
         match boss.key == boss_pubkey {
             true => {
-                match ledger.original_supply_remaining > 0 {
-                    true => { Ok(()) }
-                    false => { Err(LedgerErrors::SoldOut.into()) }
+                // validate first-time purchase
+                match Ledger::validate_first_time_purchase(ledger, purchaser) {
+                    Ok(_) => {
+                        // validate supply remaining
+                        match ledger.original_supply_remaining > 0 {
+                            true => { Ok(()) }
+                            false => { Err(LedgerErrors::SoldOut.into()) }
+                        }
+                    }
+                    err @ Err(_) => { err }
                 }
             }
             false => Err(LedgerErrors::BossUp.into())
+        }
+    }
+
+    pub fn validate_first_time_purchase(ledger: &Ledger, purchaser: &mut Signer) -> Result<()> {
+        match ledger.owners.contains(purchaser.key) {
+            true => {
+                Err(LedgerErrors::DontBeGreedy.into())
+            }
+            false => {
+                Ok(())
+            }
         }
     }
 
@@ -256,21 +280,29 @@ impl EscrowItem {
         seller: &mut SystemAccount<'a>,
         boss: &mut SystemAccount<'a>,
     ) -> Result<()> {
-        // validate
-        match EscrowItem::validate_escrow_item(escrow_item, ledger, seller) {
+        // validate buyer
+        match Ledger::validate_first_time_purchase(ledger, buyer) {
             Ok(_) => {
-                // pop
-                match EscrowItem::pop_escrow_item(escrow_item, ledger) {
+                // validate escrow item
+                match EscrowItem::validate_escrow_item(escrow_item, ledger, seller) {
                     Ok(_) => {
-                        // push
-                        ledger.owners.push(buyer.key());
-                        // collect
-                        EscrowItem::collect(escrow_item, buyer, seller, boss, ledger.resale)
+                        // pop
+                        match EscrowItem::pop_escrow_item(escrow_item, ledger) {
+                            Ok(_) => {
+                                // push
+                                ledger.owners.push(buyer.key());
+                                // collect
+                                EscrowItem::collect(escrow_item, buyer, seller, boss, ledger.resale)
+                            }
+                            err @ Err(_) => { err }
+                        }
                     }
                     err @ Err(_) => { err }
                 }
             }
-            err @ Err(_) => { err }
+            err @ Err(_) => {
+                err
+            }
         }
     }
 

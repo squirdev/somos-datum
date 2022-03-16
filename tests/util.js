@@ -13,6 +13,9 @@ export const program02 = programForUser(user02)
 // instantiate user03
 export const user03 = await createUser();
 export const program03 = programForUser(user03)
+// instantiate user04
+export const user04 = await createUser();
+export const program04 = programForUser(user04)
 
 // create 2nd (or more) user
 export async function createUser(airdropBalance) {
