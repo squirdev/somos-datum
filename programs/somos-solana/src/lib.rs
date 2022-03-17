@@ -102,6 +102,7 @@ pub struct Ledger {
     // supply
     pub price: u64,
     pub resale: f64,
+    // TODO; original_supply
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,
