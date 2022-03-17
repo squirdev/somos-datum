@@ -13,13 +13,13 @@ import {download} from "./download";
 let phantom = null;
 let release01PubKey, _ = null;
 app.ports.connectSender.subscribe(async function (user) {
-    // get phantom
-    phantom = await getPhantom(user);
     // get program public key
     [release01PubKey, _] = await web3.PublicKey.findProgramAddress(
         [textEncoder.encode(ACCOUNT_SEED)],
         programID
     );
+    // get phantom
+    phantom = await getPhantom(user);
 });
 
 // get current state as soon as user logs in
