@@ -6,7 +6,6 @@ import Model.PublicKey exposing (PublicKey)
 type Seller
     = WaitingForWallet
     | WaitingForStateLookup PublicKey
-    | NeedsToInitProgram PublicKey
     | WithoutOwnership PublicKey
 
 
@@ -17,9 +16,6 @@ getPublicKey seller =
             Nothing
 
         WaitingForStateLookup publicKey ->
-            Just publicKey
-
-        NeedsToInitProgram publicKey ->
             Just publicKey
 
         WithoutOwnership publicKey ->

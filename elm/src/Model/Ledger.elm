@@ -1,4 +1,4 @@
-module Model.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
+module Model.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError, checkOwnership)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
@@ -34,6 +34,13 @@ decodeSuccess string =
                 (Decode.field "user" Decode.string)
     in
     Decode.decodeString decoder string
+
+
+checkOwnership : Ledger -> Bool
+checkOwnership ledger =
+    List.member
+        ledger.user
+        ledger.owners
 
 
 

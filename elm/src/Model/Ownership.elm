@@ -5,5 +5,5 @@ import Model.Ledger exposing (Ledger)
 
 
 type Ownership
-    = Console Ledger Int
+    = Console Ledger
     | Download DownloadStatus

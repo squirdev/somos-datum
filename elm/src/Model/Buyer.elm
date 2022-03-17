@@ -26,13 +26,13 @@ getPublicKey anchor =
         NeedsToInitProgram publicKey ->
             Just publicKey
 
-        WithoutOwnership anchorState ->
-            Just anchorState.user
+        WithoutOwnership ledger ->
+            Just ledger.user
 
         WithOwnership ownership ->
             case ownership of
-                Console anchorState _ ->
-                    Just anchorState.user
+                Console ledger ->
+                    Just ledger.user
 
                 Download downloadStatus ->
                     case downloadStatus of

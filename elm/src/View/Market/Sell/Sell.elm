@@ -139,23 +139,6 @@ body seller =
                             []
                         ]
 
-                NeedsToInitProgram publicKey ->
-                    Html.div
-                        []
-                        [ Html.div
-                            []
-                            [ Html.text publicKey
-                            ]
-                        , Html.div
-                            []
-                            [ Html.button
-                                [ onClick (ToAnchor (InitProgram (User.SellerWith publicKey)))
-                                ]
-                                [ Html.text "Init"
-                                ]
-                            ]
-                        ]
-
                 WithoutOwnership publicKey ->
                     let
                         slice_ =

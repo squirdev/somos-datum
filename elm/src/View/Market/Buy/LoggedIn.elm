@@ -9,7 +9,6 @@ import Model.Sol as Sol
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.Ownership exposing (Ownership(..))
 
 
 
@@ -18,7 +17,7 @@ import View.Market.Ownership exposing (Ownership(..))
 
 type alias Args =
     { ledger : Ledger
-    , ownership : Ownership
+    , ownership : Bool
     }
 
 
@@ -39,31 +38,12 @@ body args =
 
         purchase =
             case args.ownership of
-                Yes count ->
-                    case count == 1 of
-                        True ->
-                            Html.div
-                                []
-                                [ Html.button
-                                    [ class "is-button-1"
-                                    , style "width" "100%"
-                                    , onClick (ToAnchor (PurchasePrimary args.ledger.user))
-                                    ]
-                                    [ Html.text
-                                        (String.join
-                                            " "
-                                            [ "Purchase 2nd Copy:"
-                                            , String.fromFloat (Sol.fromLamports args.ledger.price)
-                                            , "SOL"
-                                            ]
-                                        )
-                                    ]
-                                ]
+                True ->
+                    Html.div
+                        []
+                        []
 
-                        False ->
-                            Html.div [] []
-
-                No ->
+                False ->
                     Html.div
                         []
                         [ Html.button
@@ -83,28 +63,32 @@ body args =
                         ]
 
         maybeCount =
-            case args.ownership of
-                Yes int ->
-                    Html.div
-                        [ class "my-2"
-                        ]
-                        [ Html.p
-                            []
-                            [ Html.text "your ownership: "
-                            , Html.b
-                                [ class "has-border-2 px-1 py-1"
-                                ]
-                                [ Html.text (String.fromInt int)
-                                ]
-                            ]
-                        ]
+            let
+                ownership =
+                    case args.ownership of
+                        True ->
+                            "yes 😎"
 
-                No ->
-                    Html.div [] []
+                        False ->
+                            "not yet 😅"
+            in
+            Html.div
+                [ class "my-2"
+                ]
+                [ Html.p
+                    []
+                    [ Html.text "ownership: "
+                    , Html.b
+                        [ class "has-border-2 px-1 py-1"
+                        ]
+                        [ Html.text ownership
+                        ]
+                    ]
+                ]
 
         maybeDownload =
             case args.ownership of
-                Yes _ ->
+                True ->
                     Html.div
                         []
                         [ Html.button
@@ -116,7 +100,7 @@ body args =
                             ]
                         ]
 
-                No ->
+                False ->
                     Html.div [] []
     in
     Html.div

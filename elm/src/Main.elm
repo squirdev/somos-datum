@@ -179,27 +179,15 @@ update msg model =
                                         -- it was the buy page
                                         User.BuyerWith moreJson ->
                                             case Ledger.decodeSuccess moreJson of
-                                                Ok anchorState ->
-                                                    let
-                                                        ownership : Int
-                                                        ownership =
-                                                            List.filter
-                                                                (\pk -> pk == anchorState.user)
-                                                                anchorState.owners
-                                                                |> List.length
+                                                Ok ledger ->
+                                                    case Ledger.checkOwnership ledger of
+                                                        True ->
+                                                            State.Buy <|
+                                                             Buyer.WithOwnership <|
+                                                                Ownership.Console ledger
 
-                                                        buyer : Buyer
-                                                        buyer =
-                                                            -- TODO; throws error
-                                                            case ownership > 0 of
-                                                                True ->
-                                                                    Buyer.WithOwnership <|
-                                                                        Ownership.Console anchorState ownership
-
-                                                                False ->
-                                                                    Buyer.WithoutOwnership anchorState
-                                                    in
-                                                    Buy buyer
+                                                        False ->
+                                                            State.Buy (Buyer.WithoutOwnership ledger)
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)

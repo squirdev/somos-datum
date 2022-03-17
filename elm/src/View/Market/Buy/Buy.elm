@@ -13,7 +13,6 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Buy.LoggedIn as LoggedIn
-import View.Market.Ownership
 
 
 body : Buyer -> Html Msg
@@ -135,12 +134,12 @@ body buyer =
                         ]
 
                 WithoutOwnership ledger ->
-                    LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.No }
+                    LoggedIn.body { ledger = ledger, ownership = False }
 
                 WithOwnership ownership ->
                     case ownership of
-                        Ownership.Console ledger count ->
-                            LoggedIn.body { ledger = ledger, ownership = View.Market.Ownership.Yes count }
+                        Ownership.Console ledger ->
+                            LoggedIn.body { ledger = ledger, ownership = True }
 
                         Ownership.Download downloadStatus ->
                             case downloadStatus of
