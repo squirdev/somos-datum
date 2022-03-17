@@ -7,7 +7,6 @@ import Model.PublicKey as PublicKey
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
 import Model.User as User
-import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 
