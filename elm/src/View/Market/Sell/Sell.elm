@@ -139,10 +139,10 @@ body seller =
                             []
                         ]
 
-                WithoutOwnership publicKey ->
+                WithOwnership ledger ->
                     let
                         slice_ =
-                            PublicKey.slice publicKey
+                            PublicKey.slice ledger.user
                     in
                     Html.div
                         []
@@ -154,9 +154,29 @@ body seller =
                             ]
                         , Html.text
                             """
-                            now what
+                            TODO; shared ui (with ownership)
                             """
                         ]
+
+                WithoutOwnership ledger ->
+                    let
+                        slice_ =
+                            PublicKey.slice ledger.user
+                    in
+                    Html.div
+                        []
+                        [ Html.div
+                            [ class "has-border-2 has-font-2 px-2 py-2"
+                            , style "float" "right"
+                            ]
+                            [ Html.text slice_
+                            ]
+                        , Html.text
+                            """
+                            TODO; shared ui (without ownership)
+                            """
+                        ]
+
     in
     Html.div
         [ class "container"

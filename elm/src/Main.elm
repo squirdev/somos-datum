@@ -194,8 +194,18 @@ update msg model =
 
                                         -- it was the sell page
                                         User.SellerWith moreJson ->
-                                            -- TODO; Escrow model
-                                            State.Sell (Seller.WithoutOwnership "pubkey")
+                                            case Ledger.decodeSuccess moreJson of
+                                                Ok ledger ->
+                                                    case Ledger.checkOwnership ledger of
+                                                        True ->
+                                                            State.Sell (Seller.WithOwnership ledger)
+
+                                                        False ->
+                                                            State.Sell (Seller.WithoutOwnership ledger)
+
+                                                Err jsonError ->
+                                                    State.Error (Decode.errorToString jsonError)
+
 
                                         User.AdminWith publicKey ->
                                             State.Admin (Admin.HasWallet publicKey)
