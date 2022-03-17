@@ -124,7 +124,13 @@ update msg model =
                     in
                     case maybeSignature of
                         Ok signature ->
-                            ( { model | state = Buy (Buyer.WithOwnership (Ownership.Download (DownloadStatus.InvokedAndWaiting signature))) }
+                            ( { model
+                                | state =
+                                    Buy <|
+                                        Buyer.WithOwnership <|
+                                            Ownership.Download <|
+                                                DownloadStatus.InvokedAndWaiting signature
+                              }
                             , Download.post signature
                             )
 
