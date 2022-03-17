@@ -181,7 +181,8 @@ update msg model =
                                                          buyer =
                                                              case ownership > 0 of
                                                                  True ->
-                                                                     Buyer.WithOwnership (Ownership.Console anchorState ownership)
+                                                                     Buyer.WithOwnership
+                                                                        <| (Ownership.Console anchorState ownership)
 
                                                                  False ->
                                                                      Buyer.WithoutOwnership anchorState
