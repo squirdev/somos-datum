@@ -179,6 +179,7 @@ update msg model =
 
                                                         buyer : Buyer
                                                         buyer =
+                                                            -- TODO; throws error
                                                             case ownership > 0 of
                                                                 True ->
                                                                     Buyer.WithOwnership <|
