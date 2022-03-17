@@ -152,8 +152,13 @@ update msg model =
                     )
 
                 PurchasePrimary user ->
+                    let
+                        json : String
+                        json =
+                            User.encode (User.BuyerWith user)
+                    in
                     ( model
-                    , purchasePrimarySender user
+                    , purchasePrimarySender json
                     )
 
         FromAnchor fromAnchorMsg ->
