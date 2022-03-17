@@ -10,6 +10,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 
+
 body : Admin -> Html Msg
 body admin =
     let
@@ -25,7 +26,6 @@ body admin =
                             [ Html.text "connect"
                             ]
                         ]
-
 
                 HasWallet publicKey ->
                     case publicKey == boss of

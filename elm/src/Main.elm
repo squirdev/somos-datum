@@ -14,16 +14,16 @@ import Model.Admin as Admin
 import Model.Buyer as Buyer exposing (Buyer)
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger as Ledger exposing (Ledger)
-import Model.Ownership as Ownership
-import Model.Seller as Seller
-import Model.User as User exposing (User, WithContext)
 import Model.Model as Model exposing (Model)
+import Model.Ownership as Ownership
 import Model.Phantom as Phantom
+import Model.Seller as Seller
 import Model.State as State exposing (State(..))
+import Model.User as User exposing (User, WithContext)
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import Sub.Anchor exposing (initProgramSender, getCurrentStateSender, purchasePrimarySender)
+import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
@@ -156,7 +156,7 @@ update msg model =
                     let
                         maybeUser : Result String User.WithContext
                         maybeUser =
-                           User.decode json
+                            User.decode json
 
                         update_ : State
                         update_ =
@@ -168,29 +168,29 @@ update msg model =
                                         -- it was the buy page
                                         User.BuyerWith moreJson ->
                                             case Ledger.decodeSuccess moreJson of
-                                                 Ok anchorState ->
-                                                     let
-                                                         ownership : Int
-                                                         ownership =
-                                                             List.filter
-                                                                 (\pk -> pk == anchorState.user)
-                                                                 anchorState.owners
-                                                                 |> List.length
+                                                Ok anchorState ->
+                                                    let
+                                                        ownership : Int
+                                                        ownership =
+                                                            List.filter
+                                                                (\pk -> pk == anchorState.user)
+                                                                anchorState.owners
+                                                                |> List.length
 
-                                                         buyer : Buyer
-                                                         buyer =
-                                                             case ownership > 0 of
-                                                                 True ->
-                                                                     Buyer.WithOwnership
-                                                                        <| (Ownership.Console anchorState ownership)
+                                                        buyer : Buyer
+                                                        buyer =
+                                                            case ownership > 0 of
+                                                                True ->
+                                                                    Buyer.WithOwnership <|
+                                                                        Ownership.Console anchorState ownership
 
-                                                                 False ->
-                                                                     Buyer.WithoutOwnership anchorState
-                                                     in
-                                                     Buy buyer
+                                                                False ->
+                                                                    Buyer.WithoutOwnership anchorState
+                                                    in
+                                                    Buy buyer
 
-                                                 Err jsonError ->
-                                                     State.Error (Decode.errorToString jsonError)
+                                                Err jsonError ->
+                                                    State.Error (Decode.errorToString jsonError)
 
                                         -- it was the sell page
                                         User.SellerWith moreJson ->
@@ -202,7 +202,6 @@ update msg model =
 
                                 Err error ->
                                     State.Error error
-
                     in
                     ( { model | state = update_ }
                     , Cmd.none
@@ -288,7 +287,6 @@ view model =
 
                 Error error ->
                     hero (View.Error.Error.body error)
-
     in
     { title = "store.somos.world"
     , body =

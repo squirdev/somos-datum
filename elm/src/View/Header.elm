@@ -5,8 +5,8 @@ import Html.Attributes exposing (class, src, style, width)
 import Html.Events exposing (onClick)
 import Model.Admin as Admin
 import Model.Buyer as Buyer exposing (Buyer(..))
-import Model.Seller as Seller
 import Model.Model exposing (Model)
+import Model.Seller as Seller
 import Model.State as State exposing (State(..))
 import Model.User as User
 import Msg.Msg exposing (Msg(..))
@@ -79,7 +79,6 @@ view model =
                         , title = title
                         , msg = NoOp
                         }
-
     in
     Html.nav
         [ class "is-navbar"
@@ -151,6 +150,7 @@ isActive model state =
             case model.state of
                 Sell _ ->
                     class_
+
                 _ ->
                     ""
 

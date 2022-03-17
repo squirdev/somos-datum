@@ -2,6 +2,7 @@ module Model.Admin exposing (Admin(..), getPublicKey)
 
 import Model.PublicKey exposing (PublicKey)
 
+
 type Admin
     = WaitingForWallet
     | HasWallet PublicKey

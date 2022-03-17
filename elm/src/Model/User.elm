@@ -1,12 +1,14 @@
-module Model.User exposing (User(..), WithContext(..), toString, encode, decode)
+module Model.User exposing (User(..), WithContext(..), decode, encode, toString)
 
 import Json.Decode as Decode
 import Json.Encode as Encode
+
 
 type User
     = Buyer
     | Seller
     | Admin
+
 
 toString : User -> String
 toString user =
@@ -20,17 +22,22 @@ toString user =
         Admin ->
             "admin"
 
+
 type WithContext
     = BuyerWith Json
     | SellerWith Json
     | AdminWith Json
 
-type alias Json = String
+
+type alias Json =
+    String
+
 
 type alias Context =
     { user : String -- buyer / seller / admin
     , more : Json -- more json
     }
+
 
 decode : Json -> Result String WithContext
 decode json =
@@ -59,6 +66,7 @@ decode json =
         Err error ->
             Err (Decode.errorToString error)
 
+
 encode : WithContext -> String
 encode withContext =
     let
@@ -66,21 +74,20 @@ encode withContext =
             case withContext of
                 BuyerWith json ->
                     Encode.object
-                        [ ("user", Encode.string (toString Buyer))
-                        , ("more", Encode.string json)
+                        [ ( "user", Encode.string (toString Buyer) )
+                        , ( "more", Encode.string json )
                         ]
 
                 SellerWith json ->
                     Encode.object
-                        [ ("user", Encode.string (toString Seller))
-                        , ("more", Encode.string json)
+                        [ ( "user", Encode.string (toString Seller) )
+                        , ( "more", Encode.string json )
                         ]
 
                 AdminWith json ->
                     Encode.object
-                        [ ("user", Encode.string (toString Admin))
-                        , ("more", Encode.string json)
+                        [ ( "user", Encode.string (toString Admin) )
+                        , ( "more", Encode.string json )
                         ]
-
     in
     Encode.encode 0 encoder

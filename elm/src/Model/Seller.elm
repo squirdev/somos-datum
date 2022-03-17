@@ -2,6 +2,7 @@ module Model.Seller exposing (Seller(..), getPublicKey)
 
 import Model.PublicKey exposing (PublicKey)
 
+
 type Seller
     = WaitingForWallet
     | WaitingForStateLookup PublicKey
@@ -22,4 +23,4 @@ getPublicKey seller =
             Just publicKey
 
         WithoutOwnership publicKey ->
-             Just publicKey
+            Just publicKey

@@ -9,7 +9,7 @@ type alias Sol =
 
 fromLamports : Lamports -> Sol
 fromLamports lamports =
-    (toFloat lamports) / lamportsPerSol
+    toFloat lamports / lamportsPerSol
 
 
 

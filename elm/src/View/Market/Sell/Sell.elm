@@ -3,8 +3,8 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
-import Model.Seller exposing (Seller(..))
 import Model.PublicKey as PublicKey
+import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
 import Model.User as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -174,13 +174,13 @@ body seller =
                             now what
                             """
                         ]
-
     in
     Html.div
         [ class "container"
         ]
         [ html
         ]
+
 
 check : Html msg
 check =

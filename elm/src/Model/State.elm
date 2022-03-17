@@ -64,7 +64,6 @@ path state =
             "#/invalid"
 
 
-
 href : State -> Html.Attribute msg
 href state =
     Html.Attributes.href (path state)
