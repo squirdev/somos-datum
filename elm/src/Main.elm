@@ -212,6 +212,7 @@ update msg model =
                     let
                         maybeLedgerLookupFailure : Result Decode.Error Ledger.LedgerLookupFailure
                         maybeLedgerLookupFailure =
+                            -- TODO; drop in favor of admin init
                             Ledger.decodeFailure error
 
                         update_ : State
