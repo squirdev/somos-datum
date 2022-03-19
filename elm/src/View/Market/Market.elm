@@ -1,28 +1,17 @@
-module View.Market.Buy.LoggedIn exposing (Args, body)
+module View.Market.Market exposing (Args, body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
-import Html.Events exposing (onClick)
 import Model.Ledger exposing (Ledger)
 import Model.PublicKey as PublicKey
-import Model.Sol as Sol
-import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
-import Msg.Phantom exposing (ToPhantomMsg(..))
-
-
-
--- TODO; as buy/sell ADT
 
 
 type alias Args =
     { ledger : Ledger
     , ownership : Bool
+    , button : Html Msg
     }
-
-
-
--- TODO; move to root
 
 
 body : Args -> Html Msg
@@ -36,36 +25,12 @@ body args =
                 [ Html.text (PublicKey.slice args.ledger.user)
                 ]
 
-        purchase =
-            case args.ownership of
-                True ->
-                    Html.div
-                        []
-                        []
-
-                False ->
-                    Html.div
-                        []
-                        [ Html.button
-                            [ class "is-button-1"
-                            , style "width" "100%"
-                            , onClick (ToAnchor (PurchasePrimary args.ledger.user))
-                            ]
-                            [ Html.text
-                                (String.join
-                                    " "
-                                    [ "Purchase:"
-                                    , String.fromFloat (Sol.fromLamports args.ledger.price)
-                                    , "SOL"
-                                    ]
-                                )
-                            ]
-                        ]
-
-        maybeCount =
+        ownership : Html Msg
+        ownership =
             let
-                ownership =
-                    case args.ownership of
+                toString : Bool -> String
+                toString bool =
+                    case bool of
                         True ->
                             "yes 😎"
 
@@ -81,27 +46,10 @@ body args =
                     , Html.b
                         [ class "has-border-2 px-1 py-1"
                         ]
-                        [ Html.text ownership
+                        [ Html.text (toString args.ownership)
                         ]
                     ]
                 ]
-
-        maybeDownload =
-            case args.ownership of
-                True ->
-                    Html.div
-                        []
-                        [ Html.button
-                            [ class "is-button-1"
-                            , style "width" "100%"
-                            , onClick (ToPhantom (SignMessage args.ledger.user))
-                            ]
-                            [ Html.text "Download"
-                            ]
-                        ]
-
-                False ->
-                    Html.div [] []
     in
     Html.div
         [ class "has-font-1"
@@ -220,9 +168,8 @@ body args =
                         ]
                     ]
                 ]
-            , maybeCount
-            , maybeDownload
-            , purchase
+            , ownership
+            , args.button
             ]
         ]
 

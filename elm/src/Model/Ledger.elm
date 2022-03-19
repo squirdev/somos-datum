@@ -1,4 +1,4 @@
-module Model.Ledger exposing (Ledger, LedgerLookupFailure, decodeFailure, decodeSuccess, isAccountDoesNotExistError, checkOwnership)
+module Model.Ledger exposing (Ledger, LedgerLookupFailure, checkOwnership, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)

@@ -5,25 +5,60 @@ import Html.Attributes exposing (class, href, style, target)
 import Html.Events exposing (onClick)
 import Model.Buyer exposing (Buyer(..))
 import Model.DownloadStatus as DownloadStatus
+import Model.Ledger exposing (Ledger)
 import Model.Ownership as Ownership
 import Model.PublicKey as PublicKey
+import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.User as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.Buy.LoggedIn as LoggedIn
+import View.Market.Market
 
 
 body : Buyer -> Html Msg
 body buyer =
     let
+        purchase : Ledger -> Html Msg
+        purchase ledger =
+            Html.div
+                []
+                [ Html.button
+                    [ class "is-button-1"
+                    , style "width" "100%"
+                    , onClick (ToAnchor (PurchasePrimary ledger.user))
+                    ]
+                    [ Html.text
+                        (String.join
+                            " "
+                            [ "Purchase:"
+                            , String.fromFloat (Sol.fromLamports ledger.price)
+                            , "SOL"
+                            ]
+                        )
+                    ]
+                ]
+
+        download : Ledger -> Html Msg
+        download ledger =
+            Html.div
+                []
+                [ Html.button
+                    [ class "is-button-1"
+                    , style "width" "100%"
+                    , onClick (ToPhantom (SignMessage ledger.user))
+                    ]
+                    [ Html.text "Download"
+                    ]
+                ]
+
         html =
             case buyer of
                 WaitingForWallet ->
                     let
-                        button : Html Msg
-                        button =
+                        connect : Html Msg
+                        connect =
                             Html.button
                                 [ class "is-button-1"
                                 , onClick (ToPhantom (Connect User.Buyer))
@@ -38,7 +73,7 @@ body buyer =
                             [ class "mr-2 mt-2"
                             , style "float" "right"
                             ]
-                            [ button
+                            [ connect
                             ]
                         , Html.div
                             []
@@ -90,7 +125,7 @@ body buyer =
                                 , Html.div
                                     [ class "mb-6"
                                     ]
-                                    [ button
+                                    [ connect
                                     , Html.text " your wallet to sign-in"
                                     ]
                                 ]
@@ -134,12 +169,20 @@ body buyer =
                         ]
 
                 WithoutOwnership ledger ->
-                    LoggedIn.body { ledger = ledger, ownership = False }
+                    View.Market.Market.body
+                        { ledger = ledger
+                        , ownership = False
+                        , button = purchase ledger
+                        }
 
                 WithOwnership ownership ->
                     case ownership of
                         Ownership.Console ledger ->
-                            LoggedIn.body { ledger = ledger, ownership = True }
+                            View.Market.Market.body
+                                { ledger = ledger
+                                , ownership = True
+                                , button = download ledger
+                                }
 
                         Ownership.Download downloadStatus ->
                             case downloadStatus of

@@ -9,6 +9,7 @@ import Model.State as State exposing (State(..))
 import Model.User as User
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
+import View.Market.Market
 
 
 body : Seller -> Html Msg
@@ -139,43 +140,18 @@ body seller =
                         ]
 
                 WithOwnership ledger ->
-                    let
-                        slice_ =
-                            PublicKey.slice ledger.user
-                    in
-                    Html.div
-                        []
-                        [ Html.div
-                            [ class "has-border-2 has-font-2 px-2 py-2"
-                            , style "float" "right"
-                            ]
-                            [ Html.text slice_
-                            ]
-                        , Html.text
-                            """
-                            TODO; shared ui (with ownership)
-                            """
-                        ]
+                    View.Market.Market.body
+                        { ledger = ledger
+                        , ownership = False
+                        , button = Html.div [] []
+                        }
 
                 WithoutOwnership ledger ->
-                    let
-                        slice_ =
-                            PublicKey.slice ledger.user
-                    in
-                    Html.div
-                        []
-                        [ Html.div
-                            [ class "has-border-2 has-font-2 px-2 py-2"
-                            , style "float" "right"
-                            ]
-                            [ Html.text slice_
-                            ]
-                        , Html.text
-                            """
-                            TODO; shared ui (without ownership)
-                            """
-                        ]
-
+                    View.Market.Market.body
+                        { ledger = ledger
+                        , ownership = True
+                        , button = Html.div [] []
+                        }
     in
     Html.div
         [ class "container"

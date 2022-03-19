@@ -183,8 +183,8 @@ update msg model =
                                                     case Ledger.checkOwnership ledger of
                                                         True ->
                                                             State.Buy <|
-                                                             Buyer.WithOwnership <|
-                                                                Ownership.Console ledger
+                                                                Buyer.WithOwnership <|
+                                                                    Ownership.Console ledger
 
                                                         False ->
                                                             State.Buy (Buyer.WithoutOwnership ledger)
@@ -205,7 +205,6 @@ update msg model =
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
-
 
                                         User.AdminWith publicKey ->
                                             State.Admin (Admin.HasWallet publicKey)
