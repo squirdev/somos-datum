@@ -146,9 +146,9 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
-                InitProgram user ->
+                InitProgram pda ->
                     ( model
-                    , initProgramSender (User.encode user)
+                    , initProgramSender (User.encode (User.AdminWith pda))
                     )
 
                 PurchasePrimary user ->
@@ -178,7 +178,7 @@ update msg model =
                                     case user of
                                         -- it was the buy page
                                         User.BuyerWith moreJson ->
-                                            case Ledger.decodeSuccess moreJson of
+                                            case Ledger.decode moreJson of
                                                 Ok ledger ->
                                                     case Ledger.checkOwnership ledger of
                                                         True ->
@@ -194,7 +194,7 @@ update msg model =
 
                                         -- it was the sell page
                                         User.SellerWith moreJson ->
-                                            case Ledger.decodeSuccess moreJson of
+                                            case Ledger.decode moreJson of
                                                 Ok ledger ->
                                                     case Ledger.checkOwnership ledger of
                                                         True ->
@@ -217,27 +217,7 @@ update msg model =
                     )
 
                 Msg.Anchor.FailureOnStateLookup error ->
-                    let
-                        maybeLedgerLookupFailure : Result Decode.Error Ledger.LedgerLookupFailure
-                        maybeLedgerLookupFailure =
-                            -- TODO; drop in favor of admin init
-                            Ledger.decodeFailure error
-
-                        update_ : State
-                        update_ =
-                            case maybeLedgerLookupFailure of
-                                Ok anchorStateLookupFailure ->
-                                    case Ledger.isAccountDoesNotExistError anchorStateLookupFailure.error of
-                                        True ->
-                                            Buy (Buyer.NeedsToInitProgram anchorStateLookupFailure.user)
-
-                                        False ->
-                                            State.Error error
-
-                                Err jsonError ->
-                                    State.Error (Decode.errorToString jsonError)
-                    in
-                    ( { model | state = update_ }, Cmd.none )
+                    ( { model | state = State.Error error }, Cmd.none )
 
                 Msg.Anchor.FailureOnInitProgram error ->
                     ( { model | state = State.Error error }, Cmd.none )

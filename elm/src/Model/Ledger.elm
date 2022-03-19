@@ -1,4 +1,4 @@
-module Model.Ledger exposing (Ledger, LedgerLookupFailure, checkOwnership, decodeFailure, decodeSuccess, isAccountDoesNotExistError)
+module Model.Ledger exposing (Ledger, checkOwnership, decode)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
@@ -21,8 +21,8 @@ type alias Ledger =
     }
 
 
-decodeSuccess : String -> Result Decode.Error Ledger
-decodeSuccess string =
+decode : String -> Result Decode.Error Ledger
+decode string =
     let
         decoder : Decode.Decoder Ledger
         decoder =
@@ -41,35 +41,3 @@ checkOwnership ledger =
     List.member
         ledger.user
         ledger.owners
-
-
-
--- Failure
-
-
-type alias LedgerLookupFailure =
-    { error : String
-    , user : String
-    }
-
-
-decodeFailure : String -> Result Decode.Error LedgerLookupFailure
-decodeFailure string =
-    let
-        decoder =
-            Decode.map2 LedgerLookupFailure
-                (Decode.field "error" Decode.string)
-                (Decode.field "user" Decode.string)
-    in
-    Decode.decodeString decoder string
-
-
-isAccountDoesNotExistError : String -> Bool
-isAccountDoesNotExistError error =
-    let
-        dne : String
-        dne =
-            "account does not exist"
-    in
-    String.toLower error
-        |> String.contains dne

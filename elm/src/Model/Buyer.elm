@@ -9,7 +9,6 @@ import Model.PublicKey exposing (PublicKey)
 type Buyer
     = WaitingForWallet
     | WaitingForStateLookup PublicKey
-    | NeedsToInitProgram PublicKey
     | WithoutOwnership Ledger
     | WithOwnership Ownership
 
@@ -21,9 +20,6 @@ getPublicKey anchor =
             Nothing
 
         WaitingForStateLookup publicKey ->
-            Just publicKey
-
-        NeedsToInitProgram publicKey ->
             Just publicKey
 
         WithoutOwnership ledger ->

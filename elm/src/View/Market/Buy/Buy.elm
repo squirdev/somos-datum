@@ -151,23 +151,6 @@ body buyer =
                             []
                         ]
 
-                NeedsToInitProgram publicKey ->
-                    Html.div
-                        []
-                        [ Html.div
-                            []
-                            [ Html.text publicKey
-                            ]
-                        , Html.div
-                            []
-                            [ Html.button
-                                [ onClick (ToAnchor (InitProgram (User.BuyerWith publicKey)))
-                                ]
-                                [ Html.text "Init"
-                                ]
-                            ]
-                        ]
-
                 WithoutOwnership ledger ->
                     View.Market.Market.body
                         { ledger = ledger

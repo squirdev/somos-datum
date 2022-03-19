@@ -42,7 +42,7 @@ body admin =
                                         ]
                                     , Html.button
                                         [ class "is-button-1"
-                                        , onClick (ToAnchor (InitProgram (User.AdminWith publicKey)))
+                                        , onClick (ToAnchor (InitProgram publicKey))
                                         ]
                                         [ Html.text "init"
                                         ]
