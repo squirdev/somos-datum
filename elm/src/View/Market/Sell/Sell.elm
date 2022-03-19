@@ -142,14 +142,14 @@ body seller =
                 WithOwnership ledger ->
                     View.Market.Market.body
                         { ledger = ledger
-                        , ownership = False
+                        , ownership = True
                         , button = Html.div [] []
                         }
 
                 WithoutOwnership ledger ->
                     View.Market.Market.body
                         { ledger = ledger
-                        , ownership = True
+                        , ownership = False
                         , button = Html.div [] []
                         }
     in
