@@ -3,7 +3,7 @@ module Sub.Sub exposing (subs)
 import Msg.Anchor exposing (FromAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (FromPhantomMsg(..))
-import Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener)
+import Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener, submitToEscrowFailureListener)
 import Sub.Phantom exposing (connectFailureListener, connectSuccessListener, signMessageFailureListener, signMessageSuccessListener)
 
 
@@ -30,7 +30,7 @@ subs =
                 FromAnchor (FailureOnStateLookup error)
             )
 
-        -- init program
+        -- anchor init program
         , initProgramFailureListener
             (\error ->
                 FromAnchor (FailureOnInitProgram error)
@@ -40,6 +40,12 @@ subs =
         , purchasePrimaryFailureListener
             (\error ->
                 FromAnchor (FailureOnPurchasePrimary error)
+            )
+
+        -- anchor submit to escrow
+        , submitToEscrowFailureListener
+            (\error ->
+                FromAnchor (FailureOnSubmitToEscrow error)
             )
 
         -- phantom sign message

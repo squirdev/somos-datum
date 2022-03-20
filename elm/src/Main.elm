@@ -161,6 +161,11 @@ update msg model =
                     , purchasePrimarySender json
                     )
 
+                SubmitToEscrow publicKey float ->
+                    -- TODO;
+                    ( model, Cmd.none )
+
+
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup json ->
@@ -224,6 +229,10 @@ update msg model =
 
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )
+
+                Msg.Anchor.FailureOnSubmitToEscrow error ->
+                    ( { model | state = State.Error error }, Cmd.none )
+
 
         AwsPreSign result ->
             case result of
