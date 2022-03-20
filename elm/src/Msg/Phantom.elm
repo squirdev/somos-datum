@@ -1,15 +1,15 @@
 module Msg.Phantom exposing (FromPhantomMsg(..), ToPhantomMsg(..))
 
-import Model.PublicKey exposing (PublicKey)
-import Model.User exposing (User)
+import Model.Wallet exposing (Wallet)
+import Model.Role exposing (Role)
 
 
 type
     ToPhantomMsg
     -- connection attempt
-    = Connect User
+    = Connect Role
       -- sign message attempt
-    | SignMessage PublicKey
+    | SignMessage Wallet
 
 
 type

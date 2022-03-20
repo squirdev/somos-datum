@@ -1,15 +1,19 @@
 /*! https://docs.phantom.app/ */
 
-export async function getPhantom(user) {
+export async function getPhantom(role) {
     try {
         // connect
         const connection = await window.solana.connect();
         const publicKey = connection.publicKey;
         console.log("phantom wallet connected");
+        // more
+        const more = {
+            wallet: publicKey.toString()
+        }
         // encode
         const response = {
-            user: user,
-            more: publicKey.toString()
+            role: role,
+            more: JSON.stringify(more)
         }
         // send state to elm
         app.ports.connectSuccessListener.send(JSON.stringify(response));

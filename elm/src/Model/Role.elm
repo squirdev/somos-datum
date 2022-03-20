@@ -1,16 +1,16 @@
-module Model.User exposing (User(..), WithContext(..), decode, encode, toString)
+module Model.Role exposing (Role(..), WithContext(..), decode, encode, toString)
 
 import Json.Decode as Decode
 import Json.Encode as Encode
 
 
-type User
+type Role
     = Buyer
     | Seller
     | Admin
 
 
-toString : User -> String
+toString : Role -> String
 toString user =
     case user of
         Buyer ->
@@ -34,7 +34,7 @@ type alias Json =
 
 
 type alias Context =
-    { user : String -- buyer / seller / admin
+    { role : String -- buyer / seller / admin
     , more : Json -- more json
     }
 
@@ -45,12 +45,12 @@ decode json =
         decoder : Decode.Decoder Context
         decoder =
             Decode.map2 Context
-                (Decode.field "user" Decode.string)
+                (Decode.field "role" Decode.string)
                 (Decode.field "more" Decode.string)
     in
     case Decode.decodeString decoder json of
         Ok value ->
-            case value.user of
+            case value.role of
                 "buyer" ->
                     Ok (BuyerWith value.more)
 
@@ -74,19 +74,19 @@ encode withContext =
             case withContext of
                 BuyerWith json ->
                     Encode.object
-                        [ ( "user", Encode.string (toString Buyer) )
+                        [ ( "role", Encode.string (toString Buyer) )
                         , ( "more", Encode.string json )
                         ]
 
                 SellerWith json ->
                     Encode.object
-                        [ ( "user", Encode.string (toString Seller) )
+                        [ ( "role", Encode.string (toString Seller) )
                         , ( "more", Encode.string json )
                         ]
 
                 AdminWith json ->
                     Encode.object
-                        [ ( "user", Encode.string (toString Admin) )
+                        [ ( "role", Encode.string (toString Admin) )
                         , ( "more", Encode.string json )
                         ]
     in

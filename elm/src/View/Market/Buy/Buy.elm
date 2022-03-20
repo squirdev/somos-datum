@@ -7,10 +7,10 @@ import Model.Buyer exposing (Buyer(..))
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger exposing (Ledger)
 import Model.Ownership as Ownership
-import Model.PublicKey as PublicKey
+import Model.Wallet as PublicKey
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
-import Model.User as User
+import Model.Role as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -27,7 +27,7 @@ body buyer =
                 [ Html.button
                     [ class "is-button-1"
                     , style "width" "100%"
-                    , onClick (ToAnchor (PurchasePrimary ledger.user))
+                    , onClick (ToAnchor (PurchasePrimary ledger.wallet))
                     ]
                     [ Html.text
                         (String.join
@@ -47,7 +47,7 @@ body buyer =
                 [ Html.button
                     [ class "is-button-1"
                     , style "width" "100%"
-                    , onClick (ToPhantom (SignMessage ledger.user))
+                    , onClick (ToPhantom (SignMessage ledger.wallet))
                     ]
                     [ Html.text "Download"
                     ]

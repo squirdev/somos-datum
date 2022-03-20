@@ -1,27 +1,27 @@
-module Model.Seller exposing (Seller(..), getPublicKey)
+module Model.Seller exposing (Seller(..), getWallet)
 
 import Model.Ledger exposing (Ledger)
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 type Seller
     = WaitingForWallet
-    | WaitingForStateLookup PublicKey
+    | WaitingForStateLookup Wallet
     | WithOwnership Ledger
     | WithoutOwnership Ledger
 
 
-getPublicKey : Seller -> Maybe PublicKey
-getPublicKey seller =
+getWallet : Seller -> Maybe Wallet
+getWallet seller =
     case seller of
         WaitingForWallet ->
             Nothing
 
-        WaitingForStateLookup publicKey ->
-            Just publicKey
+        WaitingForStateLookup wallet ->
+            Just wallet
 
         WithOwnership ledger ->
-            Just ledger.user
+            Just ledger.wallet
 
         WithoutOwnership ledger ->
-            Just ledger.user
+            Just ledger.wallet

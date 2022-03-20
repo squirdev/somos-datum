@@ -8,7 +8,7 @@ import Model.Buyer as Buyer exposing (Buyer(..))
 import Model.Model exposing (Model)
 import Model.Seller as Seller
 import Model.State as State exposing (State(..))
-import Model.User as User
+import Model.Role as User
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 
@@ -24,16 +24,16 @@ view model =
         maybePublicKey =
             case model.state of
                 Buy buyer ->
-                    Buyer.getPublicKey buyer
+                    Buyer.getWallet buyer
 
                 Sell seller ->
-                    Seller.getPublicKey seller
+                    Seller.getWallet seller
 
                 About ->
                     Nothing
 
                 Admin admin ->
-                    Admin.getPublicKey admin
+                    Admin.getWallet admin
 
                 Error _ ->
                     Nothing

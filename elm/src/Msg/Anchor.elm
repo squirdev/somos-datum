@@ -1,12 +1,12 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 type ToAnchorMsg
-    = InitProgram PublicKey
-    | PurchasePrimary PublicKey
-    | SubmitToEscrow PublicKey Float
+    = InitProgram Wallet
+    | PurchasePrimary Wallet
+    | SubmitToEscrow Wallet Float
 
 
 type

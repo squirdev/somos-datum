@@ -4,8 +4,8 @@ import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model.Admin exposing (Admin(..))
-import Model.PublicKey exposing (PublicKey)
-import Model.User as User
+import Model.Wallet exposing (Wallet)
+import Model.Role as User
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -27,8 +27,8 @@ body admin =
                             ]
                         ]
 
-                HasWallet publicKey ->
-                    case publicKey == boss of
+                HasWallet wallet ->
+                    case wallet == boss of
                         True ->
                             Html.div
                                 [ class "columns is-multiline"
@@ -42,7 +42,7 @@ body admin =
                                         ]
                                     , Html.button
                                         [ class "is-button-1"
-                                        , onClick (ToAnchor (InitProgram publicKey))
+                                        , onClick (ToAnchor (InitProgram wallet))
                                         ]
                                         [ Html.text "init"
                                         ]
@@ -62,6 +62,6 @@ body admin =
         ]
 
 
-boss : PublicKey
+boss : Wallet
 boss =
     "DLXRomaskStghSHAyoFZMKnFk1saLYDhYggW25Ze4jug"

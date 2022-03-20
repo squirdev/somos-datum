@@ -2,7 +2,7 @@ module Model.Ledger exposing (Ledger, checkOwnership, decode)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 
@@ -13,11 +13,11 @@ type alias Ledger =
     { price : Lamports
     , resale : Float
     , originalSupplyRemaining : Int
-    , owners : List PublicKey
+    , owners : List Wallet
 
     -- not actually in the ledger
     -- just the current user
-    , user : PublicKey
+    , wallet : Wallet
     }
 
 
@@ -31,7 +31,7 @@ decode string =
                 (Decode.field "resale" Decode.float)
                 (Decode.field "originalSupplyRemaining" Decode.int)
                 (Decode.field "owners" (Decode.list Decode.string))
-                (Decode.field "user" Decode.string)
+                (Decode.field "wallet" Decode.string)
     in
     Decode.decodeString decoder string
 
@@ -39,5 +39,5 @@ decode string =
 checkOwnership : Ledger -> Bool
 checkOwnership ledger =
     List.member
-        ledger.user
+        ledger.wallet
         ledger.owners

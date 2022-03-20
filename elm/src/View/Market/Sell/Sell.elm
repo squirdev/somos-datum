@@ -3,10 +3,10 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style)
 import Html.Events exposing (onClick)
-import Model.PublicKey as PublicKey
+import Model.Wallet as PublicKey
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
-import Model.User as User
+import Model.Role as User
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Market

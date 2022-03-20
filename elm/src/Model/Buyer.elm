@@ -1,34 +1,34 @@
-module Model.Buyer exposing (Buyer(..), getPublicKey)
+module Model.Buyer exposing (Buyer(..), getWallet)
 
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger exposing (Ledger)
 import Model.Ownership exposing (Ownership(..))
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 type Buyer
     = WaitingForWallet
-    | WaitingForStateLookup PublicKey
+    | WaitingForStateLookup Wallet
     | WithoutOwnership Ledger
     | WithOwnership Ownership
 
 
-getPublicKey : Buyer -> Maybe PublicKey
-getPublicKey anchor =
+getWallet : Buyer -> Maybe Wallet
+getWallet anchor =
     case anchor of
         WaitingForWallet ->
             Nothing
 
-        WaitingForStateLookup publicKey ->
-            Just publicKey
+        WaitingForStateLookup wallet ->
+            Just wallet
 
         WithoutOwnership ledger ->
-            Just ledger.user
+            Just ledger.wallet
 
         WithOwnership ownership ->
             case ownership of
                 Console ledger ->
-                    Just ledger.user
+                    Just ledger.wallet
 
                 Download downloadStatus ->
                     case downloadStatus of

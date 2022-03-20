@@ -1,18 +1,18 @@
-module Model.Admin exposing (Admin(..), getPublicKey)
+module Model.Admin exposing (Admin(..), getWallet)
 
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 type Admin
     = WaitingForWallet
-    | HasWallet PublicKey
+    | HasWallet Wallet
 
 
-getPublicKey : Admin -> Maybe PublicKey
-getPublicKey admin =
+getWallet : Admin -> Maybe Wallet
+getWallet admin =
     case admin of
         WaitingForWallet ->
             Nothing
 
-        HasWallet publicKey ->
-            Just publicKey
+        HasWallet wallet ->
+            Just wallet

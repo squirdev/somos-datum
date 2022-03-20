@@ -3,7 +3,7 @@ module View.Market.Market exposing (Args, body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
 import Model.Ledger exposing (Ledger)
-import Model.PublicKey as PublicKey
+import Model.Wallet as PublicKey
 import Msg.Msg exposing (Msg(..))
 
 
@@ -22,7 +22,7 @@ body args =
                 [ class "has-border-2 has-font-2 px-2 py-2"
                 , style "float" "right"
                 ]
-                [ Html.text (PublicKey.slice args.ledger.user)
+                [ Html.text (PublicKey.slice args.ledger.wallet)
                 ]
 
         ownership : Html Msg

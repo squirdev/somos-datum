@@ -19,7 +19,8 @@ import Model.Ownership as Ownership
 import Model.Phantom as Phantom
 import Model.Seller as Seller
 import Model.State as State exposing (State(..))
-import Model.User as User exposing (User, WithContext)
+import Model.Role as Role exposing (Role, WithContext)
+import Model.Wallet as Wallet
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -75,9 +76,9 @@ update msg model =
 
         ToPhantom toPhantomMsg ->
             case toPhantomMsg of
-                Connect user ->
+                Connect role ->
                     ( model
-                    , connectSender (User.toString user)
+                    , connectSender (Role.toString role)
                     )
 
                 SignMessage user ->
@@ -88,23 +89,32 @@ update msg model =
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
                 Msg.Phantom.SuccessOnConnection json ->
-                    case User.decode json of
-                        Ok user ->
-                            case user of
-                                User.BuyerWith publicKey ->
-                                    ( { model | state = Buy (Buyer.WaitingForStateLookup publicKey) }
+                    case Role.decode json of
+                        Ok role ->
+                            case role of
+                                Role.BuyerWith wallet ->
+                                    ( { model | state = Buy (Buyer.WaitingForStateLookup wallet) }
                                     , getCurrentStateSender json
                                     )
 
-                                User.SellerWith publicKey ->
-                                    ( { model | state = Sell (Seller.WaitingForStateLookup publicKey) }
+                                Role.SellerWith wallet ->
+                                    ( { model | state = Sell (Seller.WaitingForStateLookup wallet) }
                                     , getCurrentStateSender json
                                     )
 
-                                User.AdminWith publicKey ->
-                                    ( { model | state = Admin (Admin.HasWallet publicKey) }
-                                    , Cmd.none
-                                    )
+                                Role.AdminWith moreJson ->
+                                    case Wallet.decode moreJson of
+                                        Ok wallet ->
+                                            ( { model | state = Admin (Admin.HasWallet wallet) }
+                                            , Cmd.none
+                                            )
+
+
+                                        Err error ->
+                                            ( { model | state = State.Error error }
+                                            , Cmd.none
+                                            )
+
 
                         Err error ->
                             ( { model | state = State.Error error }
@@ -146,16 +156,16 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
-                InitProgram pda ->
+                InitProgram wallet ->
                     ( model
-                    , initProgramSender (User.encode (User.AdminWith pda))
+                    , initProgramSender (Role.encode (Role.AdminWith (Wallet.encode wallet)))
                     )
 
-                PurchasePrimary user ->
+                PurchasePrimary wallet ->
                     let
                         json : String
                         json =
-                            User.encode (User.BuyerWith user)
+                            Role.encode (Role.BuyerWith (Wallet.encode wallet))
                     in
                     ( model
                     , purchasePrimarySender json
@@ -170,19 +180,19 @@ update msg model =
             case fromAnchorMsg of
                 Msg.Anchor.SuccessOnStateLookup json ->
                     let
-                        maybeUser : Result String User.WithContext
-                        maybeUser =
-                            User.decode json
+                        maybeRole : Result String Role.WithContext
+                        maybeRole =
+                            Role.decode json
 
                         update_ : State
                         update_ =
-                            case maybeUser of
+                            case maybeRole of
                                 -- client connected via buy or sell pages
                                 -- we don't know yet which page it was
-                                Ok user ->
-                                    case user of
+                                Ok role ->
+                                    case role of
                                         -- it was the buy page
-                                        User.BuyerWith moreJson ->
+                                        Role.BuyerWith moreJson ->
                                             case Ledger.decode moreJson of
                                                 Ok ledger ->
                                                     case Ledger.checkOwnership ledger of
@@ -198,7 +208,7 @@ update msg model =
                                                     State.Error (Decode.errorToString jsonError)
 
                                         -- it was the sell page
-                                        User.SellerWith moreJson ->
+                                        Role.SellerWith moreJson ->
                                             case Ledger.decode moreJson of
                                                 Ok ledger ->
                                                     case Ledger.checkOwnership ledger of
@@ -211,8 +221,8 @@ update msg model =
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
 
-                                        User.AdminWith publicKey ->
-                                            State.Admin (Admin.HasWallet publicKey)
+                                        Role.AdminWith wallet ->
+                                            State.Admin (Admin.HasWallet wallet)
 
                                 Err error ->
                                     State.Error error
