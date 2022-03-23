@@ -107,6 +107,7 @@ pub struct Ledger {
     // owners
     pub owners: Vec<Pubkey>,
     // escrow
+    // TODO; remove from escrow feature
     pub escrow: Vec<EscrowItem>,
     // persist boss for validation
     pub boss: Pubkey,
