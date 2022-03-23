@@ -17,9 +17,9 @@ import Model.Ledger as Ledger exposing (Ledger)
 import Model.Model as Model exposing (Model)
 import Model.Ownership as Ownership
 import Model.Phantom as Phantom
+import Model.Role as Role exposing (Role, WithContext)
 import Model.Seller as Seller
 import Model.State as State exposing (State(..))
-import Model.Role as Role exposing (Role, WithContext)
 import Model.Wallet as Wallet
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
@@ -109,12 +109,10 @@ update msg model =
                                             , Cmd.none
                                             )
 
-
                                         Err error ->
                                             ( { model | state = State.Error error }
                                             , Cmd.none
                                             )
-
 
                         Err error ->
                             ( { model | state = State.Error error }
@@ -168,27 +166,39 @@ update msg model =
                             Role.encode (Role.BuyerWith (Wallet.encode wallet))
                     in
                     ( model
+                      -- TODO; waiting state
                     , purchasePrimarySender json
                     )
 
-                SubmitToEscrow wallet price ->
-                    let
-                        encoder : Encode.Value
-                        encoder =
-                            Encode.object
-                                [ ("wallet", Encode.string wallet)
-                                , ("price", Encode.float price)
-                                ]
+                SubmitToEscrow ledger price ->
+                    case String.toFloat <| String.trim price of
+                        Just float ->
+                            let
+                                encoder : Encode.Value
+                                encoder =
+                                    Encode.object
+                                        [ ( "wallet", Encode.string ledger.wallet )
+                                        , ( "price", Encode.float float )
+                                        ]
 
-                        json : String
-                        json =
-                            Role.encode (Role.SellerWith (Encode.encode 0 encoder) )
+                                json : String
+                                json =
+                                    Role.encode (Role.SellerWith (Encode.encode 0 encoder))
+                            in
+                            ( { model | state = State.Sell (Seller.WaitingForStateLookup ledger.wallet) }
+                            , submitToEscrowSender json
+                            )
 
-                    in
-                    ( { model | state = State.Sell (Seller.WaitingForStateLookup wallet) }
-                    , submitToEscrowSender json
-                    )
-
+                        Nothing ->
+                            ( { model
+                                | state =
+                                    State.Sell <|
+                                        Seller.WithOwnership <|
+                                            Seller.Sell <|
+                                                Seller.PriceNotValidFloat ledger
+                              }
+                            , Cmd.none
+                            )
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
@@ -257,7 +267,6 @@ update msg model =
                 Msg.Anchor.FailureOnSubmitToEscrow error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
-
         AwsPreSign result ->
             case result of
                 Ok response ->
@@ -289,17 +298,6 @@ update msg model =
                     , Cmd.none
                     )
 
-                Seller.PriceDecided string ledger ->
-                    ( model
-                    , Cmd.none
-                    )
-
-
-                Seller.PriceIsValidFloat float ledger ->
-                    ( model
-                    , Cmd.none
-                    )
-
                 Seller.PriceNotValidFloat ledger ->
                     ( model
                     , Cmd.none
@@ -309,7 +307,6 @@ update msg model =
                     ( model
                     , Cmd.none
                     )
-
 
 
 

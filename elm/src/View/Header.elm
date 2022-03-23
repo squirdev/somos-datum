@@ -6,9 +6,9 @@ import Html.Events exposing (onClick)
 import Model.Admin as Admin
 import Model.Buyer as Buyer exposing (Buyer(..))
 import Model.Model exposing (Model)
+import Model.Role as User
 import Model.Seller as Seller
 import Model.State as State exposing (State(..))
-import Model.Role as User
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 

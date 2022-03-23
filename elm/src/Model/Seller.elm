@@ -1,4 +1,4 @@
-module Model.Seller exposing (Seller(..), getWallet, Selling(..), Ownership(..))
+module Model.Seller exposing (Ownership(..), Seller(..), Selling(..), getWallet)
 
 import Model.Ledger exposing (Ledger)
 import Model.Wallet exposing (Wallet)
@@ -10,17 +10,16 @@ type Seller
     | WithOwnership Ownership
     | WithoutOwnership Ledger
 
+
 type Ownership
     = Console Ledger
     | Sell Selling
 
+
 type Selling
     = Typing String Ledger
-    | PriceDecided String Ledger
-    | PriceIsValidFloat Float Ledger
     | PriceNotValidFloat Ledger
-    | Done Ledger
-
+    | Done Wallet
 
 
 getWallet : Seller -> Maybe Wallet
@@ -42,24 +41,11 @@ getWallet seller =
                         Typing _ ledger ->
                             Just ledger.wallet
 
-
-                        PriceDecided _ ledger ->
-                            Just ledger.wallet
-
-
-                        PriceIsValidFloat _ ledger ->
-                            Just ledger.wallet
-
-
                         PriceNotValidFloat ledger ->
                             Just ledger.wallet
 
-
-                        Done ledger ->
-                            Just ledger.wallet
-
-
+                        Done wallet ->
+                            Just wallet
 
         WithoutOwnership ledger ->
             Just ledger.wallet
-

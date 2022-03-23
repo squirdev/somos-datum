@@ -10,7 +10,7 @@ import Msg.Msg exposing (Msg(..))
 type alias Args =
     { ledger : Ledger
     , ownership : Bool
-    , button : Html Msg
+    , html : Html Msg
     }
 
 
@@ -169,7 +169,7 @@ body args =
                     ]
                 ]
             , ownership
-            , args.button
+            , args.html
             ]
         ]
 

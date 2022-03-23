@@ -7,10 +7,10 @@ import Model.Buyer exposing (Buyer(..))
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger exposing (Ledger)
 import Model.Ownership as Ownership
-import Model.Wallet as PublicKey
+import Model.Role as User
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
-import Model.Role as User
+import Model.Wallet as PublicKey
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -155,7 +155,7 @@ body buyer =
                     View.Market.Market.body
                         { ledger = ledger
                         , ownership = False
-                        , button = purchase ledger
+                        , html = purchase ledger
                         }
 
                 WithOwnership ownership ->
@@ -164,7 +164,7 @@ body buyer =
                             View.Market.Market.body
                                 { ledger = ledger
                                 , ownership = True
-                                , button = download ledger
+                                , html = download ledger
                                 }
 
                         Ownership.Download downloadStatus ->

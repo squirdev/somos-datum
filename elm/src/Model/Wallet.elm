@@ -1,8 +1,8 @@
-module Model.Wallet exposing (Wallet, slice, encode, decode)
-
+module Model.Wallet exposing (Wallet, decode, encode, slice)
 
 import Json.Decode as Decode
 import Json.Encode as Encode
+
 
 type alias Wallet =
     String
@@ -16,15 +16,17 @@ slice publicKey =
         , String.slice -5 -1 publicKey
         ]
 
+
 encode : Wallet -> String
 encode wallet =
     let
         encoder =
             Encode.object
-                [("wallet", Encode.string wallet)
+                [ ( "wallet", Encode.string wallet )
                 ]
     in
     Encode.encode 0 encoder
+
 
 type alias WalletObject =
     { wallet : String }
@@ -39,7 +41,8 @@ decode string =
                 (Decode.field "wallet" Decode.string)
     in
     case Decode.decodeString decoder string of
-        Ok obj -> Ok obj.wallet
+        Ok obj ->
+            Ok obj.wallet
 
-
-        Err error -> Err (Decode.errorToString error)
+        Err error ->
+            Err (Decode.errorToString error)

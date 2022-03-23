@@ -1,12 +1,17 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
+import Model.Ledger exposing (Ledger)
 import Model.Wallet exposing (Wallet)
 
 
 type ToAnchorMsg
     = InitProgram Wallet
     | PurchasePrimary Wallet
-    | SubmitToEscrow Wallet Float
+    | SubmitToEscrow Ledger Price
+
+
+type alias Price =
+    String
 
 
 type
@@ -18,5 +23,5 @@ type
     | FailureOnInitProgram String
       -- purchase primary attempt
     | FailureOnPurchasePrimary String
-    -- submit to escrow attempt
+      -- submit to escrow attempt
     | FailureOnSubmitToEscrow String

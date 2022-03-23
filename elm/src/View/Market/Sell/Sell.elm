@@ -4,10 +4,11 @@ import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
 import Model.Ledger exposing (Ledger)
-import Model.Wallet as PublicKey
+import Model.Role as User exposing (Role(..))
 import Model.Seller as Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
-import Model.Role as User exposing (Role(..))
+import Model.Wallet as PublicKey
+import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Market
@@ -127,7 +128,8 @@ body seller =
                             PublicKey.slice publicKey
                     in
                     Html.div
-                        []
+                        [ class "has-border-2"
+                        ]
                         [ Html.div
                             [ class "has-border-2 has-font-2 px-2 py-2"
                             , style "float" "right"
@@ -141,68 +143,104 @@ body seller =
                         ]
 
                 WithOwnership ownership ->
-                    let
-                        input : Ledger -> Html Msg
-                        input ledger =
-                            Html.div
-                                [ class "field"
-                                ]
-                                [ Html.p
-                                    [ class "control has-icons-left"
-                                    ]
-                                    [ Html.input
-                                        [ class "input is-focused is-link"
-                                        , type_ "text"
-                                        , placeholder "your price in SOL"
-                                        , onInput (\str -> FromSeller (Seller.Typing str ledger))
-                                        ]
-                                        []
-                                    , Html.span
-                                        [ class "icon is-small is-left"
-                                        ]
-                                        [ Html.i
-                                            [ class "fas fa-envelope"
-                                            ]
-                                            []
-                                        ]
-                                    ]
-                                ]
-                    in
                     case ownership of
                         Seller.Console ledger ->
                             let
-                                foo = ""
+                                button =
+                                    Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-3"
+                                            , onClick (FromSeller <| Seller.Typing "" ledger)
+                                            ]
+                                            [ Html.text "type your price here"
+                                            ]
+                                        ]
                             in
                             View.Market.Market.body
                                 { ledger = ledger
                                 , ownership = True
-                                , button = input ledger
+                                , html = button
                                 }
-
-
 
                         Seller.Sell selling ->
                             case selling of
                                 Seller.Typing string ledger ->
-                                    input ledger
+                                    let
+                                        price =
+                                            case string of
+                                                "" ->
+                                                    "_._"
 
-                                Seller.PriceDecided string ledger ->
-                                    Html.div [] []
+                                                _ ->
+                                                    string
 
-                                Seller.PriceIsValidFloat float ledger ->
-                                    Html.div [] []
+                                        input =
+                                            Html.div
+                                                [ class "field"
+                                                ]
+                                                [ Html.p
+                                                    [ class "control has-icons-left has-icons-right"
+                                                    ]
+                                                    [ Html.input
+                                                        [ class "input is-focused is-link is-small"
+                                                        , type_ "text"
+                                                        , placeholder "your price in SOL"
+                                                        , onInput (\str -> FromSeller (Seller.Typing str ledger))
+                                                        ]
+                                                        []
+                                                    , Html.span
+                                                        [ class "icon is-small is-left"
+                                                        ]
+                                                        [ Html.i
+                                                            [ class "fas fa-envelope"
+                                                            ]
+                                                            []
+                                                        ]
+                                                    ]
+                                                , Html.button
+                                                    [ class "is-button-3"
+                                                    , onClick (ToAnchor (SubmitToEscrow ledger price))
+                                                    ]
+                                                    [ Html.text <|
+                                                        String.join " " [ "submit to escrow at:", price, "SOL" ]
+                                                    ]
+                                                ]
+                                    in
+                                    View.Market.Market.body
+                                        { ledger = ledger
+                                        , ownership = True
+                                        , html = input
+                                        }
 
                                 Seller.PriceNotValidFloat ledger ->
-                                    Html.div [] []
+                                    let
+                                        button =
+                                            Html.div
+                                                []
+                                                [ Html.button
+                                                    [ class "is-button-3"
+                                                    , onClick (FromSeller <| Seller.Typing "" ledger)
+                                                    ]
+                                                    [ Html.text "try again with a valid numeric value"
+                                                    ]
+                                                ]
+                                    in
+                                    View.Market.Market.body
+                                        { ledger = ledger
+                                        , ownership = True
+                                        , html = button
+                                        }
 
-                                Seller.Done ledger ->
+                                -- TODO; success sub
+                                Seller.Done wallet ->
                                     Html.div [] []
 
                 WithoutOwnership ledger ->
                     View.Market.Market.body
                         { ledger = ledger
                         , ownership = False
-                        , button = Html.div [] []
+                        , html = Html.div [] []
                         }
     in
     Html.div

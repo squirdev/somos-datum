@@ -1,4 +1,4 @@
-port module Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSender, getCurrentStateSuccessListener, initProgramFailureListener, initProgramSender, purchasePrimaryFailureListener, purchasePrimarySender, submitToEscrowSender, submitToEscrowFailureListener)
+port module Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSender, getCurrentStateSuccessListener, initProgramFailureListener, initProgramSender, purchasePrimaryFailureListener, purchasePrimarySender, submitToEscrowFailureListener, submitToEscrowSender)
 
 -- senders
 

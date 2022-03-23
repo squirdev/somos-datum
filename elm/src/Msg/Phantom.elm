@@ -1,7 +1,7 @@
 module Msg.Phantom exposing (FromPhantomMsg(..), ToPhantomMsg(..))
 
-import Model.Wallet exposing (Wallet)
 import Model.Role exposing (Role)
+import Model.Wallet exposing (Wallet)
 
 
 type
