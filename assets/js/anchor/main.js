@@ -7,6 +7,7 @@ import {init} from "./init";
 import {primary} from "./purchase/primary";
 import {sign} from "./sign";
 import {download} from "./download";
+import {submit} from "./escrow";
 
 
 // get phantom
@@ -34,28 +35,36 @@ app.ports.getCurrentStateSender.subscribe(async function (user) {
 // TODO; elm sends PDA pubkey (clicked on by user)
 app.ports.initProgramSender.subscribe(async function (user) {
     // get provider & program
-    const pp = getPP(phantom)
+    const pp = getPP(phantom);
     // invoke init: release 01
-    await init(pp.program, pp.provider, release01PubKey, user, 100, 0.025, 0.05)
+    await init(pp.program, pp.provider, release01PubKey, user, 2, 0.025, 0.05);
 });
 
 // primary purchase
 app.ports.purchasePrimarySender.subscribe(async function (user) {
     // get provider & program
-    const pp = getPP(phantom)
+    const pp = getPP(phantom);
     // invoke purchase request
-    await primary(pp.program, pp.provider, release01PubKey, user)
+    await primary(pp.program, pp.provider, release01PubKey, user);
+});
+
+// submit to escrow
+app.ports.submitToEscrowSender.subscribe(async function (user) {
+    // get provider & program
+    const pp = getPP(phantom);
+    // invoke submit to escrow
+    await submit(pp.program, pp.provider, release01PubKey, user);
 });
 
 // sign message
 app.ports.signMessageSender.subscribe(async function (user) {
     // invoke sign message
-    await sign(phantom, user)
+    await sign(phantom, user);
 });
 
 // open download url
 app.ports.openDownloadUrlSender.subscribe(async function (json) {
-    const obj = JSON.parse(json)
+    const obj = JSON.parse(json);
     // download
-    download(obj.url)
+    download(obj.url);
 });

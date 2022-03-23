@@ -19,7 +19,6 @@ type Ownership
 type Selling
     = Typing String Ledger
     | PriceNotValidFloat Ledger
-    | Done Wallet
 
 
 getWallet : Seller -> Maybe Wallet
@@ -43,9 +42,6 @@ getWallet seller =
 
                         PriceNotValidFloat ledger ->
                             Just ledger.wallet
-
-                        Done wallet ->
-                            Just wallet
 
         WithoutOwnership ledger ->
             Just ledger.wallet

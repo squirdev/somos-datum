@@ -3,8 +3,8 @@ module Sub.Sub exposing (subs)
 import Msg.Anchor exposing (FromAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (FromPhantomMsg(..))
-import Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener, submitToEscrowFailureListener)
-import Sub.Phantom exposing (connectFailureListener, connectSuccessListener, signMessageFailureListener, signMessageSuccessListener)
+import Sub.Anchor exposing (..)
+import Sub.Phantom exposing (..)
 
 
 subs : Sub Msg

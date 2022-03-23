@@ -11,11 +11,13 @@ export async function getCurrentState(program, ledger, userJson) {
         function simplify() {
             // TODO; send pubkey to elm
             const _owners = _state.owners.map(_publicKey => _publicKey.toString());
+            const _escrow = _state.escrow.map(_publicKey => _publicKey.toString());
             const _more = {
                 price: Number(_state.price.toString()),
                 resale: _state.resale, // not a BN type
                 originalSupplyRemaining: Number(_state.originalSupplyRemaining.toString()),
                 owners: _owners,
+                escrow: _escrow,
                 wallet: more.wallet
             };
             return {

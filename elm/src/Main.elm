@@ -202,6 +202,7 @@ update msg model =
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
+                -- state lookup
                 Msg.Anchor.SuccessOnStateLookup json ->
                     let
                         maybeRole : Result String Role.WithContext
@@ -258,14 +259,18 @@ update msg model =
                 Msg.Anchor.FailureOnStateLookup error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
+                -- init program
                 Msg.Anchor.FailureOnInitProgram error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
+                -- purchase primary
                 Msg.Anchor.FailureOnPurchasePrimary error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
+                -- submit to escrow
                 Msg.Anchor.FailureOnSubmitToEscrow error ->
                     ( { model | state = State.Error error }, Cmd.none )
+
 
         AwsPreSign result ->
             case result of
@@ -298,12 +303,7 @@ update msg model =
                     , Cmd.none
                     )
 
-                Seller.PriceNotValidFloat ledger ->
-                    ( model
-                    , Cmd.none
-                    )
-
-                Seller.Done ledger ->
+                Seller.PriceNotValidFloat _ ->
                     ( model
                     , Cmd.none
                     )

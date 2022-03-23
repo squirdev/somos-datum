@@ -3,7 +3,6 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
-import Model.Ledger exposing (Ledger)
 import Model.Role as User exposing (Role(..))
 import Model.Seller as Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
@@ -231,10 +230,6 @@ body seller =
                                         , ownership = True
                                         , html = button
                                         }
-
-                                -- TODO; success sub
-                                Seller.Done wallet ->
-                                    Html.div [] []
 
                 WithoutOwnership ledger ->
                     View.Market.Market.body
