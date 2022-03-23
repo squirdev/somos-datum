@@ -24,7 +24,7 @@ import Model.Wallet as Wallet
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender)
+import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, submitToEscrowSender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
@@ -171,9 +171,23 @@ update msg model =
                     , purchasePrimarySender json
                     )
 
-                SubmitToEscrow publicKey float ->
-                    -- TODO;
-                    ( model, Cmd.none )
+                SubmitToEscrow wallet price ->
+                    let
+                        encoder : Encode.Value
+                        encoder =
+                            Encode.object
+                                [ ("wallet", Encode.string wallet)
+                                , ("price", Encode.float price)
+                                ]
+
+                        json : String
+                        json =
+                            Role.encode (Role.SellerWith (Encode.encode 0 encoder) )
+
+                    in
+                    ( { model | state = State.Sell (Seller.WaitingForStateLookup wallet) }
+                    , submitToEscrowSender json
+                    )
 
 
         FromAnchor fromAnchorMsg ->
@@ -213,7 +227,7 @@ update msg model =
                                                 Ok ledger ->
                                                     case Ledger.checkOwnership ledger of
                                                         True ->
-                                                            State.Sell (Seller.WithOwnership ledger)
+                                                            State.Sell (Seller.WithOwnership <| Seller.Console ledger)
 
                                                         False ->
                                                             State.Sell (Seller.WithoutOwnership ledger)
@@ -267,6 +281,35 @@ update msg model =
                     ( { model | state = State.Error (Http.Error.toString error) }
                     , Cmd.none
                     )
+
+        FromSeller selling ->
+            case selling of
+                Seller.Typing string ledger ->
+                    ( { model | state = State.Sell (Seller.WithOwnership <| Seller.Sell <| Seller.Typing string ledger) }
+                    , Cmd.none
+                    )
+
+                Seller.PriceDecided string ledger ->
+                    ( model
+                    , Cmd.none
+                    )
+
+
+                Seller.PriceIsValidFloat float ledger ->
+                    ( model
+                    , Cmd.none
+                    )
+
+                Seller.PriceNotValidFloat ledger ->
+                    ( model
+                    , Cmd.none
+                    )
+
+                Seller.Done ledger ->
+                    ( model
+                    , Cmd.none
+                    )
+
 
 
 

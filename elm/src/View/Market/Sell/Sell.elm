@@ -1,12 +1,13 @@
 module View.Market.Sell.Sell exposing (body)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, href, style)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, href, placeholder, style, type_)
+import Html.Events exposing (onClick, onInput)
+import Model.Ledger exposing (Ledger)
 import Model.Wallet as PublicKey
-import Model.Seller exposing (Seller(..))
+import Model.Seller as Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
-import Model.Role as User
+import Model.Role as User exposing (Role(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import View.Market.Market
@@ -139,12 +140,63 @@ body seller =
                             []
                         ]
 
-                WithOwnership ledger ->
-                    View.Market.Market.body
-                        { ledger = ledger
-                        , ownership = True
-                        , button = Html.div [] []
-                        }
+                WithOwnership ownership ->
+                    let
+                        input : Ledger -> Html Msg
+                        input ledger =
+                            Html.div
+                                [ class "field"
+                                ]
+                                [ Html.p
+                                    [ class "control has-icons-left"
+                                    ]
+                                    [ Html.input
+                                        [ class "input is-focused is-link"
+                                        , type_ "text"
+                                        , placeholder "your price in SOL"
+                                        , onInput (\str -> FromSeller (Seller.Typing str ledger))
+                                        ]
+                                        []
+                                    , Html.span
+                                        [ class "icon is-small is-left"
+                                        ]
+                                        [ Html.i
+                                            [ class "fas fa-envelope"
+                                            ]
+                                            []
+                                        ]
+                                    ]
+                                ]
+                    in
+                    case ownership of
+                        Seller.Console ledger ->
+                            let
+                                foo = ""
+                            in
+                            View.Market.Market.body
+                                { ledger = ledger
+                                , ownership = True
+                                , button = input ledger
+                                }
+
+
+
+                        Seller.Sell selling ->
+                            case selling of
+                                Seller.Typing string ledger ->
+                                    input ledger
+
+                                Seller.PriceDecided string ledger ->
+                                    Html.div [] []
+
+                                Seller.PriceIsValidFloat float ledger ->
+                                    Html.div [] []
+
+                                Seller.PriceNotValidFloat ledger ->
+                                    Html.div [] []
+
+                                Seller.Done ledger ->
+                                    Html.div [] []
 
                 WithoutOwnership ledger ->
                     View.Market.Market.body
