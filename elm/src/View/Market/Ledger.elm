@@ -112,7 +112,7 @@ body args =
             ]
             [ slice_
             , Html.div
-                [ class "has-font-2"
+                [ class "has-font-2 has-border-2 px-2 py-2"
                 ]
                 [ Html.h3
                     []

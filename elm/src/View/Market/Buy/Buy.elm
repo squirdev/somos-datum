@@ -252,7 +252,7 @@ body buyer =
 header : Html msg
 header =
     Html.div
-        [ class "py-6"
+        [ class "has-font-1 py-6"
         ]
         [ Html.div
             [ class "has-border-2 px-2 py-2"
