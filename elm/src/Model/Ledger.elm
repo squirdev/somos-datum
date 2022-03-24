@@ -1,4 +1,4 @@
-module Model.Ledger exposing (EscrowItem, Ledger, checkOwnership, decode, getEscrowItem)
+module Model.Ledger exposing (EscrowItem, Ledger, checkOwnership, decode, getEscrowItem, getMinEscrowItem)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
@@ -71,3 +71,8 @@ getEscrowItem ledger =
 
         head :: _ ->
             Just head
+
+
+getMinEscrowItem : Ledger -> Maybe EscrowItem
+getMinEscrowItem ledger =
+    List.head <| List.sortBy .price ledger.escrow

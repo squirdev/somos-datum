@@ -1,8 +1,9 @@
-module View.Market.Market exposing (Args, body)
+module View.Market.Ledger exposing (Args, body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
 import Model.Ledger as Ledger exposing (Ledger)
+import Model.Sol as Sol
 import Model.Wallet as PublicKey
 import Msg.Msg exposing (Msg(..))
 
@@ -49,54 +50,53 @@ body args =
                         ]
                     ]
                 ]
+
+        min : Html Msg
+        min =
+            case Ledger.getMinEscrowItem args.ledger of
+                Just head ->
+                    Html.div
+                        [ class "my-2"
+                        ]
+                        [ Html.p
+                            []
+                            [ Html.text "minimum resale price: "
+                            , Html.b
+                                [ class "has-border-2 px-1 py-1"
+                                ]
+                                [ Html.text <| String.fromFloat <| Sol.fromLamports head.price
+                                ]
+                            ]
+                        ]
+
+                Nothing ->
+                    Html.div [] []
+
+        yours : Html Msg
+        yours =
+            case Ledger.getEscrowItem args.ledger of
+                Just head ->
+                    Html.div
+                        [ class "my-2"
+                        ]
+                        [ Html.p
+                            []
+                            [ Html.text "your resale price: "
+                            , Html.b
+                                [ class "has-border-2 px-1 py-1"
+                                ]
+                                [ Html.text <| String.fromFloat <| Sol.fromLamports head.price
+                                ]
+                            ]
+                        ]
+
+                Nothing ->
+                    Html.div [] []
     in
     Html.div
         [ class "has-font-1"
         ]
         [ Html.div
-            [ class "py-6"
-            ]
-            [ Html.div
-                [ class "has-border-2 px-2 py-2"
-                ]
-                [ Html.div
-                    [ class "pb-2"
-                    ]
-                    [ Html.h2
-                        []
-                        [ Html.text
-                            """all releases found here are exclusively available via this marketplace
-                            """
-                        ]
-                    ]
-                , Html.div
-                    [ class "has-font-2"
-                    ]
-                    [ Html.h3
-                        []
-                        [ Html.text
-                            """these digital assets typically capture moments such as
-                            """
-                        ]
-                    , Html.div
-                        []
-                        [ check
-                        , Html.text "singles/EPs intended for our most loyal fans"
-                        ]
-                    , Html.div
-                        []
-                        [ check
-                        , Html.text "live performances"
-                        ]
-                    , Html.div
-                        []
-                        [ check
-                        , Html.text "rough studio takes & footage"
-                        ]
-                    ]
-                ]
-            ]
-        , Html.div
             [ class "pl-2"
             ]
             [ Html.div
@@ -167,16 +167,22 @@ body args =
                         ]
                     ]
                 ]
+            , Html.div
+                [ class "my-2"
+                ]
+                [ Html.p
+                    []
+                    [ Html.text "original price: "
+                    , Html.b
+                        [ class "has-border-2 px-1 py-1"
+                        ]
+                        [ Html.text <| String.fromFloat <| Sol.fromLamports args.ledger.price
+                        ]
+                    ]
+                ]
+            , min
+            , yours
             , ownership
             , args.html
             ]
-        ]
-
-
-check : Html msg
-check =
-    Html.b
-        [ class "has-spacing-1"
-        ]
-        [ Html.text "☑️"
         ]

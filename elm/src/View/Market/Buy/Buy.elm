@@ -14,7 +14,7 @@ import Model.Wallet as PublicKey
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.Market
+import View.Market.Ledger
 
 
 body : Buyer -> Html Msg
@@ -152,18 +152,26 @@ body buyer =
                         ]
 
                 WithoutOwnership ledger ->
-                    View.Market.Market.body
-                        { ledger = ledger
-                        , html = purchase ledger
-                        }
+                    Html.div
+                        []
+                        [ header
+                        , View.Market.Ledger.body
+                            { ledger = ledger
+                            , html = purchase ledger
+                            }
+                        ]
 
                 WithOwnership ownership ->
                     case ownership of
                         Ownership.Console ledger ->
-                            View.Market.Market.body
-                                { ledger = ledger
-                                , html = download ledger
-                                }
+                            Html.div
+                                []
+                                [ header
+                                , View.Market.Ledger.body
+                                    { ledger = ledger
+                                    , html = download ledger
+                                    }
+                                ]
 
                         Ownership.Download downloadStatus ->
                             case downloadStatus of
@@ -238,4 +246,60 @@ body buyer =
         [ class "container"
         ]
         [ html
+        ]
+
+
+header : Html msg
+header =
+    Html.div
+        [ class "py-6"
+        ]
+        [ Html.div
+            [ class "has-border-2 px-2 py-2"
+            ]
+            [ Html.div
+                [ class "pb-2"
+                ]
+                [ Html.h2
+                    []
+                    [ Html.text
+                        """all releases found here are exclusively available via this marketplace
+                        """
+                    ]
+                ]
+            , Html.div
+                [ class "has-font-2"
+                ]
+                [ Html.h3
+                    []
+                    [ Html.text
+                        """these digital assets typically capture moments such as
+                        """
+                    ]
+                , Html.div
+                    []
+                    [ check
+                    , Html.text "singles/EPs intended for our most loyal fans"
+                    ]
+                , Html.div
+                    []
+                    [ check
+                    , Html.text "live performances"
+                    ]
+                , Html.div
+                    []
+                    [ check
+                    , Html.text "rough studio takes & footage"
+                    ]
+                ]
+            ]
+        ]
+
+
+check : Html msg
+check =
+    Html.b
+        [ class "has-spacing-1"
+        ]
+        [ Html.text "☑️"
         ]

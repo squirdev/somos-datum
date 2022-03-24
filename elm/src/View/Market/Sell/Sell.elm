@@ -3,17 +3,15 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
-import Model.Ledger as Ledger exposing (Ledger)
 import Model.Role as User exposing (Role(..))
 import Model.Seller exposing (Seller(..))
-import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.Wallet as PublicKey
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Msg.Seller as FromSellerMsg
-import View.Market.Market
+import View.Market.Ledger
 
 
 body : Seller -> Html Msg
@@ -159,8 +157,8 @@ body seller =
                     in
                     Html.div
                         []
-                        [ forSale ledger
-                        , View.Market.Market.body
+                        [ header
+                        , View.Market.Ledger.body
                             { ledger = ledger
                             , html = button
                             }
@@ -210,8 +208,8 @@ body seller =
                     in
                     Html.div
                         []
-                        [ forSale ledger
-                        , View.Market.Market.body
+                        [ header
+                        , View.Market.Ledger.body
                             { ledger = ledger
                             , html = input
                             }
@@ -232,8 +230,8 @@ body seller =
                     in
                     Html.div
                         []
-                        [ forSale ledger
-                        , View.Market.Market.body
+                        [ header
+                        , View.Market.Ledger.body
                             { ledger = ledger
                             , html = button
                             }
@@ -255,34 +253,5 @@ check =
         ]
 
 
-forSale : Ledger -> Html Msg
-forSale ledger =
-    case Ledger.getEscrowItem ledger of
-        Just escrowItem ->
-            Html.div
-                [ class "has-border-2 mb-6"
-                ]
-                [ Html.p
-                    [ class "has-font-1 mx-2 mt-2"
-                    ]
-                    [ Html.div
-                        [ class "mb-3"
-                        ]
-                        [ Html.text "your submissions to escrow"
-                        ]
-                    , Html.div
-                        []
-                        [ Html.div
-                            []
-                            [ Html.text escrowItem.seller
-                            ]
-                        , Html.div
-                            []
-                            [ Html.text <| String.fromFloat <| Sol.fromLamports escrowItem.price
-                            ]
-                        ]
-                    ]
-                ]
-
-        Nothing ->
-            Html.div [] []
+header =
+    Html.div [] []
