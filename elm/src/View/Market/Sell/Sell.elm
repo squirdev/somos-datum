@@ -254,6 +254,7 @@ check =
         [ Html.text "☑️"
         ]
 
+
 forSale : Ledger -> Html Msg
 forSale ledger =
     case Ledger.getEscrowItem ledger of
@@ -282,7 +283,6 @@ forSale ledger =
                         ]
                     ]
                 ]
-
 
         Nothing ->
             Html.div [] []

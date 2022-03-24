@@ -1,4 +1,4 @@
-module Model.Ledger exposing (Ledger, checkOwnership, decode, EscrowItem, getEscrowItem)
+module Model.Ledger exposing (EscrowItem, Ledger, checkOwnership, decode, getEscrowItem)
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
@@ -20,6 +20,7 @@ type alias Ledger =
     -- just the current user
     , wallet : Wallet
     }
+
 
 type alias EscrowItem =
     { price : Lamports
@@ -55,6 +56,7 @@ checkOwnership ledger =
         ledger.wallet
         ledger.owners
 
+
 getEscrowItem : Ledger -> Maybe EscrowItem
 getEscrowItem ledger =
     let
@@ -64,6 +66,8 @@ getEscrowItem ledger =
                 ledger.escrow
     in
     case filter of
-        [] -> Nothing
+        [] ->
+            Nothing
 
-        head :: _ -> Just head
+        head :: _ ->
+            Just head

@@ -16,7 +16,6 @@ type alias Args =
 body : Args -> Html Msg
 body args =
     let
-
         slice_ =
             Html.div
                 [ class "has-border-2 has-font-2 px-2 py-2"
@@ -24,7 +23,6 @@ body args =
                 ]
                 [ Html.text (PublicKey.slice args.ledger.wallet)
                 ]
-
 
         ownership : Html Msg
         ownership =
