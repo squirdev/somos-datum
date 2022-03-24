@@ -205,13 +205,13 @@ update msg model =
                                 , ( "seller", Encode.string escrowItem.seller )
                                 , ( "price", Encode.int escrowItem.price )
                                 ]
+
                         json =
                             Role.encode <| Role.BuyerWith <| Encode.encode 0 encoder
                     in
                     ( model
                     , purchaseSecondarySender json
                     )
-
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
@@ -275,7 +275,6 @@ update msg model =
                 -- purchase secondary
                 Msg.Anchor.FailureOnPurchaseSecondary error ->
                     ( { model | state = State.Error error }, Cmd.none )
-
 
         AwsPreSign result ->
             case result of

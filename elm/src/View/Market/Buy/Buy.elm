@@ -76,7 +76,6 @@ body buyer =
                                     ]
                                 ]
 
-
         html =
             case buyer of
                 WaitingForWallet ->
