@@ -242,6 +242,11 @@
       "code": 6006,
       "name": "DontBeGreedy",
       "msg": "you've already purchased this item. don't be greedy."
+    },
+    {
+      "code": 6007,
+      "name": "ItemAlreadyForSale",
+      "msg": "you've already submitted this item to escrow."
     }
   ],
   "metadata": {

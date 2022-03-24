@@ -133,6 +133,8 @@ pub enum LedgerErrors {
     PrimarySaleStillOn,
     #[msg("you've already purchased this item. don't be greedy.")]
     DontBeGreedy,
+    #[msg("you've already submitted this item to escrow.")]
+    ItemAlreadyForSale,
 }
 
 impl Ledger {
@@ -213,7 +215,6 @@ impl Ledger {
 // SECONDARY MARKET ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #[derive(Accounts)]
-// TODO; assert against double submit
 pub struct SubmitToEscrow<'info> {
     #[account(mut, seeds = [& ledger.seed], bump = ledger.bump)]
     pub ledger: Account<'info, Ledger>,
@@ -311,8 +312,17 @@ impl EscrowItem {
     }
 
     fn validate_seller(seller: &Signer, ledger: &Ledger) -> Result<()> {
+        // seller is on ledger as owner
         match ledger.owners.contains(seller.key) {
-            true => { Ok(()) }
+            true => {
+                // seller has not already listed their item on escrow
+                let escrow: Vec<Pubkey> = ledger.escrow.iter()
+                    .map(|escrow_item| escrow_item.seller).collect();
+                match escrow.contains(seller.key) {
+                    true => { Err(LedgerErrors::ItemAlreadyForSale.into()) }
+                    false => { Ok(()) }
+                }
+            }
             false => { Err(LedgerErrors::SellerNotOnLedger.into()) }
         }
     }
