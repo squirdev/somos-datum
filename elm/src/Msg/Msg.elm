@@ -4,9 +4,9 @@ import Browser
 import Browser.Dom as Dom
 import Http
 import Http.Response as Download
-import Model.Seller as Seller
 import Msg.Anchor exposing (FromAnchorMsg, ToAnchorMsg)
 import Msg.Phantom exposing (FromPhantomMsg, ToPhantomMsg)
+import Msg.Seller exposing (FromSellerMsg)
 import Task
 import Url
 
@@ -24,7 +24,7 @@ type Msg
       -- aws url pre-sign
     | AwsPreSign (Result Http.Error Download.Response)
       -- user forms
-    | FromSeller Seller.Selling
+    | FromSeller FromSellerMsg
 
 
 resetViewport : Cmd Msg

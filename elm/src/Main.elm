@@ -18,12 +18,13 @@ import Model.Model as Model exposing (Model)
 import Model.Ownership as Ownership
 import Model.Phantom as Phantom
 import Model.Role as Role exposing (Role, WithContext)
-import Model.Seller as Seller
+import Model.Seller as Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
 import Model.Wallet as Wallet
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
+import Msg.Seller as FromSellerMsg
 import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, submitToEscrowSender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
@@ -192,10 +193,7 @@ update msg model =
                         Nothing ->
                             ( { model
                                 | state =
-                                    State.Sell <|
-                                        Seller.WithOwnership <|
-                                            Seller.Sell <|
-                                                Seller.PriceNotValidFloat ledger
+                                    State.Sell <| Seller.PriceNotValidFloat ledger
                               }
                             , Cmd.none
                             )
@@ -236,12 +234,7 @@ update msg model =
                                         Role.SellerWith moreJson ->
                                             case Ledger.decode moreJson of
                                                 Ok ledger ->
-                                                    case Ledger.checkOwnership ledger of
-                                                        True ->
-                                                            State.Sell (Seller.WithOwnership <| Seller.Console ledger)
-
-                                                        False ->
-                                                            State.Sell (Seller.WithoutOwnership ledger)
+                                                    State.Sell <| Seller.Console ledger
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
@@ -271,7 +264,6 @@ update msg model =
                 Msg.Anchor.FailureOnSubmitToEscrow error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
-
         AwsPreSign result ->
             case result of
                 Ok response ->
@@ -298,13 +290,8 @@ update msg model =
 
         FromSeller selling ->
             case selling of
-                Seller.Typing string ledger ->
-                    ( { model | state = State.Sell (Seller.WithOwnership <| Seller.Sell <| Seller.Typing string ledger) }
-                    , Cmd.none
-                    )
-
-                Seller.PriceNotValidFloat _ ->
-                    ( model
+                FromSellerMsg.Typing string ledger ->
+                    ( { model | state = State.Sell <| Seller.Typing string ledger }
                     , Cmd.none
                     )
 

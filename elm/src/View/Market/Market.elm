@@ -9,7 +9,7 @@ import Msg.Msg exposing (Msg(..))
 
 type alias Args =
     { ledger : Ledger
-    , ownership : Bool
+    , ownership : Bool -- TODO; check internally
     , html : Html Msg
     }
 

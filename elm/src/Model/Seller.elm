@@ -1,4 +1,4 @@
-module Model.Seller exposing (Ownership(..), Seller(..), Selling(..), getWallet)
+module Model.Seller exposing (Seller(..), getWallet)
 
 import Model.Ledger exposing (Ledger)
 import Model.Wallet exposing (Wallet)
@@ -7,17 +7,8 @@ import Model.Wallet exposing (Wallet)
 type Seller
     = WaitingForWallet
     | WaitingForStateLookup Wallet
-    | WithOwnership Ownership
-    | WithoutOwnership Ledger
-
-
-type Ownership
-    = Console Ledger
-    | Sell Selling
-
-
-type Selling
-    = Typing String Ledger
+    | Console Ledger
+    | Typing String Ledger
     | PriceNotValidFloat Ledger
 
 
@@ -30,18 +21,11 @@ getWallet seller =
         WaitingForStateLookup wallet ->
             Just wallet
 
-        WithOwnership ownership ->
-            case ownership of
-                Console ledger ->
-                    Just ledger.wallet
+        Console ledger ->
+            Just ledger.wallet
 
-                Sell selling ->
-                    case selling of
-                        Typing _ ledger ->
-                            Just ledger.wallet
+        Typing _ ledger ->
+            Just ledger.wallet
 
-                        PriceNotValidFloat ledger ->
-                            Just ledger.wallet
-
-        WithoutOwnership ledger ->
+        PriceNotValidFloat ledger ->
             Just ledger.wallet
