@@ -15,6 +15,9 @@ port purchasePrimarySender : String -> Cmd msg
 port submitToEscrowSender : String -> Cmd msg
 
 
+port purchaseSecondarySender : String -> Cmd msg
+
+
 
 -- listeners
 
@@ -32,3 +35,6 @@ port purchasePrimaryFailureListener : (String -> msg) -> Sub msg
 
 
 port submitToEscrowFailureListener : (String -> msg) -> Sub msg
+
+
+port purchaseSecondaryFailureListener : (String -> msg) -> Sub msg

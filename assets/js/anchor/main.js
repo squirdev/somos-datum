@@ -8,6 +8,7 @@ import {primary} from "./purchase/primary";
 import {sign} from "./sign";
 import {download} from "./download";
 import {submit} from "./escrow";
+import {secondary} from "./purchase/secondary";
 
 
 // get phantom
@@ -37,7 +38,7 @@ app.ports.initProgramSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom);
     // invoke init: release 01
-    await init(pp.program, pp.provider, release01PubKey, user, 2, 0.025, 0.05);
+    await init(pp.program, pp.provider, release01PubKey, user, 1, 0.025, 0.05);
 });
 
 // primary purchase
@@ -54,6 +55,14 @@ app.ports.submitToEscrowSender.subscribe(async function (user) {
     const pp = getPP(phantom);
     // invoke submit to escrow
     await submit(pp.program, pp.provider, release01PubKey, user);
+});
+
+// secondary purchase
+app.ports.purchaseSecondarySender.subscribe(async function (user) {
+    // get provider & program
+    const pp = getPP(phantom);
+    // invoke purchase request
+    await secondary(pp.program, pp.provider, release01PubKey, user);
 });
 
 // sign message

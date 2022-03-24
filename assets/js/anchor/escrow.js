@@ -5,7 +5,8 @@ export async function submit(program, provider, ledger, userJson) {
     // decode user
     const user = JSON.parse(userJson);
     const more = JSON.parse(user.more);
-    const price = more.price * web3.LAMPORTS_PER_SOL;
+    const price = more.price * web3.LAMPORTS_PER_SOL; // TODO; lamports from user
+    // rpc
     try {
         await program.rpc.submitToEscrow(new BN(price), {
             accounts: {

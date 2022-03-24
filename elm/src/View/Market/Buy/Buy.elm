@@ -35,23 +35,47 @@ body buyer =
                         ]
 
                 False ->
-                    Html.div
-                        []
-                        [ Html.button
-                            [ class "is-button-1"
-                            , style "width" "100%"
-                            , onClick (ToAnchor (PurchasePrimary ledger.wallet))
-                            ]
-                            [ Html.text
-                                (String.join
-                                    " "
-                                    [ "Purchase:"
-                                    , String.fromFloat (Sol.fromLamports ledger.price)
-                                    , "SOL"
+                    case Ledger.getMinEscrowItem ledger of
+                        -- purchase secondary
+                        Just min ->
+                            Html.div
+                                []
+                                [ Html.button
+                                    [ class "is-button-1"
+                                    , style "width" "100%"
+                                    , onClick (ToAnchor (PurchaseSecondary min ledger.wallet))
                                     ]
-                                )
-                            ]
-                        ]
+                                    [ Html.text
+                                        (String.join
+                                            " "
+                                            [ "Purchase at minimum resale price:"
+                                            , String.fromFloat (Sol.fromLamports min.price)
+                                            , "SOL"
+                                            ]
+                                        )
+                                    ]
+                                ]
+
+                        -- purchase primary
+                        Nothing ->
+                            Html.div
+                                []
+                                [ Html.button
+                                    [ class "is-button-1"
+                                    , style "width" "100%"
+                                    , onClick (ToAnchor (PurchasePrimary ledger.wallet))
+                                    ]
+                                    [ Html.text
+                                        (String.join
+                                            " "
+                                            [ "Purchase:"
+                                            , String.fromFloat (Sol.fromLamports ledger.price)
+                                            , "SOL"
+                                            ]
+                                        )
+                                    ]
+                                ]
+
 
         html =
             case buyer of

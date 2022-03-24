@@ -24,7 +24,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Msg.Seller as FromSellerMsg
-import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, submitToEscrowSender)
+import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, purchaseSecondarySender, submitToEscrowSender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
@@ -196,6 +196,23 @@ update msg model =
                             , Cmd.none
                             )
 
+                PurchaseSecondary escrowItem wallet ->
+                    let
+                        encoder : Encode.Value
+                        encoder =
+                            Encode.object
+                                [ ( "wallet", Encode.string wallet )
+                                , ( "seller", Encode.string escrowItem.seller )
+                                , ( "price", Encode.int escrowItem.price )
+                                ]
+                        json =
+                            Role.encode <| Role.BuyerWith <| Encode.encode 0 encoder
+                    in
+                    ( model
+                    , purchaseSecondarySender json
+                    )
+
+
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
                 -- state lookup
@@ -254,6 +271,11 @@ update msg model =
                 -- submit to escrow
                 Msg.Anchor.FailureOnSubmitToEscrow error ->
                     ( { model | state = State.Error error }, Cmd.none )
+
+                -- purchase secondary
+                Msg.Anchor.FailureOnPurchaseSecondary error ->
+                    ( { model | state = State.Error error }, Cmd.none )
+
 
         AwsPreSign result ->
             case result of

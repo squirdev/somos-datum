@@ -7,6 +7,7 @@ export async function getCurrentState(program, ledger, userJson) {
         const user = JSON.parse(userJson);
         const more = JSON.parse(user.more);
 
+        // simplify for codec
         function simplifyEscrowItem(escrowItem) {
             return {
                 seller: escrowItem.seller.toString(),
@@ -14,7 +15,6 @@ export async function getCurrentState(program, ledger, userJson) {
             }
         }
 
-        // simplify for codec
         function simplify() {
             // TODO; send pubkey to elm
             const _owners = _state.owners.map(_publicKey => _publicKey.toString());
