@@ -15,7 +15,6 @@ import Model.Buyer as Buyer exposing (Buyer)
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger as Ledger exposing (Ledger)
 import Model.Model as Model exposing (Model)
-import Model.Ownership as Ownership
 import Model.Phantom as Phantom
 import Model.Role as Role exposing (Role, WithContext)
 import Model.Seller as Seller exposing (Seller(..))
@@ -136,9 +135,8 @@ update msg model =
                             ( { model
                                 | state =
                                     Buy <|
-                                        Buyer.WithOwnership <|
-                                            Ownership.Download <|
-                                                DownloadStatus.InvokedAndWaiting signature
+                                        Buyer.Download <|
+                                            DownloadStatus.InvokedAndWaiting signature
                               }
                             , Download.post signature
                             )
@@ -218,14 +216,7 @@ update msg model =
                                         Role.BuyerWith moreJson ->
                                             case Ledger.decode moreJson of
                                                 Ok ledger ->
-                                                    case Ledger.checkOwnership ledger of
-                                                        True ->
-                                                            State.Buy <|
-                                                                Buyer.WithOwnership <|
-                                                                    Ownership.Console ledger
-
-                                                        False ->
-                                                            State.Buy (Buyer.WithoutOwnership ledger)
+                                                    State.Buy <| Buyer.Console ledger
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
@@ -279,7 +270,7 @@ update msg model =
                         jsonString =
                             Encode.encode 0 encoder
                     in
-                    ( { model | state = Buy (Buyer.WithOwnership (Ownership.Download (DownloadStatus.Done response))) }
+                    ( { model | state = Buy (Buyer.Download (DownloadStatus.Done response)) }
                     , openDownloadUrlSender jsonString
                     )
 
