@@ -154,7 +154,6 @@ body buyer =
                 WithoutOwnership ledger ->
                     View.Market.Market.body
                         { ledger = ledger
-                        , ownership = False
                         , html = purchase ledger
                         }
 
@@ -163,7 +162,6 @@ body buyer =
                         Ownership.Console ledger ->
                             View.Market.Market.body
                                 { ledger = ledger
-                                , ownership = True
                                 , html = download ledger
                                 }
 

@@ -2,14 +2,13 @@ module View.Market.Market exposing (Args, body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
-import Model.Ledger exposing (Ledger)
+import Model.Ledger as Ledger exposing (Ledger)
 import Model.Wallet as PublicKey
 import Msg.Msg exposing (Msg(..))
 
 
 type alias Args =
     { ledger : Ledger
-    , ownership : Bool -- TODO; check internally
     , html : Html Msg
     }
 
@@ -17,6 +16,7 @@ type alias Args =
 body : Args -> Html Msg
 body args =
     let
+
         slice_ =
             Html.div
                 [ class "has-border-2 has-font-2 px-2 py-2"
@@ -25,12 +25,13 @@ body args =
                 [ Html.text (PublicKey.slice args.ledger.wallet)
                 ]
 
+
         ownership : Html Msg
         ownership =
             let
-                toString : Bool -> String
-                toString bool =
-                    case bool of
+                toString : String
+                toString =
+                    case Ledger.checkOwnership args.ledger of
                         True ->
                             "yes 😎"
 
@@ -46,7 +47,7 @@ body args =
                     , Html.b
                         [ class "has-border-2 px-1 py-1"
                         ]
-                        [ Html.text (toString args.ownership)
+                        [ Html.text toString
                         ]
                     ]
                 ]

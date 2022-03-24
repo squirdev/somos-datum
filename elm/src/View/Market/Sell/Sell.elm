@@ -3,8 +3,10 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
+import Model.Ledger as Ledger exposing (Ledger)
 import Model.Role as User exposing (Role(..))
-import Model.Seller as Seller exposing (Seller(..))
+import Model.Seller exposing (Seller(..))
+import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.Wallet as PublicKey
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -155,11 +157,14 @@ body seller =
                                     ]
                                 ]
                     in
-                    View.Market.Market.body
-                        { ledger = ledger
-                        , ownership = True
-                        , html = button
-                        }
+                    Html.div
+                        []
+                        [ forSale ledger
+                        , View.Market.Market.body
+                            { ledger = ledger
+                            , html = button
+                            }
+                        ]
 
                 Typing string ledger ->
                     let
@@ -203,11 +208,14 @@ body seller =
                                     ]
                                 ]
                     in
-                    View.Market.Market.body
-                        { ledger = ledger
-                        , ownership = True
-                        , html = input
-                        }
+                    Html.div
+                        []
+                        [ forSale ledger
+                        , View.Market.Market.body
+                            { ledger = ledger
+                            , html = input
+                            }
+                        ]
 
                 PriceNotValidFloat ledger ->
                     let
@@ -222,11 +230,14 @@ body seller =
                                     ]
                                 ]
                     in
-                    View.Market.Market.body
-                        { ledger = ledger
-                        , ownership = True
-                        , html = button
-                        }
+                    Html.div
+                        []
+                        [ forSale ledger
+                        , View.Market.Market.body
+                            { ledger = ledger
+                            , html = button
+                            }
+                        ]
     in
     Html.div
         [ class "container"
@@ -242,3 +253,36 @@ check =
         ]
         [ Html.text "☑️"
         ]
+
+forSale : Ledger -> Html Msg
+forSale ledger =
+    case Ledger.getEscrowItem ledger of
+        Just escrowItem ->
+            Html.div
+                [ class "has-border-2 mb-6"
+                ]
+                [ Html.p
+                    [ class "has-font-1 mx-2 mt-2"
+                    ]
+                    [ Html.div
+                        [ class "mb-3"
+                        ]
+                        [ Html.text "your submissions to escrow"
+                        ]
+                    , Html.div
+                        []
+                        [ Html.div
+                            []
+                            [ Html.text escrowItem.seller
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text <| String.fromFloat <| Sol.fromLamports escrowItem.price
+                            ]
+                        ]
+                    ]
+                ]
+
+
+        Nothing ->
+            Html.div [] []
