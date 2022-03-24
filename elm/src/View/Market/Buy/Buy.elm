@@ -251,7 +251,7 @@ header =
                 [ Html.h2
                     []
                     [ Html.text
-                        """all releases found here are exclusively available via this marketplace
+                        """All releases found here are exclusively available via this marketplace
                         """
                     ]
                 ]

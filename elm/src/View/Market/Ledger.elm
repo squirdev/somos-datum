@@ -103,7 +103,7 @@ body args =
                 []
                 [ Html.h2
                     []
-                    [ Html.text "release 01"
+                    [ Html.text "Release 01"
                     ]
                 ]
             ]
