@@ -52,6 +52,7 @@ pub mod somos_solana {
         EscrowItem::submit_to_escrow(seller, price, ledger)
     }
 
+    // TODO; just pass seller without price to avoid potential float precision issues
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
         escrow_item: EscrowItem,
