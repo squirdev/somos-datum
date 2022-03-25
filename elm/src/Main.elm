@@ -203,7 +203,6 @@ update msg model =
                             Encode.object
                                 [ ( "wallet", Encode.string wallet )
                                 , ( "seller", Encode.string escrowItem.seller )
-                                , ( "price", Encode.int escrowItem.price )
                                 ]
 
                         json =

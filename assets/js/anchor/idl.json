@@ -129,9 +129,7 @@
       "args": [
         {
           "name": "escrowItem",
-          "type": {
-            "defined": "EscrowItem"
-          }
+          "type": "publicKey"
         }
       ]
     }

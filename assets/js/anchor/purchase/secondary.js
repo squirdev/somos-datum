@@ -1,4 +1,4 @@
-import {web3, BN} from "@project-serum/anchor";
+import {web3} from "@project-serum/anchor";
 import {getCurrentState} from "../state";
 import {BOSS} from "../config";
 
@@ -7,10 +7,9 @@ export async function secondary(program, provider, ledger, userJson) {
     const user = JSON.parse(userJson);
     const more = JSON.parse(user.more);
     const seller = new web3.PublicKey(more.seller)
-    const escrowItem = {price: new BN(more.price), seller: seller};
     // rpc
     try {
-        await program.rpc.purchaseSecondary(escrowItem, {
+        await program.rpc.purchaseSecondary(seller, {
             accounts: {
                 buyer: provider.wallet.publicKey,
                 seller: seller,
