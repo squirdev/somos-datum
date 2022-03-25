@@ -31,8 +31,8 @@ pub mod somos_solana {
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
     ) -> Result<()> {
-        let user = &mut ctx.accounts.user;
-        let boss = &mut ctx.accounts.boss;
+        let user = &ctx.accounts.user;
+        let boss = &ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
         let boss_pubkey = ledger.boss;
         Ledger::purchase_primary(
@@ -57,9 +57,9 @@ pub mod somos_solana {
         escrow_item: Pubkey,
     ) -> Result<()> {
         let ledger = &mut ctx.accounts.ledger;
-        let buyer = &mut ctx.accounts.buyer;
-        let seller = &mut ctx.accounts.seller;
-        let boss = &mut ctx.accounts.boss;
+        let buyer = &ctx.accounts.buyer;
+        let seller = &ctx.accounts.seller;
+        let boss = &ctx.accounts.boss;
         EscrowItem::purchase_secondary(
             &escrow_item,
             ledger,
@@ -138,8 +138,8 @@ pub enum LedgerErrors {
 
 impl Ledger {
     pub fn purchase_primary<'a>(
-        purchaser: &mut Signer<'a>,
-        boss: &mut SystemAccount<'a>,
+        purchaser: &Signer<'a>,
+        boss: &SystemAccount<'a>,
         boss_pubkey: &Pubkey,
         ledger: &mut Ledger,
     ) -> Result<()> {
@@ -160,8 +160,8 @@ impl Ledger {
 
     pub fn validate(
         ledger: &Ledger,
-        purchaser: &mut Signer,
-        boss: &mut SystemAccount,
+        purchaser: &Signer,
+        boss: &SystemAccount,
         boss_pubkey: &Pubkey,
     ) -> Result<()> {
         // validate boss
@@ -183,7 +183,7 @@ impl Ledger {
         }
     }
 
-    pub fn validate_first_time_purchase(ledger: &Ledger, purchaser: &mut Signer) -> Result<()> {
+    pub fn validate_first_time_purchase(ledger: &Ledger, purchaser: &Signer) -> Result<()> {
         match ledger.owners.contains(purchaser.key) {
             true => {
                 Err(LedgerErrors::DontBeGreedy.into())
@@ -280,9 +280,9 @@ impl EscrowItem {
     pub fn purchase_secondary<'a>(
         escrow_item: &Pubkey,
         ledger: &mut Ledger,
-        buyer: &mut Signer<'a>,
-        seller: &mut SystemAccount<'a>,
-        boss: &mut SystemAccount<'a>,
+        buyer: &Signer<'a>,
+        seller: &SystemAccount<'a>,
+        boss: &SystemAccount<'a>,
     ) -> Result<()> {
         // validate buyer
         match Ledger::validate_first_time_purchase(ledger, buyer) {
