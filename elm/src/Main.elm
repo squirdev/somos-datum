@@ -18,6 +18,7 @@ import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
 import Model.Role as Role exposing (Role, WithContext)
 import Model.Seller as Seller exposing (Seller(..))
+import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.Wallet as Wallet
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -177,7 +178,7 @@ update msg model =
                                 encoder =
                                     Encode.object
                                         [ ( "wallet", Encode.string ledger.wallet )
-                                        , ( "price", Encode.float float )
+                                        , ( "price", Encode.int <| Sol.toLamports float )
                                         ]
 
                                 json : String

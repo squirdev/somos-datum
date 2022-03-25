@@ -1,4 +1,4 @@
-module Model.Sol exposing (Sol, fromLamports)
+module Model.Sol exposing (Sol, fromLamports, toLamports)
 
 import Model.Lamports exposing (Lamports)
 
@@ -10,6 +10,11 @@ type alias Sol =
 fromLamports : Lamports -> Sol
 fromLamports lamports =
     toFloat lamports / lamportsPerSol
+
+
+toLamports : Sol -> Lamports
+toLamports sol =
+    floor <| sol * lamportsPerSol
 
 
 
