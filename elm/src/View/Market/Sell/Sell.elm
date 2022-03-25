@@ -190,7 +190,7 @@ body seller =
                                         [ class "icon is-small is-left"
                                         ]
                                         [ Html.i
-                                            [ class "fas fa-envelope"
+                                            [ class "fas fa-dollar-sign"
                                             ]
                                             []
                                         ]
