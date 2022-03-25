@@ -34,11 +34,9 @@ pub mod somos_solana {
         let user = &ctx.accounts.user;
         let boss = &ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
-        let boss_pubkey = ledger.boss;
         Ledger::purchase_primary(
             user,
             boss,
-            &boss_pubkey,
             ledger,
         )
     }
@@ -56,10 +54,10 @@ pub mod somos_solana {
         ctx: Context<PurchaseSecondary>,
         escrow_item: Pubkey,
     ) -> Result<()> {
-        let ledger = &mut ctx.accounts.ledger;
         let buyer = &ctx.accounts.buyer;
         let seller = &ctx.accounts.seller;
         let boss = &ctx.accounts.boss;
+        let ledger = &mut ctx.accounts.ledger;
         EscrowItem::purchase_secondary(
             &escrow_item,
             ledger,
@@ -140,10 +138,9 @@ impl Ledger {
     pub fn purchase_primary<'a>(
         purchaser: &Signer<'a>,
         boss: &SystemAccount<'a>,
-        boss_pubkey: &Pubkey,
         ledger: &mut Ledger,
     ) -> Result<()> {
-        match Ledger::validate(ledger, purchaser, boss, boss_pubkey) {
+        match Ledger::validate(ledger, purchaser, boss) {
             Ok(_) => {
                 match Ledger::collect(ledger.price, purchaser, boss) {
                     ok @ Ok(_) => {
@@ -162,10 +159,9 @@ impl Ledger {
         ledger: &Ledger,
         purchaser: &Signer,
         boss: &SystemAccount,
-        boss_pubkey: &Pubkey,
     ) -> Result<()> {
         // validate boss
-        match boss.key == boss_pubkey {
+        match boss.key == &ledger.boss {
             true => {
                 // validate first-time purchase
                 match Ledger::validate_first_time_purchase(ledger, purchaser) {
