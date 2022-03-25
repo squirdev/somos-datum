@@ -158,10 +158,8 @@ body seller =
                     Html.div
                         []
                         [ header
-                        , View.Market.Ledger.body
-                            { ledger = ledger
-                            , html = button
-                            }
+                        , View.Market.Ledger.body <|
+                            View.Market.Ledger.release01 ledger button
                         ]
 
                 Typing string ledger ->
@@ -209,10 +207,8 @@ body seller =
                     Html.div
                         []
                         [ header
-                        , View.Market.Ledger.body
-                            { ledger = ledger
-                            , html = input
-                            }
+                        , View.Market.Ledger.body <|
+                            View.Market.Ledger.release01 ledger input
                         ]
 
                 PriceNotValidFloat ledger ->
@@ -231,10 +227,8 @@ body seller =
                     Html.div
                         []
                         [ header
-                        , View.Market.Ledger.body
-                            { ledger = ledger
-                            , html = button
-                            }
+                        , View.Market.Ledger.body <|
+                            View.Market.Ledger.release01 ledger button
                         ]
     in
     Html.div

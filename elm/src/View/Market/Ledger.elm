@@ -1,4 +1,4 @@
-module View.Market.Ledger exposing (Args, body)
+module View.Market.Ledger exposing (Args, body, release01)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
@@ -6,12 +6,6 @@ import Model.Ledger as Ledger exposing (Ledger)
 import Model.Sol as Sol
 import Model.Wallet as PublicKey
 import Msg.Msg exposing (Msg(..))
-
-
-type alias Args =
-    { ledger : Ledger
-    , html : Html Msg
-    }
 
 
 body : Args -> Html Msg
@@ -103,7 +97,7 @@ body args =
                 []
                 [ Html.h2
                     []
-                    [ Html.text "Release 01"
+                    [ Html.text args.meta.header
                     ]
                 ]
             ]
@@ -111,7 +105,64 @@ body args =
             [ class "has-border-2 px-2 py-2"
             ]
             [ slice_
+            , args.meta.body
             , Html.div
+                [ class "my-2"
+                ]
+                [ Html.p
+                    []
+                    [ Html.text "original supply remaining: "
+                    , Html.b
+                        [ class "has-border-2 px-1 py-1"
+                        ]
+                        [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
+                        ]
+                    ]
+                ]
+            , Html.div
+                [ class "my-2"
+                ]
+                [ Html.p
+                    []
+                    [ Html.text "original price: "
+                    , Html.b
+                        [ class "has-border-2 px-1 py-1"
+                        ]
+                        [ Html.text <| String.fromFloat <| Sol.fromLamports args.ledger.price
+                        ]
+                    ]
+                ]
+            , min
+            , yours
+            , ownership
+            , args.html
+            ]
+        ]
+
+
+type alias Args =
+    { ledger : Ledger
+    , meta : Meta
+    , html : Html Msg
+    }
+
+
+type alias Meta =
+    { index : Int
+    , header : String
+    , body : Html Msg
+    }
+
+
+
+-- release 01
+
+
+release01 : Ledger -> Html Msg -> Args
+release01 ledger html =
+    let
+        body_ =
+            Html.div
                 [ class "has-font-2 has-border-2 px-2 py-2"
                 ]
                 [ Html.h3
@@ -154,35 +205,14 @@ body args =
                         """
                     ]
                 ]
-            , Html.div
-                [ class "my-2"
-                ]
-                [ Html.p
-                    []
-                    [ Html.text "original supply remaining: "
-                    , Html.b
-                        [ class "has-border-2 px-1 py-1"
-                        ]
-                        [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
-                        ]
-                    ]
-                ]
-            , Html.div
-                [ class "my-2"
-                ]
-                [ Html.p
-                    []
-                    [ Html.text "original price: "
-                    , Html.b
-                        [ class "has-border-2 px-1 py-1"
-                        ]
-                        [ Html.text <| String.fromFloat <| Sol.fromLamports args.ledger.price
-                        ]
-                    ]
-                ]
-            , min
-            , yours
-            , ownership
-            , args.html
-            ]
-        ]
+
+        meta =
+            { index = 1
+            , header = "Release 01"
+            , body = body_
+            }
+    in
+    { ledger = ledger
+    , meta = meta
+    , html = html
+    }

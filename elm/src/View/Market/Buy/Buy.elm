@@ -178,10 +178,9 @@ body buyer =
                     Html.div
                         []
                         [ header
-                        , View.Market.Ledger.body
-                            { ledger = ledger
-                            , html = button ledger
-                            }
+                        , View.Market.Ledger.body <|
+                            View.Market.Ledger.release01 ledger <|
+                                button ledger
                         ]
 
                 Download downloadStatus ->
