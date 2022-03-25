@@ -52,10 +52,9 @@ pub mod somos_solana {
         EscrowItem::submit_to_escrow(seller, price, ledger)
     }
 
-    // TODO; just pass seller without price to avoid potential float precision issues
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
-        escrow_item: EscrowItem,
+        escrow_item: Pubkey,
     ) -> Result<()> {
         let ledger = &mut ctx.accounts.ledger;
         let buyer = &mut ctx.accounts.buyer;
@@ -241,7 +240,7 @@ pub struct PurchaseSecondary<'info> {
     pub system_program: Program<'info, System>,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub struct EscrowItem {
     pub price: u64,
     pub seller: Pubkey,
@@ -279,7 +278,7 @@ impl EscrowItem {
     }
 
     pub fn purchase_secondary<'a>(
-        escrow_item: &EscrowItem,
+        escrow_item: &Pubkey,
         ledger: &mut Ledger,
         buyer: &mut Signer<'a>,
         seller: &mut SystemAccount<'a>,
@@ -293,13 +292,13 @@ impl EscrowItem {
                     Ok(_) => {
                         // pop
                         match EscrowItem::pop_escrow_item(escrow_item, ledger) {
-                            Ok(_) => {
+                            Ok(a) => {
                                 // push
                                 ledger.owners.push(buyer.key());
                                 // collect
-                                EscrowItem::collect(escrow_item, buyer, seller, boss, ledger.resale)
+                                EscrowItem::collect(a, buyer, seller, boss, ledger.resale)
                             }
-                            err @ Err(_) => { err }
+                            Err(err) => { Err(err) }
                         }
                     }
                     err @ Err(_) => { err }
@@ -336,13 +335,15 @@ impl EscrowItem {
     }
 
     fn validate_escrow_item<'a>(
-        escrow_item: &EscrowItem,
+        escrow_item: &Pubkey,
         ledger: &Ledger,
         seller: &SystemAccount<'a>,
     ) -> Result<()> {
-        match ledger.escrow.contains(escrow_item) {
+        let escrow: Vec<Pubkey> = ledger.escrow.iter()
+            .map(|escrow_item| escrow_item.seller).collect();
+        match escrow.contains(escrow_item) {
             true => {
-                match &escrow_item.seller == seller.key {
+                match escrow_item == seller.key {
                     true => { Ok(()) }
                     false => { Err(LedgerErrors::UnauthorizedSeller.into()) }
                 }
@@ -352,44 +353,50 @@ impl EscrowItem {
     }
 
     fn pop_escrow_item(
-        escrow_item: &EscrowItem,
+        escrow_item: &Pubkey,
         ledger: &mut Ledger,
-    ) -> Result<()> {
+    ) -> Result<EscrowItem> {
         // remove from escrow
         match EscrowItem::remove_from_vec(
             &mut ledger.escrow,
             escrow_item,
+            |x| &x.seller,
             LedgerErrors::ItemNotForSale,
         ) {
-            Ok(_) => {
+            Ok(a) => {
                 // remove from ledger
-                EscrowItem::remove_from_vec(
+                match EscrowItem::remove_from_vec(
                     &mut ledger.owners,
-                    &escrow_item.seller,
+                    escrow_item,
+                    |x| x,
                     LedgerErrors::SellerNotOnLedger,
-                )
+                ) {
+                    Ok(_) => { Ok(a) }
+                    Err(err) => { Err(err) }
+                }
             }
             err @ Err(_) => { err }
         }
     }
 
-    fn remove_from_vec<T: std::cmp::PartialEq>(
-        vec: &mut Vec<T>,
-        item: &T,
+    fn remove_from_vec<A: std::marker::Copy, B: std::cmp::PartialEq>(
+        vec: &mut Vec<A>,
+        item: &B,
+        with: fn(&A) -> &B,
         err: LedgerErrors,
-    ) -> Result<()> {
-        let maybe_ix = vec.iter().position(|x| x == item);
+    ) -> Result<A> {
+        let maybe_ix = vec.iter().position(|x| with(x) == item);
         match maybe_ix {
             None => { Err(err.into()) }
             Some(ix) => {
-                vec.remove(ix);
-                Ok(())
+                let a = vec.remove(ix);
+                Ok(a)
             }
         }
     }
 
     fn collect<'a>(
-        escrow_item: &EscrowItem,
+        escrow_item: EscrowItem,
         buyer: &Signer<'a>,
         seller: &SystemAccount<'a>,
         boss: &SystemAccount<'a>,

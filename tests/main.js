@@ -74,16 +74,16 @@ describe("somos-solana", () => {
     it("submit to escrow should fail when primary market is not sold out", async () => {
         const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL
         try {
-            await program02.rpc.submitToEscrow(new anchor.BN(price), {
+            await program03.rpc.submitToEscrow(new anchor.BN(price), {
                 accounts: {
-                    seller: user02.key.publicKey,
+                    seller: user03.key.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6005)
             console.log(error)
+            assert.ok(error.code === 6005)
         }
         const actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
@@ -244,10 +244,8 @@ describe("somos-solana", () => {
         const _program = programForUser(buyer)
         const seller = user03.key.publicKey; // user03 never submitted for escrow
         const boss = provider.wallet.publicKey;
-        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem = {price: new anchor.BN(price), seller: seller};
         try {
-            await _program.rpc.purchaseSecondary(escrowItem, {
+            await _program.rpc.purchaseSecondary(seller, {
                 accounts: {
                     buyer: buyer.key.publicKey,
                     seller: seller,
@@ -267,10 +265,8 @@ describe("somos-solana", () => {
         const _program = programForUser(buyer)
         const seller = user02.key.publicKey;
         const boss = provider.wallet.publicKey;
-        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem = {price: new anchor.BN(price), seller: seller};
         try {
-            await _program.rpc.purchaseSecondary(escrowItem, {
+            await _program.rpc.purchaseSecondary(seller, {
                 accounts: {
                     buyer: buyer.key.publicKey,
                     seller: boss, // should be user02 (seller)
@@ -285,7 +281,7 @@ describe("somos-solana", () => {
         }
     });
     // purchase secondary
-    it("purchase secondary at listed price", async () => {
+    it("purchase secondary", async () => {
         // players
         const buyer = user04.key.publicKey;
         const seller = user02.key.publicKey;
@@ -293,28 +289,8 @@ describe("somos-solana", () => {
         // balances
         const balanceSeller = await provider.connection.getBalance(seller);
         const balanceBoss = await provider.connection.getBalance(boss);
-        // items
-        const price1 = 0.20 * anchor.web3.LAMPORTS_PER_SOL;
-        const price2 = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem1 = {price: new anchor.BN(price1), seller: seller}; // seller is valid but price is invalid
-        const escrowItem2 = {price: new anchor.BN(price2), seller: seller};
-        // failure at wrong price
-        try {
-            await program04.rpc.purchaseSecondary(escrowItem1, {
-                accounts: {
-                    buyer: buyer,
-                    seller: seller,
-                    boss: boss,
-                    ledger: pdaLedgerPublicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                }
-            });
-        } catch (error) {
-            console.log(error);
-            assert.ok(error.code === 6003)
-        }
-        // success at correct price
-        await program04.rpc.purchaseSecondary(escrowItem2, {
+        // success
+        await program04.rpc.purchaseSecondary(seller, {
             accounts: {
                 buyer: buyer,
                 seller: seller,
@@ -345,12 +321,9 @@ describe("somos-solana", () => {
         const buyer = user04.key.publicKey;
         const seller = user02.key.publicKey;
         const boss = provider.wallet.publicKey;
-        // items
-        const price = 0.25 * anchor.web3.LAMPORTS_PER_SOL;
-        const escrowItem = {price: new anchor.BN(price), seller: seller};
         // failure
         try {
-            await program04.rpc.purchaseSecondary(escrowItem, {
+            await program04.rpc.purchaseSecondary(seller, {
                 accounts: {
                     buyer: buyer,
                     seller: seller,
