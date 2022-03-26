@@ -243,10 +243,26 @@ header =
 
 body_ : Ledgers -> (Ledger -> Html Msg) -> Html Msg
 body_ ledgers local =
-    Html.div
-        []
-        [ header
-        , Html.div
-            []
-            (yours ledgers local)
-        ]
+    let
+        yours_ =
+            case (yours ledgers local) of
+                [] ->
+                    Html.div
+                        []
+                        [ Html.text "you've nothing to sell yet"
+                        ]
+
+                _ ->
+                    Html.div
+                        []
+                        [ Html.text "your stuff"
+                        , Html.div
+                            []
+                            [ header
+                            , Html.div
+                                []
+                                (yours ledgers local)
+                            ]
+                        ]
+    in
+    yours_

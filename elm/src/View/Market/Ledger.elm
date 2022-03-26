@@ -144,7 +144,7 @@ type alias Args =
     { wallet : Wallet
     , ledger : Ledger
     , meta : Meta
-    , local : Ledger -> Html Msg
+    , local : Ledger -> Html Msg -- TODO; drop ledger arg
     }
 
 
@@ -163,9 +163,9 @@ yours : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
 yours ledgers local =
     List.concatMap
         (\(ledger, html_) ->
-            case Ledger.getEscrowItem ledgers.wallet ledger of
-                Just _ -> [ html_ ]
-                Nothing -> []
+            case Ledger.checkOwnership ledgers.wallet ledger of
+                True -> [ html_ ]
+                False -> []
         )
         (toList ledgers local)
 
@@ -173,9 +173,9 @@ others : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
 others ledgers local =
     List.concatMap
         (\(ledger, html_) ->
-            case Ledger.getEscrowItem ledgers.wallet ledger of
-                Just _ -> [ ]
-                Nothing -> [ html_ ]
+            case Ledger.checkOwnership ledgers.wallet ledger of
+                True -> [ ]
+                False -> [ html_ ]
         )
         (toList ledgers local)
 
