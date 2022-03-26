@@ -1,7 +1,7 @@
 module Msg.Seller exposing (FromSellerMsg(..))
 
-import Model.Ledger exposing (Ledger)
+import Model.Ledger exposing (Ledgers)
 
 
 type FromSellerMsg
-    = Typing String Ledger
+    = Typing String Ledgers

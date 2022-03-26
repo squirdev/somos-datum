@@ -16,7 +16,7 @@ export async function getPhantom(role) {
             more: JSON.stringify(more)
         }
         // send state to elm
-        app.ports.connectSuccessListener.send(JSON.stringify(response));
+        app.ports.getCurrentStateListener.send(JSON.stringify(response));
         // return state to js
         return {windowSolana: window.solana, connection: connection}
     } catch (err) {

@@ -1,14 +1,14 @@
 module Model.Buyer exposing (Buyer(..), getWallet)
 
 import Model.DownloadStatus as DownloadStatus exposing (DownloadStatus)
-import Model.Ledger exposing (Ledger)
+import Model.Ledger exposing (Ledger, Ledgers)
 import Model.Wallet exposing (Wallet)
 
 
 type Buyer
     = WaitingForWallet
     | WaitingForStateLookup Wallet
-    | Console Ledger
+    | Console Ledgers
     | Download DownloadStatus
 
 
@@ -21,8 +21,8 @@ getWallet anchor =
         WaitingForStateLookup wallet ->
             Just wallet
 
-        Console ledger ->
-            Just ledger.wallet
+        Console ledgers ->
+            Just ledgers.wallet
 
         Download downloadStatus ->
             case downloadStatus of

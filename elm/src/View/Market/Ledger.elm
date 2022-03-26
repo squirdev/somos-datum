@@ -1,10 +1,10 @@
-module View.Market.Ledger exposing (Args, body, release01)
+module View.Market.Ledger exposing (toList, yours, others)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
-import Model.Ledger as Ledger exposing (Ledger)
+import Model.Ledger as Ledger exposing (Ledger, Ledgers)
 import Model.Sol as Sol
-import Model.Wallet as PublicKey
+import Model.Wallet as PublicKey exposing (Wallet)
 import Msg.Msg exposing (Msg(..))
 
 
@@ -16,7 +16,7 @@ body args =
                 [ class "has-border-2 has-font-2 px-2 py-2"
                 , style "float" "right"
                 ]
-                [ Html.text (PublicKey.slice args.ledger.wallet)
+                [ Html.text (PublicKey.slice args.wallet)
                 ]
 
         ownership : Html Msg
@@ -24,7 +24,7 @@ body args =
             let
                 toString : String
                 toString =
-                    case Ledger.checkOwnership args.ledger of
+                    case Ledger.checkOwnership args.wallet args.ledger of
                         True ->
                             "yes 😎"
 
@@ -66,9 +66,9 @@ body args =
                 Nothing ->
                     Html.div [] []
 
-        yours : Html Msg
-        yours =
-            case Ledger.getEscrowItem args.ledger of
+        yourPrice : Html Msg
+        yourPrice =
+            case Ledger.getEscrowItem args.wallet args.ledger of
                 Just head ->
                     Html.div
                         [ class "my-2"
@@ -133,33 +133,57 @@ body args =
                     ]
                 ]
             , min
-            , yours
+            , yourPrice
             , ownership
-            , args.html
+            , args.local args.ledger
             ]
         ]
 
 
 type alias Args =
-    { ledger : Ledger
+    { wallet : Wallet
+    , ledger : Ledger
     , meta : Meta
-    , html : Html Msg
+    , local : Ledger -> Html Msg
     }
 
 
 type alias Meta =
-    { index : Int
-    , header : String
+    { header : String
     , body : Html Msg
     }
 
 
+toList : Ledgers -> (Ledger -> Html Msg) -> List ((Ledger, Html Msg))
+toList ledgers local =
+    [ (ledgers.one, body { wallet = ledgers.wallet, ledger = ledgers.one, meta = release01, local = local })
+    ]
+
+yours : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
+yours ledgers local =
+    List.concatMap
+        (\(ledger, html_) ->
+            case Ledger.getEscrowItem ledgers.wallet ledger of
+                Just _ -> [ html_ ]
+                Nothing -> []
+        )
+        (toList ledgers local)
+
+others : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
+others ledgers local =
+    List.concatMap
+        (\(ledger, html_) ->
+            case Ledger.getEscrowItem ledgers.wallet ledger of
+                Just _ -> [ ]
+                Nothing -> [ html_ ]
+        )
+        (toList ledgers local)
 
 -- release 01
 
 
-release01 : Ledger -> Html Msg -> Args
-release01 ledger html =
+release01 : Meta
+release01 =
     let
         body_ =
             Html.div
@@ -206,13 +230,7 @@ release01 ledger html =
                     ]
                 ]
 
-        meta =
-            { index = 1
-            , header = "Release 01"
-            , body = body_
-            }
     in
-    { ledger = ledger
-    , meta = meta
-    , html = html
+    { header = "Release 01"
+    , body = body_
     }

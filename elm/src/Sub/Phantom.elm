@@ -15,8 +15,8 @@ port openDownloadUrlSender : String -> Cmd msg
 
 -- listeners
 
-
-port connectSuccessListener : (String -> msg) -> Sub msg
+-- TODO: move to root
+port getCurrentStateListener : (String -> msg) -> Sub msg
 
 
 port connectFailureListener : (String -> msg) -> Sub msg

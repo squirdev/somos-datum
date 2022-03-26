@@ -1,5 +1,4 @@
 import {web3, BN} from "@project-serum/anchor";
-import {getCurrentState} from "./state";
 import {ACCOUNT_SEED} from "./config";
 
 export async function init(program, provider, ledger, user, n, price, resale) {
@@ -12,8 +11,8 @@ export async function init(program, provider, ledger, user, n, price, resale) {
                 systemProgram: web3.SystemProgram.programId,
             },
         });
-        // get state after transaction
-        await getCurrentState(program, ledger, user);
+        // send state to elm
+        app.ports.getCurrentStateListener.send(user);
         // log success
         console.log("program init success");
     } catch (error) {

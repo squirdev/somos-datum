@@ -1,13 +1,13 @@
 module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
-import Model.Ledger exposing (EscrowItem, Ledger)
+import Model.Ledger exposing (EscrowItem, Ledgers)
 import Model.Wallet exposing (Wallet)
 
 
 type ToAnchorMsg
     = InitProgram Wallet
     | PurchasePrimary Wallet
-    | SubmitToEscrow Ledger Price
+    | SubmitToEscrow Price Ledgers
     | PurchaseSecondary EscrowItem Wallet
 
 
@@ -16,7 +16,7 @@ type alias Price =
 
 
 type
-    FromAnchorMsg
+    FromAnchorMsg -- TODO; clean up failures in favor of generic
     -- state lookup attempt
     = SuccessOnStateLookup String
     | FailureOnStateLookup String

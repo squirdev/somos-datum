@@ -89,7 +89,7 @@ update msg model =
 
         FromPhantom fromPhantomMsg ->
             case fromPhantomMsg of
-                Msg.Phantom.SuccessOnConnection json ->
+                Msg.Phantom.GetCurrentState json ->
                     case Role.decode json of
                         Ok role ->
                             case role of
@@ -170,14 +170,14 @@ update msg model =
                     , purchasePrimarySender json
                     )
 
-                SubmitToEscrow ledger price ->
+                SubmitToEscrow price ledgers ->
                     case String.toFloat <| String.trim price of
                         Just float ->
                             let
                                 encoder : Encode.Value
                                 encoder =
                                     Encode.object
-                                        [ ( "wallet", Encode.string ledger.wallet )
+                                        [ ( "wallet", Encode.string ledgers.wallet )
                                         , ( "price", Encode.int <| Sol.toLamports float )
                                         ]
 
@@ -185,14 +185,14 @@ update msg model =
                                 json =
                                     Role.encode (Role.SellerWith (Encode.encode 0 encoder))
                             in
-                            ( { model | state = State.Sell (Seller.WaitingForStateLookup ledger.wallet) }
+                            ( { model | state = State.Sell (Seller.WaitingForStateLookup ledgers.wallet) }
                             , submitToEscrowSender json
                             )
 
                         Nothing ->
                             ( { model
                                 | state =
-                                    State.Sell <| Seller.PriceNotValidFloat ledger
+                                    State.Sell <| Seller.PriceNotValidFloat ledgers
                               }
                             , Cmd.none
                             )
@@ -232,8 +232,8 @@ update msg model =
                                         -- it was the buy page
                                         Role.BuyerWith moreJson ->
                                             case Ledger.decode moreJson of
-                                                Ok ledger ->
-                                                    State.Buy <| Buyer.Console ledger
+                                                Ok ledgers ->
+                                                    State.Buy <| Buyer.Console ledgers
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
@@ -241,8 +241,8 @@ update msg model =
                                         -- it was the sell page
                                         Role.SellerWith moreJson ->
                                             case Ledger.decode moreJson of
-                                                Ok ledger ->
-                                                    State.Sell <| Seller.Console ledger
+                                                Ok ledgers ->
+                                                    State.Sell <| Seller.Console ledgers
 
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
@@ -276,6 +276,8 @@ update msg model =
                 Msg.Anchor.FailureOnPurchaseSecondary error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
+
+
         AwsPreSign result ->
             case result of
                 Ok response ->
@@ -302,8 +304,8 @@ update msg model =
 
         FromSeller selling ->
             case selling of
-                FromSellerMsg.Typing string ledger ->
-                    ( { model | state = State.Sell <| Seller.Typing string ledger }
+                FromSellerMsg.Typing string ledgers ->
+                    ( { model | state = State.Sell <| Seller.Typing string ledgers }
                     , Cmd.none
                     )
 

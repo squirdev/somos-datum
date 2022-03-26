@@ -1,6 +1,7 @@
 import {web3} from "@project-serum/anchor";
 import {encodeBase64, textEncoder} from "./util.js";
 
+// TODO; move to phantom dir
 export async function sign(_phantom, user) {
     try {
         // build message

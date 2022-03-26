@@ -11,6 +11,7 @@ import {submit} from "./escrow";
 import {secondary} from "./purchase/secondary";
 
 
+// TODO; move this file to root
 // get phantom
 let phantom = null;
 let release01PubKey, _ = null;
@@ -29,6 +30,7 @@ app.ports.getCurrentStateSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom);
     // invoke state request & send response to elm
+    // TODO; call all
     await getCurrentState(pp.program, release01PubKey, user);
 });
 

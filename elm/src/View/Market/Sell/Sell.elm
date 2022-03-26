@@ -3,6 +3,7 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
+import Model.Ledger exposing (Ledger, Ledgers)
 import Model.Role as User exposing (Role(..))
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
@@ -11,7 +12,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Msg.Seller as FromSellerMsg
-import View.Market.Ledger
+import View.Market.Ledger exposing (yours)
 
 
 body : Seller -> Html Msg
@@ -142,27 +143,23 @@ body seller =
                             []
                         ]
 
-                Console ledger ->
+                Console ledgers ->
                     let
-                        button =
+                        button : Ledger -> Html Msg
+                        button ledger =
                             Html.div
                                 []
                                 [ Html.button
                                     [ class "is-button-3"
-                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledger)
+                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
                                     ]
                                     [ Html.text "type your price here"
                                     ]
                                 ]
                     in
-                    Html.div
-                        []
-                        [ header
-                        , View.Market.Ledger.body <|
-                            View.Market.Ledger.release01 ledger button
-                        ]
+                    body_ ledgers button
 
-                Typing string ledger ->
+                Typing string ledgers ->
                     let
                         price =
                             case string of
@@ -172,7 +169,8 @@ body seller =
                                 _ ->
                                     string
 
-                        input =
+                        input : Ledger -> Html Msg
+                        input ledger =
                             Html.div
                                 [ class "field"
                                 ]
@@ -183,7 +181,7 @@ body seller =
                                         [ class "input is-focused is-link is-small"
                                         , type_ "text"
                                         , placeholder "your price in SOL"
-                                        , onInput (\str -> FromSeller (FromSellerMsg.Typing str ledger))
+                                        , onInput (\str -> FromSeller (FromSellerMsg.Typing str ledgers))
                                         ]
                                         []
                                     , Html.span
@@ -197,39 +195,30 @@ body seller =
                                     ]
                                 , Html.button
                                     [ class "is-button-3"
-                                    , onClick (ToAnchor (SubmitToEscrow ledger price))
+                                    , onClick (ToAnchor (SubmitToEscrow price ledgers))
                                     ]
                                     [ Html.text <|
                                         String.join " " [ "submit to escrow at:", price, "SOL" ]
                                     ]
                                 ]
                     in
-                    Html.div
-                        []
-                        [ header
-                        , View.Market.Ledger.body <|
-                            View.Market.Ledger.release01 ledger input
-                        ]
+                    body_ ledgers input
 
-                PriceNotValidFloat ledger ->
+                PriceNotValidFloat ledgers ->
                     let
-                        button =
+                        button : Ledger -> Html Msg
+                        button ledger =
                             Html.div
                                 []
                                 [ Html.button
                                     [ class "is-button-3"
-                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledger)
+                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
                                     ]
                                     [ Html.text "try again with a valid numeric value"
                                     ]
                                 ]
                     in
-                    Html.div
-                        []
-                        [ header
-                        , View.Market.Ledger.body <|
-                            View.Market.Ledger.release01 ledger button
-                        ]
+                    body_ ledgers button
     in
     Html.div
         [ class "container"
@@ -247,5 +236,17 @@ check =
         ]
 
 
+-- TODO;
 header =
     Html.div [] []
+
+
+body_ : Ledgers -> (Ledger -> Html Msg) -> Html Msg
+body_ ledgers local =
+    Html.div
+        []
+        [ header
+        , Html.div
+            []
+            (yours ledgers local)
+        ]

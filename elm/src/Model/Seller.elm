@@ -1,15 +1,15 @@
 module Model.Seller exposing (Seller(..), getWallet)
 
-import Model.Ledger exposing (Ledger)
+import Model.Ledger exposing (Ledger, Ledgers)
 import Model.Wallet exposing (Wallet)
 
 
 type Seller
     = WaitingForWallet
     | WaitingForStateLookup Wallet
-    | Console Ledger
-    | Typing String Ledger
-    | PriceNotValidFloat Ledger
+    | Console Ledgers
+    | Typing String Ledgers
+    | PriceNotValidFloat Ledgers
 
 
 getWallet : Seller -> Maybe Wallet
@@ -21,11 +21,11 @@ getWallet seller =
         WaitingForStateLookup wallet ->
             Just wallet
 
-        Console ledger ->
-            Just ledger.wallet
+        Console ledgers ->
+            Just ledgers.wallet
 
-        Typing _ ledger ->
-            Just ledger.wallet
+        Typing _ ledgers ->
+            Just ledgers.wallet
 
-        PriceNotValidFloat ledger ->
-            Just ledger.wallet
+        PriceNotValidFloat ledgers ->
+            Just ledgers.wallet

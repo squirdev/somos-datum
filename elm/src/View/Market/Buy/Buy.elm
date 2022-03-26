@@ -9,26 +9,26 @@ import Model.Ledger as Ledger exposing (Ledger)
 import Model.Role as User
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
-import Model.Wallet as PublicKey
+import Model.Wallet as PublicKey exposing (Wallet)
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
-import View.Market.Ledger
+import View.Market.Ledger exposing (others, yours)
 
 
 body : Buyer -> Html Msg
 body buyer =
     let
-        button : Ledger -> Html Msg
-        button ledger =
-            case Ledger.checkOwnership ledger of
+        button : Wallet -> Ledger -> Html Msg
+        button wallet ledger =
+            case Ledger.checkOwnership wallet ledger of
                 True ->
                     Html.div
                         []
                         [ Html.button
                             [ class "is-button-1"
                             , style "width" "100%"
-                            , onClick (ToPhantom (SignMessage ledger.wallet))
+                            , onClick (ToPhantom (SignMessage wallet))
                             ]
                             [ Html.text "Download"
                             ]
@@ -43,7 +43,7 @@ body buyer =
                                 [ Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (PurchaseSecondary min ledger.wallet))
+                                    , onClick (ToAnchor (PurchaseSecondary min wallet))
                                     ]
                                     [ Html.text
                                         (String.join
@@ -63,7 +63,7 @@ body buyer =
                                 [ Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (PurchasePrimary ledger.wallet))
+                                    , onClick (ToAnchor (PurchasePrimary wallet))
                                     ]
                                     [ Html.text
                                         (String.join
@@ -174,13 +174,24 @@ body buyer =
                             []
                         ]
 
-                Console ledger ->
+                Console ledgers ->
                     Html.div
                         []
                         [ header
-                        , View.Market.Ledger.body <|
-                            View.Market.Ledger.release01 ledger <|
-                                button ledger
+                        , Html.div
+                            []
+                            [ Html.text "yours"
+                            , Html.div
+                                []
+                                (yours ledgers (button ledgers.wallet))
+                            ]
+                        , Html.div
+                            []
+                            [ Html.text "others"
+                            , Html.div
+                                []
+                                (others ledgers (button ledgers.wallet))
+                            ]
                         ]
 
                 Download downloadStatus ->

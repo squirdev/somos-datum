@@ -1,5 +1,4 @@
 import {web3, BN} from "@project-serum/anchor";
-import {getCurrentState} from "./state";
 
 export async function submit(program, provider, ledger, userJson) {
     // decode user
@@ -14,8 +13,8 @@ export async function submit(program, provider, ledger, userJson) {
                 systemProgram: web3.SystemProgram.programId,
             }
         });
-        // get state after transaction
-        await getCurrentState(program, ledger, userJson);
+        // send state to elm
+        app.ports.getCurrentStateListener.send(user);
         // log success
         console.log("submit to escrow success");
     } catch (error) {
