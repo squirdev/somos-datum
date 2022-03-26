@@ -66,7 +66,6 @@ decode string =
     Decode.decodeString decoder string
 
 
-
 checkOwnership : Wallet -> Ledger -> Bool
 checkOwnership wallet ledger =
     List.member

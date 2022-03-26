@@ -289,8 +289,6 @@ update msg model =
                 Msg.Anchor.FailureOnPurchaseSecondary error ->
                     ( { model | state = State.Error error }, Cmd.none )
 
-
-
         AwsPreSign result ->
             case result of
                 Ok response ->

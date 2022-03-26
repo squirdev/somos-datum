@@ -16,7 +16,8 @@ type alias Price =
 
 
 type
-    FromAnchorMsg -- TODO; clean up failures in favor of generic
+    FromAnchorMsg
+    -- TODO; clean up failures in favor of generic
     -- state lookup attempt
     = SuccessOnStateLookup String
     | FailureOnStateLookup String

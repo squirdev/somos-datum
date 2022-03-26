@@ -236,7 +236,10 @@ check =
         ]
 
 
+
 -- TODO;
+
+
 header =
     Html.div [] []
 
@@ -245,7 +248,7 @@ body_ : Ledgers -> (Ledger -> Html Msg) -> Html Msg
 body_ ledgers local =
     let
         yours_ =
-            case (yours ledgers local) of
+            case yours ledgers local of
                 [] ->
                     Html.div
                         []

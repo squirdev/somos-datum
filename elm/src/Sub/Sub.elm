@@ -10,13 +10,11 @@ import Sub.Phantom exposing (..)
 subs : Sub Msg
 subs =
     Sub.batch
-        [
-        -- phantom connect
-        connectFailureListener
+        [ -- phantom connect
+          connectFailureListener
             (\error ->
                 FromPhantom (ErrorOnConnection error)
             )
-
         , getCurrentStateListener
             (\pubKey ->
                 FromPhantom (GetCurrentState pubKey)

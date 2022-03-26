@@ -1,4 +1,4 @@
-module View.Market.Ledger exposing (toList, yours, others)
+module View.Market.Ledger exposing (others, toList, yours)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, style, target)
@@ -144,7 +144,9 @@ type alias Args =
     { wallet : Wallet
     , ledger : Ledger
     , meta : Meta
-    , local : Ledger -> Html Msg -- TODO; drop ledger arg
+    , local :
+        Ledger
+        -> Html Msg -- TODO; drop ledger arg
     }
 
 
@@ -154,30 +156,40 @@ type alias Meta =
     }
 
 
-toList : Ledgers -> (Ledger -> Html Msg) -> List ((Ledger, Html Msg))
+toList : Ledgers -> (Ledger -> Html Msg) -> List ( Ledger, Html Msg )
 toList ledgers local =
-    [ (ledgers.one, body { wallet = ledgers.wallet, ledger = ledgers.one, meta = release01, local = local })
+    [ ( ledgers.one, body { wallet = ledgers.wallet, ledger = ledgers.one, meta = release01, local = local } )
     ]
+
 
 yours : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
 yours ledgers local =
     List.concatMap
-        (\(ledger, html_) ->
+        (\( ledger, html_ ) ->
             case Ledger.checkOwnership ledgers.wallet ledger of
-                True -> [ html_ ]
-                False -> []
+                True ->
+                    [ html_ ]
+
+                False ->
+                    []
         )
         (toList ledgers local)
+
 
 others : Ledgers -> (Ledger -> Html Msg) -> List (Html Msg)
 others ledgers local =
     List.concatMap
-        (\(ledger, html_) ->
+        (\( ledger, html_ ) ->
             case Ledger.checkOwnership ledgers.wallet ledger of
-                True -> [ ]
-                False -> [ html_ ]
+                True ->
+                    []
+
+                False ->
+                    [ html_ ]
         )
         (toList ledgers local)
+
+
 
 -- release 01
 
@@ -229,7 +241,6 @@ release01 =
                         """
                     ]
                 ]
-
     in
     { header = "Release 01"
     , body = body_
