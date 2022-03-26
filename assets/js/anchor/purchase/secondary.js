@@ -18,7 +18,7 @@ export async function secondary(program, provider, ledger, userJson) {
             },
         });
         // send state to elm
-        app.ports.getCurrentStateListener.send(user);
+        app.ports.getCurrentStateListener.send(userJson);
         // log success
         console.log("secondary purchase success");
     } catch (error) {

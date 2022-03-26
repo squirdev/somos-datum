@@ -14,7 +14,7 @@ export async function submit(program, provider, ledger, userJson) {
             }
         });
         // send state to elm
-        app.ports.getCurrentStateListener.send(user);
+        app.ports.getCurrentStateListener.send(userJson);
         // log success
         console.log("submit to escrow success");
     } catch (error) {
