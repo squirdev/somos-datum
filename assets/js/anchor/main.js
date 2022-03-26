@@ -2,7 +2,7 @@ import {web3} from "@project-serum/anchor";
 import {ACCOUNT_SEED, programID} from "./config";
 import {getPP, textEncoder} from "./util.js";
 import {getPhantom} from "../phantom";
-import {getCurrentState} from "./state";
+import {getLedger, sendLedgers} from "./state";
 import {init} from "./init";
 import {primary} from "./purchase/primary";
 import {sign} from "./sign";
@@ -30,8 +30,8 @@ app.ports.getCurrentStateSender.subscribe(async function (user) {
     // get provider & program
     const pp = getPP(phantom);
     // invoke state request & send response to elm
-    // TODO; call all
-    await getCurrentState(pp.program, release01PubKey, user);
+    const ledgerOne = await getLedger(pp.program, release01PubKey);
+    await sendLedgers(user, ledgerOne);
 });
 
 // init program

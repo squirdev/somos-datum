@@ -1,5 +1,5 @@
 // get ledger state
-export async function getCurrentState(program, ledger) {
+export async function getLedger(program, ledger) {
     try {
         // fetch state
         const _state = await program.account.ledger.fetch(ledger);
@@ -13,7 +13,6 @@ export async function getCurrentState(program, ledger) {
         }
 
         function simplify() {
-            // TODO; send pubkey to elm
             const _owners = _state.owners.map(_publicKey => _publicKey.toString());
             const _escrow = _state.escrow.map(escrowItem => simplifyEscrowItem(escrowItem));
             return {
@@ -34,7 +33,8 @@ export async function getCurrentState(program, ledger) {
     }
 }
 
-export async function all(program, userJson, ledgerOne) {
+// send ledgers to elm
+export async function sendLedgers(userJson, ledgerOne) {
     try {
         // decode user
         const user = JSON.parse(userJson);
