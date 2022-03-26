@@ -93,15 +93,29 @@ update msg model =
                     case Role.decode json of
                         Ok role ->
                             case role of
-                                Role.BuyerWith wallet ->
-                                    ( { model | state = Buy (Buyer.WaitingForStateLookup wallet) }
-                                    , getCurrentStateSender json
-                                    )
+                                Role.BuyerWith moreJson ->
+                                    case Wallet.decode moreJson of
+                                        Ok wallet ->
+                                            ( { model | state = Buy (Buyer.WaitingForStateLookup wallet) }
+                                            , getCurrentStateSender json
+                                            )
 
-                                Role.SellerWith wallet ->
-                                    ( { model | state = Sell (Seller.WaitingForStateLookup wallet) }
-                                    , getCurrentStateSender json
-                                    )
+                                        Err error ->
+                                            ( { model | state = State.Error error }
+                                            , Cmd.none
+                                            )
+
+                                Role.SellerWith moreJson ->
+                                    case Wallet.decode moreJson of
+                                        Ok wallet ->
+                                            ( { model | state = Sell (Seller.WaitingForStateLookup wallet) }
+                                            , getCurrentStateSender json
+                                            )
+
+                                        Err error ->
+                                            ( { model | state = State.Error error }
+                                            , Cmd.none
+                                            )
 
                                 Role.AdminWith moreJson ->
                                     case Wallet.decode moreJson of
