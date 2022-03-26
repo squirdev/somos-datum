@@ -179,8 +179,7 @@ update msg model =
                         json =
                             Role.encode (Role.BuyerWith (Wallet.encode wallet))
                     in
-                    ( model
-                      -- TODO; waiting state
+                    ( { model | state = State.Buy <| Buyer.WaitingForStateLookup wallet }
                     , purchasePrimarySender json
                     )
 
