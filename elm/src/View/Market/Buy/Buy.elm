@@ -6,7 +6,8 @@ import Html.Events exposing (onClick)
 import Model.Buyer exposing (Buyer(..))
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger as Ledger exposing (Ledger)
-import Model.Role as User
+import Model.Role as User exposing (Role(..))
+import Model.Seller as Seller
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.Wallet as PublicKey exposing (Wallet)
@@ -155,19 +156,10 @@ body buyer =
                             ]
                         ]
 
-                WaitingForStateLookup publicKey ->
-                    let
-                        slice_ =
-                            PublicKey.slice publicKey
-                    in
+                WaitingForStateLookup wallet ->
                     Html.div
                         []
-                        [ Html.div
-                            [ class "has-border-2 has-font-2 px-2 py-2"
-                            , style "float" "right"
-                            ]
-                            [ Html.text slice_
-                            ]
+                        [ slice_ wallet
                         , Html.div
                             [ class "is-loading"
                             ]
@@ -175,21 +167,84 @@ body buyer =
                         ]
 
                 Console ledgers ->
+                    let
+                        yours_ =
+                            case yours ledgers (button ledgers.wallet) of
+                                [] ->
+                                    Html.div
+                                        [ class "has-border-2 px-2 py-2"
+                                        ]
+                                        [ Html.h2
+                                            [ class "has-font-1"
+                                            ]
+                                            [ Html.text "Your collection"
+                                            ]
+                                        , Html.div
+                                            []
+                                            [ Html.div
+                                                [ class "has-font-2"
+                                                ]
+                                                [ Html.text "nothing here yet \u{1F97A}"
+                                                ]
+                                            , Html.div
+                                                [ class "has-font-2"
+                                                ]
+                                                [ Html.text
+                                                    """check out the available releases below
+                                                    """
+                                                ]
+                                            ]
+                                        ]
+
+                                nel ->
+                                    Html.div
+                                        [ class "has-border-2 px-2 py-2"
+                                        ]
+                                        [ Html.h2
+                                            [ class "has-font-1"
+                                            ]
+                                            [ Html.text "Your collection"
+                                            ]
+                                        , Html.div
+                                            [ class "pb-2"
+                                            ]
+                                            [ Html.div
+                                                [ class "has-font-2"
+                                                ]
+                                                [ Html.text "ready for download 💿️️"
+                                                ]
+                                            , Html.div
+                                                [ class "has-font-2"
+                                                ]
+                                                [ Html.p
+                                                    []
+                                                    [ Html.text "ready for "
+                                                    , Html.a
+                                                        [ class "has-sky-blue-text"
+                                                        , State.href (State.Sell <| Seller.WaitingForStateLookup ledgers.wallet)
+                                                        , onClick (ToPhantom (Connect User.Seller))
+                                                        ]
+                                                        [ Html.text "re-sell"
+                                                        ]
+                                                    , Html.text " 💰"
+                                                    ]
+                                                ]
+                                            ]
+                                        , Html.div
+                                            []
+                                            nel
+                                        ]
+                    in
                     Html.div
                         []
-                        [ header
-                        , Html.div
-                            []
-                            [ Html.text "yours"
-                            , Html.div
-                                []
-                                (yours ledgers (button ledgers.wallet))
-                            ]
+                        [ header ledgers.wallet
+                        , yours_
                         , Html.div
                             []
                             [ Html.text "others"
                             , Html.div
                                 []
+                                -- TODO;
                                 (others ledgers (button ledgers.wallet))
                             ]
                         ]
@@ -197,18 +252,9 @@ body buyer =
                 Download downloadStatus ->
                     case downloadStatus of
                         DownloadStatus.InvokedAndWaiting phantomSignature ->
-                            let
-                                slice_ =
-                                    PublicKey.slice phantomSignature.userDecoded
-                            in
                             Html.div
                                 []
-                                [ Html.div
-                                    [ class "has-border-2 has-font-2 px-2 py-2"
-                                    , style "float" "right"
-                                    ]
-                                    [ Html.text slice_
-                                    ]
+                                [ slice_ phantomSignature.userDecoded
                                 , Html.div
                                     [ class "is-loading"
                                     ]
@@ -216,19 +262,10 @@ body buyer =
                                 ]
 
                         DownloadStatus.Done response ->
-                            let
-                                slice_ =
-                                    Html.div
-                                        [ class "has-border-2 has-font-2 px-2 py-2"
-                                        , style "float" "right"
-                                        ]
-                                        [ Html.text (PublicKey.slice response.user)
-                                        ]
-                            in
                             Html.div
                                 [ class "has-border-2 px-2 pt-2"
                                 ]
-                                [ slice_
+                                [ slice_ response.user
                                 , Html.div
                                     [ class "mb-3"
                                     ]
@@ -270,15 +307,16 @@ body buyer =
         ]
 
 
-header : Html msg
-header =
+header : Wallet -> Html Msg
+header wallet =
     Html.div
         [ class "has-font-1 py-6"
         ]
         [ Html.div
             [ class "has-border-2 px-2 py-2"
             ]
-            [ Html.div
+            [ slice_ wallet
+            , Html.div
                 [ class "pb-2"
                 ]
                 [ Html.h2
@@ -314,6 +352,16 @@ header =
                     ]
                 ]
             ]
+        ]
+
+
+slice_ : Wallet -> Html Msg
+slice_ wallet =
+    Html.div
+        [ class "has-border-2 has-font-2 px-2 py-2"
+        , style "float" "right"
+        ]
+        [ Html.text (PublicKey.slice wallet)
         ]
 
 

@@ -1,24 +1,16 @@
 module View.Market.Ledger exposing (others, toList, yours)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, href, style, target)
+import Html.Attributes exposing (class, href, target)
 import Model.Ledger as Ledger exposing (Ledger, Ledgers)
 import Model.Sol as Sol
-import Model.Wallet as PublicKey exposing (Wallet)
+import Model.Wallet exposing (Wallet)
 import Msg.Msg exposing (Msg(..))
 
 
 body : Args -> Html Msg
 body args =
     let
-        slice_ =
-            Html.div
-                [ class "has-border-2 has-font-2 px-2 py-2"
-                , style "float" "right"
-                ]
-                [ Html.text (PublicKey.slice args.wallet)
-                ]
-
         ownership : Html Msg
         ownership =
             let
@@ -91,50 +83,53 @@ body args =
         [ class "has-font-1"
         ]
         [ Html.div
-            [ class "pl-2"
-            ]
-            [ Html.div
-                []
-                [ Html.h2
-                    []
-                    [ Html.text args.meta.header
-                    ]
-                ]
-            ]
-        , Html.div
             [ class "has-border-2 px-2 py-2"
             ]
-            [ slice_
+            [ Html.div
+                [ class "pl-2"
+                ]
+                [ Html.div
+                    []
+                    [ Html.h2
+                        []
+                        [ Html.text args.meta.header
+                        ]
+                    ]
+                ]
             , args.meta.body
             , Html.div
-                [ class "my-2"
+                [ class "has-border-2 px-2 py-2"
                 ]
-                [ Html.p
-                    []
-                    [ Html.text "original supply remaining: "
-                    , Html.b
-                        [ class "has-border-2 px-1 py-1"
-                        ]
-                        [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
+                [ Html.div
+                    [ class "my-2"
+                    ]
+                    [ Html.p
+                        []
+                        [ Html.text "original supply remaining: "
+                        , Html.b
+                            [ class "has-border-2 px-1 py-1"
+                            ]
+                            [ Html.text (String.fromInt args.ledger.originalSupplyRemaining)
+                            ]
                         ]
                     ]
-                ]
-            , Html.div
-                [ class "my-2"
-                ]
-                [ Html.p
-                    []
-                    [ Html.text "original price: "
-                    , Html.b
-                        [ class "has-border-2 px-1 py-1"
-                        ]
-                        [ Html.text <| String.fromFloat <| Sol.fromLamports args.ledger.price
+                , Html.div
+                    [ class "my-2"
+                    ]
+                    [ Html.p
+                        []
+                        [ Html.text "original price: "
+                        , Html.b
+                            [ class "has-border-2 px-1 py-1"
+                            ]
+                            [ Html.text <| String.fromFloat <| Sol.fromLamports args.ledger.price
+                            ]
                         ]
                     ]
+                , min
+                , yourPrice
+                , ownership
                 ]
-            , min
-            , yourPrice
-            , ownership
             , args.local args.ledger
             ]
         ]
