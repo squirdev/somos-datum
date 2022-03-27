@@ -3,11 +3,12 @@ module View.Market.Sell.Sell exposing (body)
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, type_)
 import Html.Events exposing (onClick, onInput)
+import Model.Buyer as Buyer
 import Model.Ledger exposing (Ledger, Ledgers)
 import Model.Role as User exposing (Role(..))
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
-import Model.Wallet as PublicKey
+import Model.Wallet as PublicKey exposing (Wallet)
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -123,20 +124,11 @@ body seller =
                             ]
                         ]
 
-                WaitingForStateLookup publicKey ->
-                    let
-                        slice_ =
-                            PublicKey.slice publicKey
-                    in
+                WaitingForStateLookup wallet ->
                     Html.div
                         [ class "has-border-2"
                         ]
-                        [ Html.div
-                            [ class "has-border-2 has-font-2 px-2 py-2"
-                            , style "float" "right"
-                            ]
-                            [ Html.text slice_
-                            ]
+                        [ slice_ wallet
                         , Html.div
                             [ class "is-loading"
                             ]
@@ -236,12 +228,49 @@ check =
         ]
 
 
+header : Wallet -> Html Msg
+header wallet =
+    Html.div
+        [ class "has-font-1 py-6"
+        ]
+        [ Html.div
+            [ class "has-border-2 px-2 py-2"
+            ]
+            [ slice_ wallet
+            , Html.div
+                [ class "pb-2"
+                ]
+                [ Html.h2
+                    []
+                    [ Html.text
+                        """Re-sell marketplace
+                        """
+                    ]
+                ]
+            , Html.div
+                [ class "has-font-2"
+                ]
+                [ Html.div
+                    []
+                    [ Html.text "specify your re-sell price ✏️"
+                    ]
+                , Html.div
+                    []
+                    [ Html.text "make a profit 💯"
+                    ]
+                ]
+            ]
+        ]
 
--- TODO;
 
-
-header =
-    Html.div [] []
+slice_ : Wallet -> Html Msg
+slice_ wallet =
+    Html.div
+        [ class "has-border-2 has-font-2 px-2 py-2 ml-1"
+        , style "float" "right"
+        ]
+        [ Html.text (PublicKey.slice wallet)
+        ]
 
 
 body_ : Ledgers -> (Ledger -> Html Msg) -> Html Msg
@@ -252,19 +281,54 @@ body_ ledgers local =
                 [] ->
                     Html.div
                         []
-                        [ Html.text "you've nothing to sell yet"
+                        [ header ledgers.wallet
+                        , Html.div
+                            [ class "has-border-2 px-2 py-2"
+                            ]
+                            [ Html.h2
+                                [ class "has-font-1 has-border-1 mb-2"
+                                ]
+                                [ Html.text "Your collection"
+                                ]
+                            , Html.div
+                                [ class "has-font-2"
+                                ]
+                                [ Html.text "is empty 😭"
+                                ]
+                            , Html.div
+                                [ class "has-font-2"
+                                ]
+                                [ Html.p
+                                    []
+                                    [ Html.text "go check out our "
+                                    , Html.a
+                                        [ class "has-sky-blue-text"
+                                        , State.href (State.Buy <| Buyer.WaitingForStateLookup ledgers.wallet)
+                                        , onClick (ToPhantom (Connect User.Buyer))
+                                        ]
+                                        [ Html.text "available releases"
+                                        ]
+                                    , Html.text " 😉"
+                                    ]
+                                ]
+                            ]
                         ]
 
-                _ ->
+                nel ->
                     Html.div
                         []
-                        [ Html.text "your stuff"
+                        [ header ledgers.wallet
                         , Html.div
-                            []
-                            [ header
+                            [ class "has-border-2 px-2 py-2"
+                            ]
+                            [ Html.h2
+                                [ class "has-font-1 has-border-1 mb-2"
+                                ]
+                                [ Html.text "Your collection"
+                                ]
                             , Html.div
                                 []
-                                (yours ledgers local)
+                                nel
                             ]
                         ]
     in

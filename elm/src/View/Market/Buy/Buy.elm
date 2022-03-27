@@ -178,7 +178,7 @@ body buyer =
                                             [ class "has-border-2 px-2 py-2"
                                             ]
                                             [ Html.h2
-                                                [ class "has-font-1 has-border-1"
+                                                [ class "has-font-1 has-border-1 mb-2"
                                                 ]
                                                 [ Html.text "Your collection"
                                                 ]
@@ -208,7 +208,7 @@ body buyer =
                                             [ class "has-border-2 px-2 py-2"
                                             ]
                                             [ Html.h2
-                                                [ class "has-font-1 has-border-1"
+                                                [ class "has-font-1 has-border-1 mb-2"
                                                 ]
                                                 [ Html.text "Your collection"
                                                 ]
@@ -250,7 +250,7 @@ body buyer =
                                         [ class "has-border-2 px-2 py-2"
                                         ]
                                         [ Html.h2
-                                            [ class "has-font-1 has-border-1"
+                                            [ class "has-font-1 has-border-1 mb-2"
                                             ]
                                             [ Html.text "Available releases not in your collection"
                                             ]
@@ -278,7 +278,7 @@ body buyer =
                                         [ class "has-border-2 px-2 py-2"
                                         ]
                                         [ Html.h2
-                                            [ class "has-font-1 has-border-1"
+                                            [ class "has-font-1 has-border-1 mb-2"
                                             ]
                                             [ Html.text "Available releases not in your collection"
                                             ]
