@@ -172,25 +172,102 @@ body buyer =
                             case yours ledgers (button ledgers.wallet) of
                                 [] ->
                                     Html.div
+                                        [ class "pb-6"
+                                        ]
+                                        [ Html.div
+                                            [ class "has-border-2 px-2 py-2"
+                                            ]
+                                            [ Html.h2
+                                                [ class "has-font-1 has-border-1"
+                                                ]
+                                                [ Html.text "Your collection"
+                                                ]
+                                            , Html.div
+                                                []
+                                                [ Html.div
+                                                    [ class "has-font-2"
+                                                    ]
+                                                    [ Html.text "nothing here yet \u{1F97A}"
+                                                    ]
+                                                , Html.div
+                                                    [ class "has-font-2"
+                                                    ]
+                                                    [ Html.text
+                                                        """check out the available releases below
+                                                        """
+                                                    ]
+                                                ]
+                                            ]
+                                        ]
+
+                                nel ->
+                                    Html.div
+                                        [ class "pb-6"
+                                        ]
+                                        [ Html.div
+                                            [ class "has-border-2 px-2 py-2"
+                                            ]
+                                            [ Html.h2
+                                                [ class "has-font-1 has-border-1"
+                                                ]
+                                                [ Html.text "Your collection"
+                                                ]
+                                            , Html.div
+                                                [ class "pb-2"
+                                                ]
+                                                [ Html.div
+                                                    [ class "has-font-2"
+                                                    ]
+                                                    [ Html.text "ready for download 💿️️"
+                                                    ]
+                                                , Html.div
+                                                    [ class "has-font-2"
+                                                    ]
+                                                    [ Html.p
+                                                        []
+                                                        [ Html.text "ready for "
+                                                        , Html.a
+                                                            [ class "has-sky-blue-text"
+                                                            , State.href (State.Sell <| Seller.WaitingForStateLookup ledgers.wallet)
+                                                            , onClick (ToPhantom (Connect User.Seller))
+                                                            ]
+                                                            [ Html.text "re-sell"
+                                                            ]
+                                                        , Html.text " 💰"
+                                                        ]
+                                                    ]
+                                                ]
+                                            , Html.div
+                                                []
+                                                nel
+                                            ]
+                                        ]
+
+                        others_ =
+                            case others ledgers (button ledgers.wallet) of
+                                [] ->
+                                    Html.div
                                         [ class "has-border-2 px-2 py-2"
                                         ]
                                         [ Html.h2
-                                            [ class "has-font-1"
+                                            [ class "has-font-1 has-border-1"
                                             ]
-                                            [ Html.text "Your collection"
+                                            [ Html.text "Available releases not in your collection"
                                             ]
                                         , Html.div
                                             []
                                             [ Html.div
                                                 [ class "has-font-2"
                                                 ]
-                                                [ Html.text "nothing here yet \u{1F97A}"
+                                                [ Html.text
+                                                    """this is empty because you've purchased every release available ♥️
+                                                    """
                                                 ]
                                             , Html.div
                                                 [ class "has-font-2"
                                                 ]
                                                 [ Html.text
-                                                    """check out the available releases below
+                                                    """go download and consider re-selling for a profit
                                                     """
                                                 ]
                                             ]
@@ -201,34 +278,9 @@ body buyer =
                                         [ class "has-border-2 px-2 py-2"
                                         ]
                                         [ Html.h2
-                                            [ class "has-font-1"
+                                            [ class "has-font-1 has-border-1"
                                             ]
-                                            [ Html.text "Your collection"
-                                            ]
-                                        , Html.div
-                                            [ class "pb-2"
-                                            ]
-                                            [ Html.div
-                                                [ class "has-font-2"
-                                                ]
-                                                [ Html.text "ready for download 💿️️"
-                                                ]
-                                            , Html.div
-                                                [ class "has-font-2"
-                                                ]
-                                                [ Html.p
-                                                    []
-                                                    [ Html.text "ready for "
-                                                    , Html.a
-                                                        [ class "has-sky-blue-text"
-                                                        , State.href (State.Sell <| Seller.WaitingForStateLookup ledgers.wallet)
-                                                        , onClick (ToPhantom (Connect User.Seller))
-                                                        ]
-                                                        [ Html.text "re-sell"
-                                                        ]
-                                                    , Html.text " 💰"
-                                                    ]
-                                                ]
+                                            [ Html.text "Available releases not in your collection"
                                             ]
                                         , Html.div
                                             []
@@ -239,14 +291,7 @@ body buyer =
                         []
                         [ header ledgers.wallet
                         , yours_
-                        , Html.div
-                            []
-                            [ Html.text "others"
-                            , Html.div
-                                []
-                                -- TODO;
-                                (others ledgers (button ledgers.wallet))
-                            ]
+                        , others_
                         ]
 
                 Download downloadStatus ->
