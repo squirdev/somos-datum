@@ -137,6 +137,7 @@ body seller =
 
                 Console ledgers ->
                     let
+                        -- TODO; match on ownership
                         button : Ledger -> Html Msg
                         button ledger =
                             Html.div
