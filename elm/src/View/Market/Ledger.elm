@@ -83,7 +83,7 @@ body args =
         [ class "has-font-1"
         ]
         [ Html.div
-            [ class "has-border-2 px-2 py-2"
+            [ class "pb-2"
             ]
             [ Html.div
                 [ class "pl-2"

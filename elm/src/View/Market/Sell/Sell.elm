@@ -1,7 +1,7 @@
 module View.Market.Sell.Sell exposing (body)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class, href, placeholder, style, type_)
+import Html.Attributes exposing (class, href, placeholder, style, target, type_)
 import Html.Events exposing (onClick, onInput)
 import Model.Buyer as Buyer
 import Model.Ledger exposing (Ledger, Ledgers)
@@ -140,9 +140,11 @@ body seller =
                         button : Ledger -> Html Msg
                         button ledger =
                             Html.div
-                                []
+                                [ class "has-border-2"
+                                ]
                                 [ Html.button
-                                    [ class "is-button-3"
+                                    [ class "is-button-1"
+                                    , style "width" "100%"
                                     , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
                                     ]
                                     [ Html.text "type your price here"
@@ -164,7 +166,7 @@ body seller =
                         input : Ledger -> Html Msg
                         input ledger =
                             Html.div
-                                [ class "field"
+                                [ class "field has-border-2"
                                 ]
                                 [ Html.p
                                     [ class "control has-icons-left has-icons-right"
@@ -186,7 +188,8 @@ body seller =
                                         ]
                                     ]
                                 , Html.button
-                                    [ class "is-button-3"
+                                    [ class "is-button-1"
+                                    , style "width" "100%"
                                     , onClick (ToAnchor (SubmitToEscrow price ledgers))
                                     ]
                                     [ Html.text <|
@@ -201,9 +204,11 @@ body seller =
                         button : Ledger -> Html Msg
                         button ledger =
                             Html.div
-                                []
+                                [ class "has-border-2"
+                                ]
                                 [ Html.button
-                                    [ class "is-button-3"
+                                    [ class "is-button-1"
+                                    , style "width" "100%"
                                     , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
                                     ]
                                     [ Html.text "try again with a valid numeric value"
@@ -252,11 +257,17 @@ header wallet =
                 ]
                 [ Html.div
                     []
-                    [ Html.text "specify your re-sell price ✏️"
-                    ]
-                , Html.div
-                    []
-                    [ Html.text "make a profit 💯"
+                    [ Html.text
+                        """transactions are facilitated
+                        """
+                    , Html.a
+                        [ class "has-sky-blue-text"
+                        , target "_blank"
+                        , href "https://github.com/bigtimetapin/somos-solana/blob/develop/programs/somos-solana/src/lib.rs"
+                        ]
+                        [ Html.text "securely"
+                        ]
+                    , Html.text " on the solana blockchain"
                     ]
                 ]
             ]
@@ -325,6 +336,20 @@ body_ ledgers local =
                                 [ class "has-font-1 has-border-1 mb-2"
                                 ]
                                 [ Html.text "Your collection"
+                                ]
+                            , Html.div
+                                [ class "pb-2"
+                                ]
+                                [ Html.div
+                                    [ class "has-font-2"
+                                    ]
+                                    [ Html.text "specify your re-sell price ✏️"
+                                    ]
+                                , Html.div
+                                    [ class "has-font-2"
+                                    ]
+                                    [ Html.text "make a profit 💯"
+                                    ]
                                 ]
                             , Html.div
                                 []
