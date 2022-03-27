@@ -358,7 +358,7 @@ header wallet =
 slice_ : Wallet -> Html Msg
 slice_ wallet =
     Html.div
-        [ class "has-border-2 has-font-2 px-2 py-2"
+        [ class "has-border-2 has-font-2 px-2 py-2 ml-1"
         , style "float" "right"
         ]
         [ Html.text (PublicKey.slice wallet)
