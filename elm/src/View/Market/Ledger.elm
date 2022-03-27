@@ -139,9 +139,7 @@ type alias Args =
     { wallet : Wallet
     , ledger : Ledger
     , meta : Meta
-    , local :
-        Ledger
-        -> Html Msg -- TODO; drop ledger arg
+    , local : Ledger -> Html Msg
     }
 
 
