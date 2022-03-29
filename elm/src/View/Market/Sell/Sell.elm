@@ -4,7 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class, href, placeholder, style, target, type_)
 import Html.Events exposing (onClick, onInput)
 import Model.Buyer as Buyer
-import Model.Ledger exposing (Ledger, Ledgers)
+import Model.Ledger as Ledger exposing (Ledger, Ledgers)
 import Model.Role as User exposing (Role(..))
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
@@ -137,20 +137,25 @@ body seller =
 
                 Console ledgers ->
                     let
-                        -- TODO; match on ownership
                         button : Ledger -> Html Msg
                         button ledger =
-                            Html.div
-                                [ class "has-border-2"
-                                ]
-                                [ Html.button
-                                    [ class "is-button-1"
-                                    , style "width" "100%"
-                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
-                                    ]
-                                    [ Html.text "type your price here"
-                                    ]
-                                ]
+                            case Ledger.getEscrowItem ledgers.wallet ledger of
+                                Just _ ->
+                                    Html.div [] []
+
+                                Nothing ->
+                                    Html.div
+                                        [ class "has-border-2"
+                                        ]
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , style "width" "100%"
+                                            , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
+                                            ]
+                                            [ Html.text "type your price here"
+                                            ]
+                                        ]
+
                     in
                     body_ ledgers button
 
