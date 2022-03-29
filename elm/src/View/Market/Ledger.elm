@@ -46,7 +46,7 @@ body args =
                         ]
                         [ Html.p
                             []
-                            [ Html.text "minimum resale price: "
+                            [ Html.text "minimum re-sell price: "
                             , Html.b
                                 [ class "has-border-2 px-1 py-1"
                                 ]
@@ -67,7 +67,7 @@ body args =
                         ]
                         [ Html.p
                             []
-                            [ Html.text "your resale price: "
+                            [ Html.text "your re-sell price: "
                             , Html.b
                                 [ class "has-border-2 px-1 py-1"
                                 ]
