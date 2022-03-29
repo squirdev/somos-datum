@@ -155,7 +155,6 @@ body seller =
                                             [ Html.text "type your price here"
                                             ]
                                         ]
-
                     in
                     body_ ledgers button
 
@@ -196,7 +195,7 @@ body seller =
                                 , Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (SubmitToEscrow price ledgers))
+                                    , onClick (ToAnchor (SubmitToEscrow price ledgers ledger.release))
                                     ]
                                     [ Html.text <|
                                         String.join " " [ "submit to escrow at:", price, "SOL" ]

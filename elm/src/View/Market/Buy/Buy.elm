@@ -44,7 +44,7 @@ body buyer =
                                 [ Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (PurchaseSecondary min wallet))
+                                    , onClick (ToAnchor (PurchaseSecondary min wallet ledger.release))
                                     ]
                                     [ Html.text
                                         (String.join
@@ -64,7 +64,7 @@ body buyer =
                                 [ Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (PurchasePrimary wallet))
+                                    , onClick (ToAnchor (PurchasePrimary wallet ledger.release))
                                     ]
                                     [ Html.text
                                         (String.join

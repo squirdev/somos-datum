@@ -16,6 +16,7 @@ import Model.DownloadStatus as DownloadStatus
 import Model.Ledger as Ledger exposing (Ledger)
 import Model.Model as Model exposing (Model)
 import Model.Phantom as Phantom
+import Model.Release as Release
 import Model.Role as Role exposing (Role, WithContext)
 import Model.Seller as Seller exposing (Seller(..))
 import Model.Sol as Sol
@@ -168,22 +169,27 @@ update msg model =
 
         ToAnchor toAnchorMsg ->
             case toAnchorMsg of
-                InitProgram wallet ->
-                    ( model
-                    , initProgramSender (Role.encode (Role.AdminWith (Wallet.encode wallet)))
-                    )
-
-                PurchasePrimary wallet ->
+                InitProgram wallet release ->
                     let
                         json : String
                         json =
-                            Role.encode (Role.BuyerWith (Wallet.encode wallet))
+                            Role.encode <| Role.AdminWith <| Release.encode wallet release
+                    in
+                    ( model
+                    , initProgramSender json
+                    )
+
+                PurchasePrimary wallet release ->
+                    let
+                        json : String
+                        json =
+                            Role.encode <| Role.BuyerWith <| Release.encode wallet release
                     in
                     ( { model | state = State.Buy <| Buyer.WaitingForStateLookup wallet }
                     , purchasePrimarySender json
                     )
 
-                SubmitToEscrow price ledgers ->
+                SubmitToEscrow price ledgers release ->
                     case String.toFloat <| String.trim price of
                         Just float ->
                             let
@@ -191,6 +197,7 @@ update msg model =
                                 encoder =
                                     Encode.object
                                         [ ( "wallet", Encode.string ledgers.wallet )
+                                        , ( "release", Encode.int <| Release.toInt release )
                                         , ( "price", Encode.int <| Sol.toLamports float )
                                         ]
 
@@ -210,12 +217,13 @@ update msg model =
                             , Cmd.none
                             )
 
-                PurchaseSecondary escrowItem wallet ->
+                PurchaseSecondary escrowItem wallet release ->
                     let
                         encoder : Encode.Value
                         encoder =
                             Encode.object
                                 [ ( "wallet", Encode.string wallet )
+                                , ( "release", Encode.int <| Release.toInt release )
                                 , ( "seller", Encode.string escrowItem.seller )
                                 ]
 

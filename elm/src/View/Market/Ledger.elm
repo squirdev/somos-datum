@@ -152,6 +152,7 @@ type alias Meta =
 toList : Ledgers -> (Ledger -> Html Msg) -> List ( Ledger, Html Msg )
 toList ledgers local =
     [ ( ledgers.one, body { wallet = ledgers.wallet, ledger = ledgers.one, meta = release01, local = local } )
+    , ( ledgers.two, body { wallet = ledgers.wallet, ledger = ledgers.two, meta = release02, local = local } )
     ]
 
 
@@ -236,5 +237,48 @@ release01 =
                 ]
     in
     { header = "Release 01"
+    , body = body_
+    }
+
+
+
+-- release 02
+-- TODO;
+
+
+release02 : Meta
+release02 =
+    let
+        body_ =
+            Html.div
+                [ class "has-font-2 has-border-2 px-2 py-2"
+                ]
+                [ Html.h3
+                    []
+                    [ Html.text "Event 01"
+                    , Html.text
+                        """
+                         (ticket sales)
+                        """
+                    ]
+                , Html.div
+                    []
+                    [ Html.b
+                        [ class "mr-2"
+                        ]
+                        [ Html.text "🎟"
+                        ]
+                    , Html.text "buy a ticket"
+                    ]
+                , Html.div
+                    []
+                    [ Html.text
+                        """purchasing a ticket to this live-music event grants admission & access to exclusive digital
+                        content captured from the night we shared together.
+                        """
+                    ]
+                ]
+    in
+    { header = "Release 02"
     , body = body_
     }

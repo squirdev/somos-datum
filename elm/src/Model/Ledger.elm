@@ -2,6 +2,7 @@ module Model.Ledger exposing (EscrowItem, Ledger, Ledgers, checkOwnership, decod
 
 import Json.Decode as Decode
 import Model.Lamports exposing (Lamports)
+import Model.Release as Release exposing (Release)
 import Model.Wallet exposing (Wallet)
 
 
@@ -15,6 +16,10 @@ type alias Ledger =
     , originalSupplyRemaining : Int
     , owners : List Wallet
     , escrow : List EscrowItem
+
+    -- not actually in the ledger
+    -- just the release index
+    , release : Release
     }
 
 
@@ -26,6 +31,7 @@ type alias EscrowItem =
 
 type alias Ledgers =
     { one : Ledger
+    , two : Ledger
 
     -- not actually in the ledger
     -- just the current user
@@ -48,19 +54,25 @@ decode string =
                 (Decode.field "price" Decode.int)
                 (Decode.field "seller" Decode.string)
 
+        releaseDecoder : Decode.Decoder Release
+        releaseDecoder =
+            Decode.map Release.fromInt Decode.int
+
         ledgerDecoder : Decode.Decoder Ledger
         ledgerDecoder =
-            Decode.map5 Ledger
+            Decode.map6 Ledger
                 (Decode.field "price" Decode.int)
                 (Decode.field "resale" Decode.float)
                 (Decode.field "originalSupplyRemaining" Decode.int)
                 (Decode.field "owners" (Decode.list Decode.string))
                 (Decode.field "escrow" (Decode.list escrowItemDecoder))
+                (Decode.field "release" releaseDecoder)
 
         decoder : Decode.Decoder Ledgers
         decoder =
-            Decode.map2 Ledgers
+            Decode.map3 Ledgers
                 (Decode.field "one" ledgerDecoder)
+                (Decode.field "two" ledgerDecoder)
                 (Decode.field "wallet" Decode.string)
     in
     Decode.decodeString decoder string

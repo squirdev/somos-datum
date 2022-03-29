@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Model.Admin exposing (Admin(..))
+import Model.Release exposing (Release(..))
 import Model.Role as User
 import Model.Wallet exposing (Wallet)
 import Msg.Anchor exposing (ToAnchorMsg(..))
@@ -42,7 +43,21 @@ body admin =
                                         ]
                                     , Html.button
                                         [ class "is-button-1"
-                                        , onClick (ToAnchor (InitProgram wallet))
+                                        , onClick (ToAnchor (InitProgram wallet One))
+                                        ]
+                                        [ Html.text "init"
+                                        ]
+                                    ]
+                                , Html.div
+                                    [ class "column has-border-2 is-12"
+                                    ]
+                                    [ Html.div
+                                        []
+                                        [ Html.text "release02"
+                                        ]
+                                    , Html.button
+                                        [ class "is-button-1"
+                                        , onClick (ToAnchor (InitProgram wallet Two))
                                         ]
                                         [ Html.text "init"
                                         ]

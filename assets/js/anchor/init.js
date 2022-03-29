@@ -1,10 +1,9 @@
 import {web3, BN} from "@project-serum/anchor";
-import {ACCOUNT_SEED} from "./config";
 
-export async function init(program, provider, ledger, user, n, price, resale) {
+export async function init(program, provider, ledger, seed, user, n, price, resale) {
     try {
         const priceInLamports = price * web3.LAMPORTS_PER_SOL
-        await program.rpc.initializeLedger(ACCOUNT_SEED, new BN(n), new BN(priceInLamports), resale, {
+        await program.rpc.initializeLedger(seed, new BN(n), new BN(priceInLamports), resale, {
             accounts: {
                 user: provider.wallet.publicKey,
                 ledger: ledger,

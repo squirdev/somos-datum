@@ -1,5 +1,5 @@
 // get ledger state
-export async function getLedger(program, ledger) {
+export async function getLedger(program, ledger, release) {
     try {
         // fetch state
         const _state = await program.account.ledger.fetch(ledger);
@@ -20,7 +20,8 @@ export async function getLedger(program, ledger) {
                 resale: _state.resale, // not a BN type
                 originalSupplyRemaining: Number(_state.originalSupplyRemaining.toString()),
                 owners: _owners,
-                escrow: _escrow
+                escrow: _escrow,
+                release: release
             };
         }
 
@@ -34,13 +35,14 @@ export async function getLedger(program, ledger) {
 }
 
 // send ledgers to elm
-export async function sendLedgers(userJson, ledgerOne) {
+export async function sendLedgers(userJson, ledgerOne, ledgerTwo) {
     try {
         // decode user
         const user = JSON.parse(userJson);
         const more = JSON.parse(user.more);
         const ledgers = {
             one: ledgerOne,
+            two: ledgerTwo,
             wallet: more.wallet
         }
         const response = {
