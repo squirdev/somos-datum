@@ -305,7 +305,7 @@ body_ ledgers local =
                             , Html.div
                                 [ class "has-font-2"
                                 ]
-                                [ Html.text "is empty 😭"
+                                [ Html.text "nothing here yet 😭"
                                 ]
                             , Html.div
                                 [ class "has-font-2"
@@ -320,7 +320,6 @@ body_ ledgers local =
                                         ]
                                         [ Html.text "available releases"
                                         ]
-                                    , Html.text " 😉"
                                     ]
                                 ]
                             ]
