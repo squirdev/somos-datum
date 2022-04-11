@@ -51,7 +51,7 @@ describe("somos-solana", () => {
         const balance = await provider.connection.getBalance(provider.wallet.publicKey)
         await program03.rpc.purchasePrimary({
             accounts: {
-                user: user03.key.publicKey,
+                buyer: user03.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
@@ -99,7 +99,7 @@ describe("somos-solana", () => {
         try {
             await _program.rpc.purchasePrimary({
                 accounts: {
-                    user: purchaser.key.publicKey,
+                    buyer: purchaser.key.publicKey,
                     boss: purchaser.key.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
@@ -115,7 +115,7 @@ describe("somos-solana", () => {
         try {
             await program03.rpc.purchasePrimary({
                 accounts: {
-                    user: user03.key.publicKey,
+                    buyer: user03.key.publicKey,
                     boss: provider.wallet.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
@@ -137,7 +137,7 @@ describe("somos-solana", () => {
         const balance = await provider.connection.getBalance(provider.wallet.publicKey)
         await program02.rpc.purchasePrimary({
             accounts: {
-                user: user02.key.publicKey,
+                buyer: user02.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
@@ -163,7 +163,7 @@ describe("somos-solana", () => {
         try {
             await _program.rpc.purchasePrimary({
                 accounts: {
-                    user: purchaser.key.publicKey,
+                    buyer: purchaser.key.publicKey,
                     boss: provider.wallet.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,

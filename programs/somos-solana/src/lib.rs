@@ -31,11 +31,11 @@ pub mod somos_solana {
     pub fn purchase_primary(
         ctx: Context<PurchasePrimary>
     ) -> Result<()> {
-        let user = &ctx.accounts.user;
+        let buyer = &ctx.accounts.buyer;
         let boss = &ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
         Ledger::purchase_primary(
-            user,
+            buyer,
             boss,
             ledger,
         )
@@ -85,7 +85,7 @@ pub struct InitializeLedger<'info> {
 #[derive(Accounts)]
 pub struct PurchasePrimary<'info> {
     #[account(mut)]
-    pub user: Signer<'info>,
+    pub buyer: Signer<'info>,
     // used to validate against persisted boss
     #[account(mut)]
     pub boss: SystemAccount<'info>,
@@ -136,15 +136,15 @@ pub enum LedgerErrors {
 
 impl Ledger {
     pub fn purchase_primary<'a>(
-        purchaser: &Signer<'a>,
+        buyer: &Signer<'a>,
         boss: &SystemAccount<'a>,
         ledger: &mut Ledger,
     ) -> Result<()> {
-        match Ledger::validate(ledger, purchaser, boss) {
+        match Ledger::validate(ledger, buyer, boss) {
             Ok(_) => {
-                match Ledger::collect(ledger.price, purchaser, boss) {
+                match Ledger::collect(ledger.price, buyer, boss) {
                     ok @ Ok(_) => {
-                        ledger.owners.push(purchaser.key());
+                        ledger.owners.push(buyer.key());
                         ledger.original_supply_remaining = ledger.original_supply_remaining - 1;
                         ok
                     }
@@ -157,14 +157,14 @@ impl Ledger {
 
     pub fn validate(
         ledger: &Ledger,
-        purchaser: &Signer,
+        buyer: &Signer,
         boss: &SystemAccount,
     ) -> Result<()> {
         // validate boss
         match boss.key == &ledger.boss {
             true => {
                 // validate first-time purchase
-                match Ledger::validate_first_time_purchase(ledger, purchaser) {
+                match Ledger::validate_first_time_purchase(ledger, buyer) {
                     Ok(_) => {
                         // validate supply remaining
                         match ledger.original_supply_remaining > 0 {
@@ -179,8 +179,8 @@ impl Ledger {
         }
     }
 
-    pub fn validate_first_time_purchase(ledger: &Ledger, purchaser: &Signer) -> Result<()> {
-        match ledger.owners.contains(purchaser.key) {
+    pub fn validate_first_time_purchase(ledger: &Ledger, buyer: &Signer) -> Result<()> {
+        match ledger.owners.contains(buyer.key) {
             true => {
                 Err(LedgerErrors::DontBeGreedy.into())
             }
@@ -190,16 +190,16 @@ impl Ledger {
         }
     }
 
-    pub fn collect<'a>(price: u64, purchaser: &Signer<'a>, boss: &SystemAccount<'a>) -> Result<()> {
+    pub fn collect<'a>(price: u64, buyer: &Signer<'a>, boss: &SystemAccount<'a>) -> Result<()> {
         let ix = anchor_lang::solana_program::system_instruction::transfer(
-            &purchaser.key(),
+            &buyer.key(),
             &boss.key(),
             price,
         );
         anchor_lang::solana_program::program::invoke(
             &ix,
             &[
-                purchaser.to_account_info(),
+                buyer.to_account_info(),
                 boss.to_account_info()
             ],
         ).map_err(Into::into)
