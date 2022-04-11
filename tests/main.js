@@ -52,6 +52,7 @@ describe("somos-solana", () => {
         await program03.rpc.purchasePrimary({
             accounts: {
                 buyer: user03.key.publicKey,
+                recipient: user03.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
@@ -100,6 +101,7 @@ describe("somos-solana", () => {
             await _program.rpc.purchasePrimary({
                 accounts: {
                     buyer: purchaser.key.publicKey,
+                    recipient: purchaser.key.publicKey,
                     boss: purchaser.key.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
@@ -116,6 +118,7 @@ describe("somos-solana", () => {
             await program03.rpc.purchasePrimary({
                 accounts: {
                     buyer: user03.key.publicKey,
+                    recipient: user03.key.publicKey,
                     boss: provider.wallet.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
@@ -133,11 +136,12 @@ describe("somos-solana", () => {
         assert.ok(actualLedger.originalSupplyRemaining === 1)
     });
     // purchase primary
-    it("purchase primary sold out", async () => {
+    it("purchase primary for someone else", async () => {
         const balance = await provider.connection.getBalance(provider.wallet.publicKey)
-        await program02.rpc.purchasePrimary({
+        await program03.rpc.purchasePrimary({
             accounts: {
-                buyer: user02.key.publicKey,
+                buyer: user03.key.publicKey,
+                recipient: user02.key.publicKey,
                 boss: provider.wallet.publicKey,
                 ledger: pdaLedgerPublicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
@@ -147,12 +151,14 @@ describe("somos-solana", () => {
             pdaLedgerPublicKey
         );
         console.log(actualLedger)
+        const owners = actualLedger.owners.map(_publicKey => _publicKey.toString())
         const newBalance = await provider.connection.getBalance(provider.wallet.publicKey);
         const diff = newBalance - balance
         console.log(diff)
         console.log(newBalance)
         console.log(balance)
         // assertions
+        assert.ok(owners.includes(user02.key.publicKey.toString()))
         assert.ok(actualLedger.originalSupplyRemaining === 0)
         assert.ok(diff === 100000000)
     });
@@ -164,6 +170,7 @@ describe("somos-solana", () => {
             await _program.rpc.purchasePrimary({
                 accounts: {
                     buyer: purchaser.key.publicKey,
+                    recipient: purchaser.key.publicKey,
                     boss: provider.wallet.publicKey,
                     ledger: pdaLedgerPublicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,

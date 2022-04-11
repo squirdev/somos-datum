@@ -32,10 +32,12 @@ pub mod somos_solana {
         ctx: Context<PurchasePrimary>
     ) -> Result<()> {
         let buyer = &ctx.accounts.buyer;
+        let recipient = &ctx.accounts.recipient;
         let boss = &ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
         Ledger::purchase_primary(
             buyer,
+            recipient,
             boss,
             ledger,
         )
@@ -86,6 +88,8 @@ pub struct InitializeLedger<'info> {
 pub struct PurchasePrimary<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
+    #[account(mut)]
+    pub recipient: SystemAccount<'info>,
     // used to validate against persisted boss
     #[account(mut)]
     pub boss: SystemAccount<'info>,
@@ -137,14 +141,15 @@ pub enum LedgerErrors {
 impl Ledger {
     pub fn purchase_primary<'a>(
         buyer: &Signer<'a>,
+        recipient: &SystemAccount<'a>,
         boss: &SystemAccount<'a>,
         ledger: &mut Ledger,
     ) -> Result<()> {
-        match Ledger::validate(ledger, buyer, boss) {
+        match Ledger::validate(ledger, recipient.key, boss.key) {
             Ok(_) => {
                 match Ledger::collect(ledger.price, buyer, boss) {
                     ok @ Ok(_) => {
-                        ledger.owners.push(buyer.key());
+                        ledger.owners.push(recipient.key());
                         ledger.original_supply_remaining = ledger.original_supply_remaining - 1;
                         ok
                     }
@@ -157,11 +162,11 @@ impl Ledger {
 
     pub fn validate(
         ledger: &Ledger,
-        buyer: &Signer,
-        boss: &SystemAccount,
+        buyer: &Pubkey,
+        boss: &Pubkey,
     ) -> Result<()> {
         // validate boss
-        match boss.key == &ledger.boss {
+        match boss == &ledger.boss {
             true => {
                 // validate first-time purchase
                 match Ledger::validate_first_time_purchase(ledger, buyer) {
@@ -179,8 +184,8 @@ impl Ledger {
         }
     }
 
-    pub fn validate_first_time_purchase(ledger: &Ledger, buyer: &Signer) -> Result<()> {
-        match ledger.owners.contains(buyer.key) {
+    pub fn validate_first_time_purchase(ledger: &Ledger, buyer: &Pubkey) -> Result<()> {
+        match ledger.owners.contains(buyer) {
             true => {
                 Err(LedgerErrors::DontBeGreedy.into())
             }
@@ -281,7 +286,7 @@ impl EscrowItem {
         boss: &SystemAccount<'a>,
     ) -> Result<()> {
         // validate buyer
-        match Ledger::validate_first_time_purchase(ledger, buyer) {
+        match Ledger::validate_first_time_purchase(ledger, buyer.key) {
             Ok(_) => {
                 // validate escrow item
                 match EscrowItem::validate_escrow_item(escrow_item, ledger, seller) {
