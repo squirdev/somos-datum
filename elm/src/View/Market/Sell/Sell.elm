@@ -168,6 +168,7 @@ body seller =
                                 _ ->
                                     string
 
+                        -- TODO; only show for focused release
                         input : Ledger -> Html Msg
                         input ledger =
                             Html.div

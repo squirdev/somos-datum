@@ -47,6 +47,7 @@ body admin =
                                         ]
                                         [ Html.text "init"
                                         ]
+                                    -- TODO; purchase for someone else input
                                     ]
                                 , Html.div
                                     [ class "column has-border-2 is-12"

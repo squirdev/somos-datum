@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import Model.Buyer exposing (Buyer(..))
 import Model.DownloadStatus as DownloadStatus
 import Model.Ledger as Ledger exposing (Ledger)
-import Model.Role as User exposing (Role(..))
+import Model.Role as Role exposing (Role(..))
 import Model.Seller as Seller
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
@@ -64,7 +64,7 @@ body buyer =
                                 [ Html.button
                                     [ class "is-button-1"
                                     , style "width" "100%"
-                                    , onClick (ToAnchor (PurchasePrimary wallet ledger.release))
+                                    , onClick (ToAnchor (PurchasePrimary wallet Role.Buyer ledger.release))
                                     ]
                                     [ Html.text
                                         (String.join
@@ -85,7 +85,7 @@ body buyer =
                         connect =
                             Html.button
                                 [ class "is-button-1"
-                                , onClick (ToPhantom (Connect User.Buyer))
+                                , onClick (ToPhantom (Connect Role.Buyer))
                                 ]
                                 [ Html.text "Connect"
                                 ]
@@ -229,7 +229,7 @@ body buyer =
                                                         , Html.a
                                                             [ class "has-sky-blue-text"
                                                             , State.href (State.Sell <| Seller.WaitingForStateLookup ledgers.wallet)
-                                                            , onClick (ToPhantom (Connect User.Seller))
+                                                            , onClick (ToPhantom (Connect Role.Seller))
                                                             ]
                                                             [ Html.text "re-sell"
                                                             ]
@@ -338,7 +338,7 @@ body buyer =
                                     ]
                                     [ Html.button
                                         [ class "is-button-2"
-                                        , onClick (ToPhantom (Connect User.Buyer))
+                                        , onClick (ToPhantom (Connect Role.Buyer))
                                         ]
                                         [ Html.text "Refresh"
                                         ]

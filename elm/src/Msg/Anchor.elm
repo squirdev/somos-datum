@@ -2,12 +2,13 @@ module Msg.Anchor exposing (FromAnchorMsg(..), ToAnchorMsg(..))
 
 import Model.Ledger exposing (EscrowItem, Ledgers)
 import Model.Release exposing (Release)
+import Model.Role exposing (Role)
 import Model.Wallet exposing (Wallet)
 
 
 type ToAnchorMsg
     = InitProgram Wallet Release
-    | PurchasePrimary Wallet Release
+    | PurchasePrimary Wallet Role Release
     | SubmitToEscrow Price Ledgers Release
     | PurchaseSecondary EscrowItem Wallet Release
 

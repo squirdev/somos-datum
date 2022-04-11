@@ -49,9 +49,14 @@
       "name": "purchasePrimary",
       "accounts": [
         {
-          "name": "user",
+          "name": "buyer",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "recipient",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "boss",

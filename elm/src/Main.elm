@@ -179,15 +179,23 @@ update msg model =
                     , initProgramSender json
                     )
 
-                PurchasePrimary wallet release ->
-                    let
-                        json : String
-                        json =
-                            Role.encode <| Role.BuyerWith <| Release.encode wallet release
-                    in
-                    ( { model | state = State.Buy <| Buyer.WaitingForStateLookup wallet }
-                    , purchasePrimarySender json
-                    )
+                PurchasePrimary wallet role release ->
+                    case role of
+                        Role.Buyer ->
+                            ( { model | state = State.Buy <| Buyer.WaitingForStateLookup wallet }
+                            , purchasePrimarySender <| Role.encode <| Role.BuyerWith <| Release.encode wallet release
+                            )
+
+                        Role.Seller ->
+                            ( { model | state = State.Error "purchase as seller?" }
+                            , Cmd.none
+                            )
+
+
+                        Role.Admin ->
+                            ( { model | state = State.Admin <| Admin.WaitingForWallet }
+                            , purchasePrimarySender <| Role.encode <| Role.AdminWith <| Release.encode wallet release
+                            )
 
                 SubmitToEscrow price ledgers release ->
                     case String.toFloat <| String.trim price of

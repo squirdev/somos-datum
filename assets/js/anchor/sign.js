@@ -9,6 +9,7 @@ export async function sign(_phantom, user) {
         const encoded = textEncoder.encode(message)
         const signed = await _phantom.windowSolana.signMessage(encoded, "utf8");
         // build json
+        // TODO; add release id
         const signedObj = {
             message: encodeBase64(encoded),
             signature: encodeBase64(signed.signature),
