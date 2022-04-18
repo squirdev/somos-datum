@@ -150,7 +150,7 @@ body seller =
                                         [ Html.button
                                             [ class "is-button-1"
                                             , style "width" "100%"
-                                            , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
+                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
                                             ]
                                             [ Html.text "type your price here"
                                             ]
@@ -158,7 +158,7 @@ body seller =
                     in
                     body_ ledgers button
 
-                Typing string ledgers ->
+                Typing release string ledgers ->
                     let
                         price =
                             case string of
@@ -168,58 +168,90 @@ body seller =
                                 _ ->
                                     string
 
-                        -- TODO; only show for focused release
                         input : Ledger -> Html Msg
                         input ledger =
-                            Html.div
-                                [ class "field has-border-2"
-                                ]
-                                [ Html.p
-                                    [ class "control has-icons-left has-icons-right"
-                                    ]
-                                    [ Html.input
-                                        [ class "input is-focused is-link is-small"
-                                        , type_ "text"
-                                        , placeholder "your price in SOL"
-                                        , onInput (\str -> FromSeller (FromSellerMsg.Typing str ledgers))
+                            case release == ledger.release of
+                                True ->
+                                    Html.div
+                                        [ class "field has-border-2"
                                         ]
-                                        []
-                                    , Html.span
-                                        [ class "icon is-small is-left"
-                                        ]
-                                        [ Html.i
-                                            [ class "fas fa-dollar-sign"
+                                        [ Html.p
+                                            [ class "control has-icons-left has-icons-right"
                                             ]
-                                            []
+                                            [ Html.input
+                                                [ class "input is-focused is-link is-small"
+                                                , type_ "text"
+                                                , placeholder "your price in SOL"
+                                                , onInput
+                                                    (\str ->
+                                                        FromSeller (FromSellerMsg.Typing ledger.release str ledgers)
+                                                    )
+                                                ]
+                                                []
+                                            , Html.span
+                                                [ class "icon is-small is-left"
+                                                ]
+                                                [ Html.i
+                                                    [ class "fas fa-dollar-sign"
+                                                    ]
+                                                    []
+                                                ]
+                                            ]
+                                        , Html.button
+                                            [ class "is-button-1"
+                                            , style "width" "100%"
+                                            , onClick (ToAnchor (SubmitToEscrow price ledgers ledger.release))
+                                            ]
+                                            [ Html.text <|
+                                                String.join " " [ "submit to escrow at:", price, "SOL" ]
+                                            ]
                                         ]
-                                    ]
-                                , Html.button
-                                    [ class "is-button-1"
-                                    , style "width" "100%"
-                                    , onClick (ToAnchor (SubmitToEscrow price ledgers ledger.release))
-                                    ]
-                                    [ Html.text <|
-                                        String.join " " [ "submit to escrow at:", price, "SOL" ]
-                                    ]
-                                ]
+
+                                False ->
+                                    Html.div
+                                        [ class "has-border-2"
+                                        ]
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , style "width" "100%"
+                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
+                                            ]
+                                            [ Html.text "type your price here"
+                                            ]
+                                        ]
                     in
                     body_ ledgers input
 
-                PriceNotValidFloat ledgers ->
+                PriceNotValidFloat release ledgers ->
                     let
                         button : Ledger -> Html Msg
                         button ledger =
-                            Html.div
-                                [ class "has-border-2"
-                                ]
-                                [ Html.button
-                                    [ class "is-button-1"
-                                    , style "width" "100%"
-                                    , onClick (FromSeller <| FromSellerMsg.Typing "" ledgers)
-                                    ]
-                                    [ Html.text "try again with a valid numeric value"
-                                    ]
-                                ]
+                            case release == ledger.release of
+                                True ->
+                                    Html.div
+                                        [ class "has-border-2"
+                                        ]
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , style "width" "100%"
+                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
+                                            ]
+                                            [ Html.text "try again with a valid numeric value"
+                                            ]
+                                        ]
+
+                                False ->
+                                    Html.div
+                                        [ class "has-border-2"
+                                        ]
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , style "width" "100%"
+                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
+                                            ]
+                                            [ Html.text "type your price here"
+                                            ]
+                                        ]
                     in
                     body_ ledgers button
     in

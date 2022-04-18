@@ -191,7 +191,6 @@ update msg model =
                             , Cmd.none
                             )
 
-
                         Role.Admin ->
                             ( { model | state = State.Admin <| Admin.WaitingForWallet }
                             , purchasePrimarySender <| Role.encode <| Role.AdminWith <| Release.encode wallet release
@@ -220,7 +219,7 @@ update msg model =
                         Nothing ->
                             ( { model
                                 | state =
-                                    State.Sell <| Seller.PriceNotValidFloat ledgers
+                                    State.Sell <| Seller.PriceNotValidFloat release ledgers
                               }
                             , Cmd.none
                             )
@@ -331,8 +330,8 @@ update msg model =
 
         FromSeller selling ->
             case selling of
-                FromSellerMsg.Typing string ledgers ->
-                    ( { model | state = State.Sell <| Seller.Typing string ledgers }
+                FromSellerMsg.Typing release string ledgers ->
+                    ( { model | state = State.Sell <| Seller.Typing release string ledgers }
                     , Cmd.none
                     )
 
