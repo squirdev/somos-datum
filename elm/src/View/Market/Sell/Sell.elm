@@ -91,6 +91,7 @@ body seller =
                                             , Html.a
                                                 [ class "has-sky-blue-text"
                                                 , href "https://solana.com/"
+                                                , target "_blank"
                                                 ]
                                                 [ Html.text "solana blockchain"
                                                 ]
