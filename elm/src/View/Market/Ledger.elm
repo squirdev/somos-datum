@@ -243,7 +243,6 @@ release01 =
 
 
 -- release 02
--- TODO;
 
 
 release02 : Meta
