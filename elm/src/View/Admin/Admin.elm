@@ -144,8 +144,7 @@ body admin =
                                 ]
                     in
                     Html.div
-                        [
-                        ]
+                        []
                         [ Html.div
                             [ class "has-border-2"
                             ]
@@ -158,7 +157,7 @@ body admin =
                                 (List.map
                                     vi_
                                     ledgers.one.owners
-                                    )
+                                )
                             ]
                         , Html.div
                             [ class "has-border-2"
@@ -172,12 +171,9 @@ body admin =
                                 (List.map
                                     vi_
                                     ledgers.two.owners
-                                    )
+                                )
                             ]
                         ]
-
-
-
     in
     Html.div
         [ class "container"

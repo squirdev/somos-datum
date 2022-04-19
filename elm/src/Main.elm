@@ -185,11 +185,11 @@ update msg model =
                         json : String
                         json =
                             Encode.object
-                                [ ("wallet", Encode.string wallet)
-                                , ("recipient", Encode.string recipient)
-                                , ("release", Encode.int <| Release.toInt release)
+                                [ ( "wallet", Encode.string wallet )
+                                , ( "recipient", Encode.string recipient )
+                                , ( "release", Encode.int <| Release.toInt release )
                                 ]
-                            |> Encode.encode 0
+                                |> Encode.encode 0
                     in
                     case role of
                         Role.Buyer ->
@@ -291,10 +291,8 @@ update msg model =
                                                 Ok ledgers ->
                                                     State.Admin (Admin.ViewingLedger ledgers)
 
-
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
-
 
                                 Err error ->
                                     State.Error error
@@ -364,9 +362,6 @@ update msg model =
                     ( model
                     , getCurrentStateSender <| Role.encode <| Role.AdminWith <| Wallet.encode wallet
                     )
-
-
-
 
 
 
