@@ -8,7 +8,7 @@ import Model.Wallet exposing (Wallet)
 
 type ToAnchorMsg
     = InitProgram Wallet Release
-    | PurchasePrimary Wallet Role Release
+    | PurchasePrimary Wallet Wallet Role Release
     | SubmitToEscrow Price Ledgers Release
     | PurchaseSecondary EscrowItem Wallet Release
 

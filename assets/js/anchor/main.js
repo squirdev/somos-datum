@@ -65,17 +65,15 @@ app.ports.initProgramSender.subscribe(async function (userJson) {
 app.ports.purchasePrimarySender.subscribe(async function (userJson) {
     // get provider & program
     const pp = getPP(phantom);
-    // get user public key
-    const userPublicKey = pp.provider.wallet.publicKey.toString()
     // decode user
     const user = JSON.parse(userJson);
     const more = JSON.parse(user.more);
     // invoke purchase request: release 01
     if (more.release === 1) {
-        await primary(pp.program, pp.provider, userPublicKey, release01PubKey, userJson);
+        await primary(pp.program, pp.provider, more.recipient, release01PubKey, userJson);
         // invoke purchase request: release 02
     } else if (more.release === 2) {
-        await primary(pp.program, pp.provider, userPublicKey, release02PubKey, userJson);
+        await primary(pp.program, pp.provider, more.recipient, release02PubKey, userJson);
         // unsupported release
     } else {
         const msg = "could not purchase primary with release: " + more.release.toString();

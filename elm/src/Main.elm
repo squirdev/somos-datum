@@ -22,6 +22,7 @@ import Model.Seller as Seller exposing (Seller(..))
 import Model.Sol as Sol
 import Model.State as State exposing (State(..))
 import Model.Wallet as Wallet
+import Msg.Admin as FromAdminMsg
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -179,11 +180,21 @@ update msg model =
                     , initProgramSender json
                     )
 
-                PurchasePrimary wallet role release ->
+                PurchasePrimary wallet recipient role release ->
+                    let
+                        json : String
+                        json =
+                            Encode.object
+                                [ ("wallet", Encode.string wallet)
+                                , ("recipient", Encode.string recipient)
+                                , ("release", Encode.int <| Release.toInt release)
+                                ]
+                            |> Encode.encode 0
+                    in
                     case role of
                         Role.Buyer ->
                             ( { model | state = State.Buy <| Buyer.WaitingForStateLookup wallet }
-                            , purchasePrimarySender <| Role.encode <| Role.BuyerWith <| Release.encode wallet release
+                            , purchasePrimarySender <| Role.encode <| Role.BuyerWith <| json
                             )
 
                         Role.Seller ->
@@ -193,7 +204,7 @@ update msg model =
 
                         Role.Admin ->
                             ( { model | state = State.Admin <| Admin.WaitingForWallet }
-                            , purchasePrimarySender <| Role.encode <| Role.AdminWith <| Release.encode wallet release
+                            , purchasePrimarySender <| Role.encode <| Role.AdminWith <| json
                             )
 
                 SubmitToEscrow price ledgers release ->
@@ -334,6 +345,15 @@ update msg model =
                     ( { model | state = State.Sell <| Seller.Typing release string ledgers }
                     , Cmd.none
                     )
+
+        FromAdmin administrating ->
+            case administrating of
+                FromAdminMsg.Typing release string wallet ->
+                    ( { model | state = State.Admin <| Admin.Typing release string wallet }
+                    , Cmd.none
+                    )
+
+
 
 
 

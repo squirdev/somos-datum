@@ -2,11 +2,12 @@ module View.Admin.Admin exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Model.Admin exposing (Admin(..))
-import Model.Release exposing (Release(..))
-import Model.Role as User
+import Model.Release as Release exposing (Release(..))
+import Model.Role as User exposing (Role(..))
 import Model.Wallet exposing (Wallet)
+import Msg.Admin as FromAdminMsg
 import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -41,14 +42,24 @@ body admin =
                                         []
                                         [ Html.text "release01"
                                         ]
-                                    , Html.button
-                                        [ class "is-button-1"
-                                        , onClick (ToAnchor (InitProgram wallet One))
+                                    , Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , onClick (ToAnchor (InitProgram wallet One))
+                                            ]
+                                            [ Html.text "init"
+                                            ]
                                         ]
-                                        [ Html.text "init"
+                                    , Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , onClick (FromAdmin <| FromAdminMsg.Typing One "" wallet)
+                                            ]
+                                            [ Html.text "buy for other"
+                                            ]
                                         ]
-
-                                    -- TODO; purchase for someone else input
                                     ]
                                 , Html.div
                                     [ class "column has-border-2 is-12"
@@ -57,11 +68,23 @@ body admin =
                                         []
                                         [ Html.text "release02"
                                         ]
-                                    , Html.button
-                                        [ class "is-button-1"
-                                        , onClick (ToAnchor (InitProgram wallet Two))
+                                    , Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , onClick (ToAnchor (InitProgram wallet Two))
+                                            ]
+                                            [ Html.text "init"
+                                            ]
                                         ]
-                                        [ Html.text "init"
+                                    , Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , onClick (FromAdmin <| FromAdminMsg.Typing Two "" wallet)
+                                            ]
+                                            [ Html.text "buy for other"
+                                            ]
                                         ]
                                     ]
                                 ]
@@ -71,6 +94,34 @@ body admin =
                                 []
                                 [ Html.text "unauthorized;"
                                 ]
+
+                Typing release string wallet ->
+                    Html.div
+                        [ class "has-border-2"
+                        ]
+                        [ Html.h2
+                            []
+                            [ Html.text <| String.concat [ "release: ", String.fromInt (Release.toInt release) ]
+                            ]
+                        , Html.div
+                            []
+                            [ Html.input
+                                [ onInput (\s -> FromAdmin <| FromAdminMsg.Typing release s wallet)
+                                ]
+                                []
+                            ]
+                        , Html.div
+                            []
+                            [ Html.button
+                                [ class "is-button-1"
+                                , onClick (ToAnchor <| PurchasePrimary wallet string Admin release)
+                                ]
+                                [ Html.text <| String.concat [ "buy for: ", string ]
+                                ]
+                            ]
+                        ]
+
+
     in
     Html.div
         [ class "container"

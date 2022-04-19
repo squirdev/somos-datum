@@ -4,6 +4,7 @@ import Browser
 import Browser.Dom as Dom
 import Http
 import Http.Response as Download
+import Msg.Admin exposing (FromAdminMsg)
 import Msg.Anchor exposing (FromAnchorMsg, ToAnchorMsg)
 import Msg.Phantom exposing (FromPhantomMsg, ToPhantomMsg)
 import Msg.Seller exposing (FromSellerMsg)
@@ -25,6 +26,7 @@ type Msg
     | AwsPreSign (Result Http.Error Download.Response)
       -- user forms
     | FromSeller FromSellerMsg
+    | FromAdmin FromAdminMsg
 
 
 resetViewport : Cmd Msg

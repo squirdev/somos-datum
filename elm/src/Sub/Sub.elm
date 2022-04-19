@@ -48,6 +48,12 @@ subs =
                 FromAnchor (FailureOnSubmitToEscrow error)
             )
 
+        -- anchor purchase secondary
+        , purchaseSecondaryFailureListener
+            (\error ->
+                FromAnchor (FailureOnPurchaseSecondary error)
+            )
+
         -- phantom sign message
         , signMessageSuccessListener
             (\jsonString ->
