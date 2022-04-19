@@ -87,6 +87,19 @@ body admin =
                                             ]
                                         ]
                                     ]
+                                , Html.div
+                                    [ class "column has-border-2 is-12"
+                                    ]
+                                    [ Html.div
+                                        []
+                                        [ Html.button
+                                            [ class "is-button-1"
+                                            , onClick (FromAdmin <| FromAdminMsg.ViewLedger wallet)
+                                            ]
+                                            [ Html.text "view ledgers"
+                                            ]
+                                        ]
+                                    ]
                                 ]
 
                         False ->
@@ -120,6 +133,49 @@ body admin =
                                 ]
                             ]
                         ]
+
+                ViewingLedger ledgers ->
+                    let
+                        vi_ : Wallet -> Html Msg
+                        vi_ wallet =
+                            Html.div
+                                []
+                                [ Html.text wallet
+                                ]
+                    in
+                    Html.div
+                        [
+                        ]
+                        [ Html.div
+                            [ class "has-border-2"
+                            ]
+                            [ Html.div
+                                []
+                                [ Html.text "ledger: one"
+                                ]
+                            , Html.div
+                                []
+                                (List.map
+                                    vi_
+                                    ledgers.one.owners
+                                    )
+                            ]
+                        , Html.div
+                            [ class "has-border-2"
+                            ]
+                            [ Html.div
+                                []
+                                [ Html.text "ledger: two"
+                                ]
+                            , Html.div
+                                []
+                                (List.map
+                                    vi_
+                                    ledgers.two.owners
+                                    )
+                            ]
+                        ]
+
 
 
     in

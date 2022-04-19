@@ -286,8 +286,15 @@ update msg model =
                                                 Err jsonError ->
                                                     State.Error (Decode.errorToString jsonError)
 
-                                        Role.AdminWith wallet ->
-                                            State.Admin (Admin.HasWallet wallet)
+                                        Role.AdminWith moreJson ->
+                                            case Ledger.decode moreJson of
+                                                Ok ledgers ->
+                                                    State.Admin (Admin.ViewingLedger ledgers)
+
+
+                                                Err jsonError ->
+                                                    State.Error (Decode.errorToString jsonError)
+
 
                                 Err error ->
                                     State.Error error
@@ -352,6 +359,12 @@ update msg model =
                     ( { model | state = State.Admin <| Admin.Typing release string wallet }
                     , Cmd.none
                     )
+
+                FromAdminMsg.ViewLedger wallet ->
+                    ( model
+                    , getCurrentStateSender <| Role.encode <| Role.AdminWith <| Wallet.encode wallet
+                    )
+
 
 
 
