@@ -13,6 +13,7 @@ import Model.Wallet exposing (Wallet)
 type alias Ledger =
     { price : Lamports
     , resale : Float
+    , originalSupply : Int
     , originalSupplyRemaining : Int
     , owners : List Wallet
     , escrow : List EscrowItem
@@ -60,9 +61,10 @@ decode string =
 
         ledgerDecoder : Decode.Decoder Ledger
         ledgerDecoder =
-            Decode.map6 Ledger
+            Decode.map7 Ledger
                 (Decode.field "price" Decode.int)
                 (Decode.field "resale" Decode.float)
+                (Decode.field "originalSupply" Decode.int)
                 (Decode.field "originalSupplyRemaining" Decode.int)
                 (Decode.field "owners" (Decode.list Decode.string))
                 (Decode.field "escrow" (Decode.list escrowItemDecoder))

@@ -17,6 +17,7 @@ pub mod somos_solana {
         // init ledger
         ledger.price = price;
         ledger.resale = resale;
+        ledger.original_supply = n;
         ledger.original_supply_remaining = n;
         ledger.owners = Vec::new();
         ledger.escrow = Vec::new();
@@ -104,7 +105,7 @@ pub struct Ledger {
     // supply
     pub price: u64,
     pub resale: f64,
-    // TODO; original_supply
+    pub original_supply: u16,
     pub original_supply_remaining: u16,
     // owners
     pub owners: Vec<Pubkey>,

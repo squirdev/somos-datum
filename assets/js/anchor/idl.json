@@ -154,6 +154,10 @@
             "type": "f64"
           },
           {
+            "name": "originalSupply",
+            "type": "u16"
+          },
+          {
             "name": "originalSupplyRemaining",
             "type": "u16"
           },

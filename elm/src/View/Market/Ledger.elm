@@ -105,6 +105,19 @@ body args =
                     ]
                     [ Html.p
                         []
+                        [ Html.text "original supply: "
+                        , Html.b
+                            [ class "has-border-2 px-1 py-1"
+                            ]
+                            [ Html.text (String.fromInt args.ledger.originalSupply)
+                            ]
+                        ]
+                    ]
+                , Html.div
+                    [ class "my-2"
+                    ]
+                    [ Html.p
+                        []
                         [ Html.text "original supply remaining: "
                         , Html.b
                             [ class "has-border-2 px-1 py-1"

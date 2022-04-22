@@ -18,6 +18,7 @@ export async function getLedger(program, ledger, release) {
             return {
                 price: Number(_state.price.toString()),
                 resale: _state.resale, // not a BN type
+                originalSupply: Number(_state.originalSupply.toString()),
                 originalSupplyRemaining: Number(_state.originalSupplyRemaining.toString()),
                 owners: _owners,
                 escrow: _escrow,
