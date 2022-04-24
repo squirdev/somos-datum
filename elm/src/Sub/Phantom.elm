@@ -1,9 +1,9 @@
-port module Sub.Phantom exposing (connectFailureListener, connectSender, connectSuccessListener, openDownloadUrlSender, signMessageFailureListener, signMessageSender, signMessageSuccessListener)
+port module Sub.Phantom exposing (..)
 
 -- senders
 
 
-port connectSender : () -> Cmd msg
+port connectSender : String -> Cmd msg
 
 
 port signMessageSender : String -> Cmd msg
@@ -14,9 +14,10 @@ port openDownloadUrlSender : String -> Cmd msg
 
 
 -- listeners
+-- TODO: move to root
 
 
-port connectSuccessListener : (String -> msg) -> Sub msg
+port getCurrentStateListener : (String -> msg) -> Sub msg
 
 
 port connectFailureListener : (String -> msg) -> Sub msg

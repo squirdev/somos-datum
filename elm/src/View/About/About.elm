@@ -2,7 +2,8 @@ module View.About.About exposing (body)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, href, target)
-import Model.Anchor.Anchor as Anchor
+import Model.Buyer as Buyer
+import Model.Seller as Seller
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg)
 
@@ -35,7 +36,15 @@ body =
                         [ Html.text
                             """
                             providing what we are calling the "right-to-download"
+                            of exclusive audio & video releases from
                             """
+                        , Html.a
+                            [ class "has-sky-blue-text mb-6"
+                            , href "https://somos.world/"
+                            , target "_blank"
+                            ]
+                            [ Html.text "somos*"
+                            ]
                         ]
                     ]
                 , Html.p
@@ -43,7 +52,7 @@ body =
                     ]
                     [ Html.a
                         [ class "has-sky-blue-text mb-6"
-                        , State.href (Buy Anchor.WaitingForWallet)
+                        , State.href (Buy Buyer.WaitingForWallet)
                         ]
                         [ Html.text "purchasing"
                         ]
@@ -101,7 +110,7 @@ body =
                             , Html.text "can be re-generated as many times as you want as long as you don't "
                             , Html.a
                                 [ class "has-sky-blue-text mb-6"
-                                , State.href Sell
+                                , State.href (Sell Seller.WaitingForWallet)
                                 ]
                                 [ Html.text "sell your ownership"
                                 ]

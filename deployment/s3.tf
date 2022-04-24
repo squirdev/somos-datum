@@ -2,7 +2,6 @@
 ## buckets #############################################################################################################
 resource "aws_s3_bucket" "artifacts" {
   bucket = var.artifacts_bucket_name
-  // todo: pre-signed url
   acl = "private"
   tags = {
     Name = "somos"

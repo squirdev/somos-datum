@@ -1,13 +1,15 @@
 import {web3} from "@project-serum/anchor";
 import {encodeBase64, textEncoder} from "./util.js";
 
-export async function sign(_phantom, _state, user) {
+// TODO; move to phantom dir
+export async function sign(_phantom, user) {
     try {
         // build message
         const message = "ready for download"
         const encoded = textEncoder.encode(message)
         const signed = await _phantom.windowSolana.signMessage(encoded, "utf8");
         // build json
+        // TODO; add release id
         const signedObj = {
             message: encodeBase64(encoded),
             signature: encodeBase64(signed.signature),

@@ -1,15 +1,24 @@
-port module Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, initProgramSender, isConnectedSender, purchasePrimaryFailureListener, purchasePrimarySender)
+port module Sub.Anchor exposing (..)
 
 -- senders
-
-
-port isConnectedSender : String -> Cmd msg
 
 
 port initProgramSender : String -> Cmd msg
 
 
+port getCurrentStateSender : String -> Cmd msg
+
+
 port purchasePrimarySender : String -> Cmd msg
+
+
+port submitToEscrowSender : String -> Cmd msg
+
+
+port removeFromEscrowSender : String -> Cmd msg
+
+
+port purchaseSecondarySender : String -> Cmd msg
 
 
 
@@ -26,3 +35,12 @@ port initProgramFailureListener : (String -> msg) -> Sub msg
 
 
 port purchasePrimaryFailureListener : (String -> msg) -> Sub msg
+
+
+port submitToEscrowFailureListener : (String -> msg) -> Sub msg
+
+
+port purchaseSecondaryFailureListener : (String -> msg) -> Sub msg
+
+
+port genericErrorListener : (String -> msg) -> Sub msg

@@ -3,8 +3,11 @@ module View.Header exposing (view)
 import Html exposing (Html)
 import Html.Attributes exposing (class, src, style, width)
 import Html.Events exposing (onClick)
-import Model.Anchor.Anchor as Anchor exposing (Anchor(..))
+import Model.Admin as Admin
+import Model.Buyer as Buyer exposing (Buyer(..))
 import Model.Model exposing (Model)
+import Model.Role as User
+import Model.Seller as Seller
 import Model.State as State exposing (State(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (ToPhantomMsg(..))
@@ -20,14 +23,17 @@ view model =
         maybePublicKey : Maybe String
         maybePublicKey =
             case model.state of
-                Buy anchor ->
-                    Anchor.getPublicKey anchor
+                Buy buyer ->
+                    Buyer.getWallet buyer
 
-                Sell ->
-                    Nothing
+                Sell seller ->
+                    Seller.getWallet seller
 
                 About ->
                     Nothing
+
+                Admin admin ->
+                    Admin.getWallet admin
 
                 Error _ ->
                     Nothing
@@ -41,14 +47,35 @@ view model =
             case maybePublicKey of
                 Just publicKey ->
                     tab_
-                        { state = Buy (JustHasWallet publicKey)
+                        { state = Buy (Buyer.WaitingForStateLookup publicKey)
                         , title = title
-                        , msg = ToPhantom Connect
+                        , msg = ToPhantom (Connect User.Buyer)
                         }
 
                 Nothing ->
                     tab_
-                        { state = Buy WaitingForWallet
+                        { state = Buy Buyer.WaitingForWallet
+                        , title = title
+                        , msg = NoOp
+                        }
+
+        sell : Html Msg
+        sell =
+            let
+                title =
+                    "SELL"
+            in
+            case maybePublicKey of
+                Just publicKey ->
+                    tab_
+                        { state = Sell (Seller.WaitingForStateLookup publicKey)
+                        , title = title
+                        , msg = ToPhantom (Connect User.Seller)
+                        }
+
+                Nothing ->
+                    tab_
+                        { state = Sell Seller.WaitingForWallet
                         , title = title
                         , msg = NoOp
                         }
@@ -62,11 +89,7 @@ view model =
             , msg = NoOp
             }
         , buy
-        , tab_
-            { state = Sell
-            , title = "SELL"
-            , msg = NoOp
-            }
+        , sell
         , Html.div
             [ style "float" "right"
             ]
@@ -118,6 +141,14 @@ isActive model state =
         Buy _ ->
             case model.state of
                 Buy _ ->
+                    class_
+
+                _ ->
+                    ""
+
+        Sell _ ->
+            case model.state of
+                Sell _ ->
                     class_
 
                 _ ->

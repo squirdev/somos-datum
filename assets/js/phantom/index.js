@@ -1,13 +1,22 @@
 /*! https://docs.phantom.app/ */
 
-export async function getPhantom() {
+export async function getPhantom(role) {
     try {
         // connect
         const connection = await window.solana.connect();
-        const pubKey = connection.publicKey
+        const publicKey = connection.publicKey;
         console.log("phantom wallet connected");
+        // more
+        const more = {
+            wallet: publicKey.toString()
+        }
+        // encode
+        const response = {
+            role: role,
+            more: JSON.stringify(more)
+        }
         // send state to elm
-        app.ports.connectSuccessListener.send(pubKey.toString())
+        app.ports.getCurrentStateListener.send(JSON.stringify(response));
         // return state to js
         return {windowSolana: window.solana, connection: connection}
     } catch (err) {

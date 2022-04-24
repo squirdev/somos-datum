@@ -119,20 +119,31 @@ a:link, a:visited {
   top: 0; /* Position the navbar at the top of the page */
   width: 100%; /* Full width */
   z-index: 101;
+  // blend in
+  background-color: #241F20;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // buttons /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-.is-button-1, .is-button-2 {
-  background-color: #241F20;
-  border: 1px dotted #4a4a4a;
-  color: #FDF9EF;
+.is-button-1, .is-button-2, .is-button-3 {
   height: 30px;
   text-align: center;
 }
 
+.is-button-1, .is-button-2 {
+  background-color: #241F20;
+  border: 1px dotted #4a4a4a;
+  color: #FDF9EF;
+}
+
 .is-button-2 {
   letter-spacing: 10px;
+}
+
+.is-button-3 {
+  color: #241F20;
+  border: 1px dotted #4a4a4a;
+  background-color: #FDF9EF;
 }
 
 .is-active-header-tab {
@@ -168,9 +179,18 @@ $navbar-height: 4.00rem;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Bulma Extensions ///////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-.has-font-1, .has-font-2 {
+.has-font-1 {
   @include until($tablet) {
     font-size: small;
+  }
+  @include from($tablet) {
+    font-size: medium;
+  }
+}
+
+.has-font-2 {
+  @include until($tablet) {
+    font-size: medium;
   }
   @include from($tablet) {
     font-size: large;

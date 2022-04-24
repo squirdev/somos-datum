@@ -1,18 +1,17 @@
 import {web3, BN} from "@project-serum/anchor";
-import {getCurrentState} from "./state";
 
-export async function init(program, provider, statePublicKey, bump, user) {
+export async function init(program, provider, ledger, seed, user, n, price, resale) {
     try {
-        const price = 0.025 * web3.LAMPORTS_PER_SOL
-        await program.rpc.initializeLedgerOne(new BN(bump), new BN(100), new BN(price), {
+        const priceInLamports = price * web3.LAMPORTS_PER_SOL
+        await program.rpc.initializeLedger(seed, new BN(n), new BN(priceInLamports), resale, {
             accounts: {
                 user: provider.wallet.publicKey,
-                ledger: statePublicKey,
+                ledger: ledger,
                 systemProgram: web3.SystemProgram.programId,
             },
         });
-        // get state after transaction
-        await getCurrentState(program, statePublicKey, user);
+        // send state to elm
+        app.ports.getCurrentStateListener.send(user);
         // log success
         console.log("program init success");
     } catch (error) {

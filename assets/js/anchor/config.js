@@ -1,9 +1,9 @@
 import {web3} from "@project-serum/anchor";
-import idl from "./idl.json";
 
 export const preflightCommitment = "processed";
-export const programID = new web3.PublicKey(idl.metadata.address);
-export const ACCOUNT_SEED = "hancock"
+export const programID = new web3.PublicKey("A2UL8cJAGZWetZJRgHizdGJGmsrCGR6ELBtwjj8kGeXp");
+export const ACCOUNT_SEED_01 = Buffer.from("shortershortersh");
+export const ACCOUNT_SEED_02 = Buffer.from("robsonrobsonrobs");
 export const BOSS = new web3.PublicKey("DLXRomaskStghSHAyoFZMKnFk1saLYDhYggW25Ze4jug")
 
 // const localnet = "http://127.0.0.1:8899";

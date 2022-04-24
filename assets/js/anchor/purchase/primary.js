@@ -1,19 +1,19 @@
 import {web3} from "@project-serum/anchor";
-import {getCurrentState} from "../state";
 import {BOSS} from "../config";
 
-export async function primary(program, provider, statePublicKey, user) {
+export async function primary(program, provider, recipient, ledger, user) {
     try {
         await program.rpc.purchasePrimary({
             accounts: {
-                user: provider.wallet.publicKey,
+                buyer: provider.wallet.publicKey,
+                recipient: new web3.PublicKey(recipient),
                 boss: BOSS,
-                ledger: statePublicKey,
+                ledger: ledger,
                 systemProgram: web3.SystemProgram.programId,
             },
         });
-        // get state after transaction
-        await getCurrentState(program, statePublicKey, user);
+        // send state to elm
+        app.ports.getCurrentStateListener.send(user);
         // log success
         console.log("primary purchase success");
     } catch (error) {

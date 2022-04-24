@@ -1,4 +1,4 @@
-module Model.Anchor.DownloadStatus exposing (DownloadStatus(..))
+module Model.DownloadStatus exposing (DownloadStatus(..))
 
 import Http.Response as Download
 import Model.Phantom exposing (PhantomSignature)

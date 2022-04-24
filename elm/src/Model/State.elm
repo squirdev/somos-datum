@@ -2,24 +2,28 @@ module Model.State exposing (State(..), href, parse)
 
 import Html
 import Html.Attributes
-import Model.Anchor.Anchor exposing (Anchor(..))
+import Model.Admin as Admin exposing (Admin)
+import Model.Buyer as Buyer exposing (Buyer)
+import Model.Seller as Seller exposing (Seller)
 import Url
 import Url.Parser as UrlParser
 
 
 type State
-    = Buy Anchor
-    | Sell
+    = Buy Buyer
+    | Sell Seller
     | About
+    | Admin Admin
     | Error String
 
 
 urlParser : UrlParser.Parser (State -> c) c
 urlParser =
     UrlParser.oneOf
-        [ UrlParser.map (Buy WaitingForWallet) UrlParser.top
-        , UrlParser.map (Buy WaitingForWallet) (UrlParser.s "buy")
-        , UrlParser.map Sell (UrlParser.s "sell")
+        [ UrlParser.map (Buy Buyer.WaitingForWallet) UrlParser.top
+        , UrlParser.map (Buy Buyer.WaitingForWallet) (UrlParser.s "buy")
+        , UrlParser.map (Sell Seller.WaitingForWallet) (UrlParser.s "sell")
+        , UrlParser.map (Admin Admin.WaitingForWallet) (UrlParser.s "admin")
         , UrlParser.map About (UrlParser.s "about")
         ]
 
@@ -47,11 +51,14 @@ path state =
         Buy _ ->
             "#/buy"
 
-        Sell ->
+        Sell _ ->
             "#/sell"
 
         About ->
             "#/about"
+
+        Admin _ ->
+            "#/admin"
 
         Error _ ->
             "#/invalid"

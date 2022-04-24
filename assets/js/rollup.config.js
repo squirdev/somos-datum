@@ -20,7 +20,9 @@ export default {
         resolve({
             browser: true
         }),
-        typescript(),
+        typescript(
+            {target: "es2019"}
+        ),
         json()
     ]
 };

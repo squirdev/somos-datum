@@ -1,14 +1,14 @@
 module Model.Phantom exposing (PhantomSignature, decodeSignature)
 
 import Json.Decode as Decode
-import Model.PublicKey exposing (PublicKey)
+import Model.Wallet exposing (Wallet)
 
 
 type alias PhantomSignature =
     { message : Base64
     , signature : Base64
     , user : Base64
-    , userDecoded : PublicKey
+    , userDecoded : Wallet
     }
 
 

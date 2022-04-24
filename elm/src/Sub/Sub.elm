@@ -3,21 +3,31 @@ module Sub.Sub exposing (subs)
 import Msg.Anchor exposing (FromAnchorMsg(..))
 import Msg.Msg exposing (Msg(..))
 import Msg.Phantom exposing (FromPhantomMsg(..))
-import Sub.Anchor exposing (getCurrentStateFailureListener, getCurrentStateSuccessListener, initProgramFailureListener, purchasePrimaryFailureListener)
-import Sub.Phantom exposing (connectFailureListener, connectSuccessListener, signMessageFailureListener, signMessageSuccessListener)
+import Sub.Anchor exposing (..)
+import Sub.Phantom exposing (..)
 
 
 subs : Sub Msg
 subs =
     Sub.batch
-        -- phantom connect
-        [ connectSuccessListener
-            (\pubKey ->
-                FromPhantom (SuccessOnConnection pubKey)
-            )
-        , connectFailureListener
+        [ -- phantom connect
+          connectFailureListener
             (\error ->
                 FromPhantom (ErrorOnConnection error)
+            )
+        , getCurrentStateListener
+            (\pubKey ->
+                FromPhantom (GetCurrentState pubKey)
+            )
+
+        -- phantom sign message
+        , signMessageSuccessListener
+            (\jsonString ->
+                FromPhantom (SuccessOnSignMessage jsonString)
+            )
+        , signMessageFailureListener
+            (\error ->
+                FromPhantom (FailureOnSignMessage error)
             )
 
         -- anchor get current state
@@ -30,7 +40,7 @@ subs =
                 FromAnchor (FailureOnStateLookup error)
             )
 
-        -- init program
+        -- anchor init program
         , initProgramFailureListener
             (\error ->
                 FromAnchor (FailureOnInitProgram error)
@@ -42,13 +52,21 @@ subs =
                 FromAnchor (FailureOnPurchasePrimary error)
             )
 
-        -- phantom sign message
-        , signMessageSuccessListener
-            (\jsonString ->
-                FromPhantom (SuccessOnSignMessage jsonString)
-            )
-        , signMessageFailureListener
+        -- anchor submit to escrow
+        , submitToEscrowFailureListener
             (\error ->
-                FromPhantom (FailureOnSignMessage error)
+                FromAnchor (FailureOnSubmitToEscrow error)
+            )
+
+        -- anchor purchase secondary
+        , purchaseSecondaryFailureListener
+            (\error ->
+                FromAnchor (FailureOnPurchaseSecondary error)
+            )
+
+        -- generic error
+        , genericErrorListener
+            (\error ->
+                FromJsError error
             )
         ]
