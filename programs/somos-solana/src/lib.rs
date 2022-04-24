@@ -136,7 +136,7 @@ pub enum LedgerErrors {
     #[msg("your public-key is not on the ledger.")]
     SellerNotOnLedger,
     #[msg("the item you've requested is not for sale.")]
-    ItemNotForSale,
+    ItemNotInEscrow,
     #[msg("seller unauthorized to sell this item.")]
     UnauthorizedSeller,
     #[msg("items still available in primary market.")]
@@ -144,7 +144,7 @@ pub enum LedgerErrors {
     #[msg("you've already purchased this item. don't be greedy.")]
     DontBeGreedy,
     #[msg("you've already submitted this item to escrow.")]
-    ItemAlreadyForSale,
+    ItemAlreadyInEscrow,
 }
 
 impl Ledger {
@@ -295,7 +295,7 @@ impl EscrowItem {
             &mut ledger.escrow,
             &seller.key(),
             |x| &x.seller,
-            LedgerErrors::ItemNotForSale,
+            LedgerErrors::ItemNotInEscrow,
         ).map(|_| ())
     }
 
@@ -340,7 +340,7 @@ impl EscrowItem {
                 let escrow: Vec<Pubkey> = ledger.escrow.iter()
                     .map(|escrow_item| escrow_item.seller).collect();
                 match escrow.contains(seller.key) {
-                    true => { Err(LedgerErrors::ItemAlreadyForSale.into()) }
+                    true => { Err(LedgerErrors::ItemAlreadyInEscrow.into()) }
                     false => { Ok(()) }
                 }
             }
@@ -371,7 +371,7 @@ impl EscrowItem {
                     false => { Err(LedgerErrors::UnauthorizedSeller.into()) }
                 }
             }
-            false => { Err(LedgerErrors::ItemNotForSale.into()) }
+            false => { Err(LedgerErrors::ItemNotInEscrow.into()) }
         }
     }
 
@@ -384,7 +384,7 @@ impl EscrowItem {
             &mut ledger.escrow,
             escrow_item,
             |x| &x.seller,
-            LedgerErrors::ItemNotForSale,
+            LedgerErrors::ItemNotInEscrow,
         ) {
             Ok(a) => {
                 // remove from ledger
