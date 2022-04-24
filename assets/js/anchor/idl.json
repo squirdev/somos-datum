@@ -266,5 +266,8 @@
       "name": "ItemAlreadyInEscrow",
       "msg": "you've already submitted this item to escrow."
     }
-  ]
+  ],
+  "metadata": {
+    "address": "A2UL8cJAGZWetZJRgHizdGJGmsrCGR6ELBtwjj8kGeXp"
+  }
 }
