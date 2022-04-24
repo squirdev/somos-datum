@@ -36,14 +36,14 @@ export async function getLedger(program, ledger, release) {
 }
 
 // send ledgers to elm
-export async function sendLedgers(userJson, ledgerOne, ledgerTwo) {
+export async function sendLedgers(userJson, ledgerOne) {
     try {
         // decode user
         const user = JSON.parse(userJson);
         const more = JSON.parse(user.more);
         const ledgers = {
             one: ledgerOne,
-            two: ledgerTwo,
+            //two: ledgerTwo,
             wallet: more.wallet
         }
         const response = {

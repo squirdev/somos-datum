@@ -61,32 +61,32 @@ body admin =
                                             ]
                                         ]
                                     ]
-                                , Html.div
-                                    [ class "column has-border-2 is-12"
-                                    ]
-                                    [ Html.div
-                                        []
-                                        [ Html.text "release02"
-                                        ]
-                                    , Html.div
-                                        []
-                                        [ Html.button
-                                            [ class "is-button-1"
-                                            , onClick (ToAnchor (InitProgram wallet Two))
-                                            ]
-                                            [ Html.text "init"
-                                            ]
-                                        ]
-                                    , Html.div
-                                        []
-                                        [ Html.button
-                                            [ class "is-button-1"
-                                            , onClick (FromAdmin <| FromAdminMsg.Typing Two "" wallet)
-                                            ]
-                                            [ Html.text "buy for other"
-                                            ]
-                                        ]
-                                    ]
+                                --, Html.div
+                                --    [ class "column has-border-2 is-12"
+                                --    ]
+                                --    [ Html.div
+                                --        []
+                                --        [ Html.text "release02"
+                                --        ]
+                                --    , Html.div
+                                --        []
+                                --        [ Html.button
+                                --            [ class "is-button-1"
+                                --            , onClick (ToAnchor (InitProgram wallet Two))
+                                --            ]
+                                --            [ Html.text "init"
+                                --            ]
+                                --        ]
+                                --    , Html.div
+                                --        []
+                                --        [ Html.button
+                                --            [ class "is-button-1"
+                                --            , onClick (FromAdmin <| FromAdminMsg.Typing Two "" wallet)
+                                --            ]
+                                --            [ Html.text "buy for other"
+                                --            ]
+                                --        ]
+                                --    ]
                                 , Html.div
                                     [ class "column has-border-2 is-12"
                                     ]
@@ -159,20 +159,20 @@ body admin =
                                     ledgers.one.owners
                                 )
                             ]
-                        , Html.div
-                            [ class "has-border-2"
-                            ]
-                            [ Html.div
-                                []
-                                [ Html.text "ledger: two"
-                                ]
-                            , Html.div
-                                []
-                                (List.map
-                                    vi_
-                                    ledgers.two.owners
-                                )
-                            ]
+                        -- , Html.div
+                        --     [ class "has-border-2"
+                        --     ]
+                        --     [ Html.div
+                        --         []
+                        --         [ Html.text "ledger: two"
+                        --         ]
+                        --     , Html.div
+                        --         []
+                        --         (List.map
+                        --             vi_
+                        --             ledgers.two.owners
+                        --         )
+                        --     ]
                         ]
     in
     Html.div

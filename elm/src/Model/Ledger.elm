@@ -32,7 +32,7 @@ type alias EscrowItem =
 
 type alias Ledgers =
     { one : Ledger
-    , two : Ledger
+    -- , two : Ledger
 
     -- not actually in the ledger
     -- just the current user
@@ -72,9 +72,9 @@ decode string =
 
         decoder : Decode.Decoder Ledgers
         decoder =
-            Decode.map3 Ledgers
+            Decode.map2 Ledgers
                 (Decode.field "one" ledgerDecoder)
-                (Decode.field "two" ledgerDecoder)
+                -- (Decode.field "two" ledgerDecoder)
                 (Decode.field "wallet" Decode.string)
     in
     Decode.decodeString decoder string

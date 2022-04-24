@@ -37,8 +37,8 @@ app.ports.getCurrentStateSender.subscribe(async function (user) {
     const pp = getPP(phantom);
     // invoke state request & send response to elm
     const ledgerOne = await getLedger(pp.program, release01PubKey, 1);
-    const ledgerTwo = await getLedger(pp.program, release02PubKey, 2);
-    await sendLedgers(user, ledgerOne, ledgerTwo);
+    //const ledgerTwo = await getLedger(pp.program, release02PubKey, 2);
+    await sendLedgers(user, ledgerOne);
 });
 
 // init program
@@ -50,7 +50,7 @@ app.ports.initProgramSender.subscribe(async function (userJson) {
     const more = JSON.parse(user.more);
     // invoke init: release 01
     if (more.release === 1) {
-        await init(pp.program, pp.provider, release01PubKey, ACCOUNT_SEED_01, userJson, 1, 0.025, 0.05);
+        await init(pp.program, pp.provider, release01PubKey, ACCOUNT_SEED_01, userJson, 10, 0.025, 0.05);
         // invoke init: release 02
     } else if (more.release === 2) {
         await init(pp.program, pp.provider, release02PubKey, ACCOUNT_SEED_02, userJson, 1, 0.055, 0.05);
