@@ -27,7 +27,7 @@ import Msg.Anchor exposing (ToAnchorMsg(..))
 import Msg.Msg exposing (Msg(..), resetViewport)
 import Msg.Phantom exposing (ToPhantomMsg(..))
 import Msg.Seller as FromSellerMsg
-import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, purchaseSecondarySender, submitToEscrowSender)
+import Sub.Anchor exposing (getCurrentStateSender, initProgramSender, purchasePrimarySender, purchaseSecondarySender, removeFromEscrowSender, submitToEscrowSender)
 import Sub.Phantom exposing (connectSender, openDownloadUrlSender, signMessageSender)
 import Sub.Sub as Sub
 import Url
@@ -235,6 +235,24 @@ update msg model =
                             , Cmd.none
                             )
 
+                RemoveFromEscrow wallet release ->
+                    let
+                        encoder : Encode.Value
+                        encoder =
+                            Encode.object
+                                [ ( "wallet", Encode.string wallet )
+                                , ( "release", Encode.int <| Release.toInt release )
+                                ]
+
+                        json : String
+                        json =
+                            Role.encode (Role.SellerWith (Encode.encode 0 encoder))
+                    in
+                    ( { model | state = State.Sell (Seller.WaitingForStateLookup wallet) }
+                    , removeFromEscrowSender json
+                    )
+
+
                 PurchaseSecondary escrowItem wallet release ->
                     let
                         encoder : Encode.Value
@@ -251,6 +269,7 @@ update msg model =
                     ( model
                     , purchaseSecondarySender json
                     )
+
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
@@ -362,6 +381,12 @@ update msg model =
                     ( model
                     , getCurrentStateSender <| Role.encode <| Role.AdminWith <| Wallet.encode wallet
                     )
+
+        FromJsError string ->
+            ( { model | state = Error string }
+            , Cmd.none
+            )
+
 
 
 

@@ -24,3 +24,24 @@ export async function submit(program, provider, ledger, userJson) {
         app.ports.submitToEscrowFailureListener.send(error.message)
     }
 }
+
+export async function remove(program, provider, ledger, userJson) {
+    try {
+        await program.rpc.removeFromEscrow({
+            accounts: {
+                seller: provider.wallet.publicKey,
+                ledger: ledger,
+                systemProgram: web3.SystemProgram.programId,
+            }
+        });
+        // send state to elm
+        app.ports.getCurrentStateListener.send(userJson);
+        // log success
+        console.log("remove from escrow success");
+    } catch (error) {
+        // log error
+        console.log(error.toString());
+        // send error to elm
+        app.ports.genericErrorListener.send(error.message)
+    }
+}

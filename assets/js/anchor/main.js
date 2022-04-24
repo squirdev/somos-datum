@@ -7,7 +7,7 @@ import {init} from "./init";
 import {primary} from "./purchase/primary";
 import {sign} from "./sign";
 import {download} from "./download";
-import {submit} from "./escrow";
+import {remove, submit} from "./escrow";
 import {secondary} from "./purchase/secondary";
 
 
@@ -98,6 +98,26 @@ app.ports.submitToEscrowSender.subscribe(async function (userJson) {
     } else {
         const msg = "could not submit to escrow with release: " + more.release.toString();
         app.ports.submitToEscrowFailureListener.send(msg);
+    }
+});
+
+// remove from escrow
+app.ports.removeFromEscrowSender.subscribe(async function (userJson) {
+    // get provider & program
+    const pp = getPP(phantom);
+    // decode user
+    const user = JSON.parse(userJson);
+    const more = JSON.parse(user.more);
+    // invoke remove from escrow request: release 01
+    if (more.release === 1) {
+        await remove(pp.program, pp.provider, release01PubKey, userJson);
+        // invoke remove from escrow request: release 02
+    } else if (more.release === 2) {
+        await remove(pp.program, pp.provider, release02PubKey, userJson);
+        // unsupported release
+    } else {
+        const msg = "could not remove from release with release: " + more.release.toString();
+        app.ports.genericErrorListener.send(msg);
     }
 });
 

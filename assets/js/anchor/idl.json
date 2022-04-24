@@ -137,6 +137,27 @@
           "type": "publicKey"
         }
       ]
+    },
+    {
+      "name": "removeFromEscrow",
+      "accounts": [
+        {
+          "name": "ledger",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "seller",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [

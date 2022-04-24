@@ -5,6 +5,7 @@ import Html.Attributes exposing (class, href, placeholder, style, target, type_)
 import Html.Events exposing (onClick, onInput)
 import Model.Buyer as Buyer
 import Model.Ledger as Ledger exposing (Ledger, Ledgers)
+import Model.Release exposing (Release)
 import Model.Role as User exposing (Role(..))
 import Model.Seller exposing (Seller(..))
 import Model.State as State exposing (State(..))
@@ -127,8 +128,7 @@ body seller =
 
                 WaitingForStateLookup wallet ->
                     Html.div
-                        [ class "has-border-2"
-                        ]
+                        []
                         [ slice_ wallet
                         , Html.div
                             [ class "is-loading"
@@ -142,20 +142,12 @@ body seller =
                         button ledger =
                             case Ledger.getEscrowItem ledgers.wallet ledger of
                                 Just _ ->
-                                    Html.div [] []
+                                    -- button to remove from escrow
+                                    remove ledgers.wallet ledger.release
 
                                 Nothing ->
-                                    Html.div
-                                        [ class "has-border-2"
-                                        ]
-                                        [ Html.button
-                                            [ class "is-button-1"
-                                            , style "width" "100%"
-                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
-                                            ]
-                                            [ Html.text "type your price here"
-                                            ]
-                                        ]
+                                    -- user input to submit price for escrow
+                                    startTyping ledger.release ledgers
                     in
                     body_ ledgers button
 
@@ -209,17 +201,16 @@ body seller =
                                         ]
 
                                 False ->
-                                    Html.div
-                                        [ class "has-border-2"
-                                        ]
-                                        [ Html.button
-                                            [ class "is-button-1"
-                                            , style "width" "100%"
-                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
-                                            ]
-                                            [ Html.text "type your price here"
-                                            ]
-                                        ]
+                                    case Ledger.getEscrowItem ledgers.wallet ledger of
+                                        Just _ ->
+                                            -- button to remove from escrow
+                                            remove ledgers.wallet ledger.release
+
+
+                                        Nothing ->
+                                            -- user input to submit price for escrow
+                                            startTyping ledger.release ledgers
+
                     in
                     body_ ledgers input
 
@@ -242,17 +233,15 @@ body seller =
                                         ]
 
                                 False ->
-                                    Html.div
-                                        [ class "has-border-2"
-                                        ]
-                                        [ Html.button
-                                            [ class "is-button-1"
-                                            , style "width" "100%"
-                                            , onClick (FromSeller <| FromSellerMsg.Typing ledger.release "" ledgers)
-                                            ]
-                                            [ Html.text "type your price here"
-                                            ]
-                                        ]
+                                    case Ledger.getEscrowItem ledgers.wallet ledger of
+                                        Just _ ->
+                                            -- button to remove from escrow
+                                            remove ledgers.wallet ledger.release
+
+
+                                        Nothing ->
+                                            -- user input to submit price for escrow
+                                            startTyping ledger.release ledgers
                     in
                     body_ ledgers button
     in
@@ -309,6 +298,34 @@ header wallet =
                     , Html.text " on the solana blockchain"
                     ]
                 ]
+            ]
+        ]
+
+startTyping : Release -> Ledgers -> Html Msg
+startTyping release ledgers =
+    Html.div
+        [ class "has-border-2"
+        ]
+        [ Html.button
+            [ class "is-button-1"
+            , style "width" "100%"
+            , onClick (FromSeller <| FromSellerMsg.Typing release "" ledgers)
+            ]
+            [ Html.text "type your price here"
+            ]
+        ]
+
+remove : Wallet -> Release -> Html Msg
+remove wallet release =
+    Html.div
+        [ class "has-border-2"
+        ]
+        [ Html.button
+            [ class "is-button-1"
+            , style "width" "100%"
+            , onClick (ToAnchor <| RemoveFromEscrow wallet release)
+            ]
+            [ Html.text "remove from escrow"
             ]
         ]
 

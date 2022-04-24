@@ -10,6 +10,7 @@ type ToAnchorMsg
     = InitProgram Wallet Release
     | PurchasePrimary Wallet Wallet Role Release
     | SubmitToEscrow Price Ledgers Release
+    | RemoveFromEscrow Wallet Release
     | PurchaseSecondary EscrowItem Wallet Release
 
 

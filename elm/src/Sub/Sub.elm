@@ -20,6 +20,16 @@ subs =
                 FromPhantom (GetCurrentState pubKey)
             )
 
+        -- phantom sign message
+        , signMessageSuccessListener
+            (\jsonString ->
+                FromPhantom (SuccessOnSignMessage jsonString)
+            )
+        , signMessageFailureListener
+            (\error ->
+                FromPhantom (FailureOnSignMessage error)
+            )
+
         -- anchor get current state
         , getCurrentStateSuccessListener
             (\jsonString ->
@@ -54,13 +64,9 @@ subs =
                 FromAnchor (FailureOnPurchaseSecondary error)
             )
 
-        -- phantom sign message
-        , signMessageSuccessListener
-            (\jsonString ->
-                FromPhantom (SuccessOnSignMessage jsonString)
-            )
-        , signMessageFailureListener
+        -- generic error
+        , genericErrorListener
             (\error ->
-                FromPhantom (FailureOnSignMessage error)
+                FromJsError error
             )
         ]

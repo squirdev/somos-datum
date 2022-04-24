@@ -27,6 +27,8 @@ type Msg
       -- user forms
     | FromSeller FromSellerMsg
     | FromAdmin FromAdminMsg
+    -- generic javascript error
+    | FromJsError String
 
 
 resetViewport : Cmd Msg

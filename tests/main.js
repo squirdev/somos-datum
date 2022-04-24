@@ -368,7 +368,7 @@ describe("somos-solana", () => {
         // assertions
         assert.ok(actualLedger.escrow.length === 1)
     });
-    // remove
+    // remove // TODO: fails when not on escrow
     it("remove from escrow", async () => {
         await program04.rpc.removeFromEscrow({
             accounts: {
