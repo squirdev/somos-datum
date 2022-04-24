@@ -8,7 +8,7 @@ export async function secondary(program, provider, ledger, userJson) {
     const seller = new web3.PublicKey(more.seller)
     // rpc
     try {
-        await program.rpc.purchaseSecondary(seller, {
+        await program.rpc.purchaseSecondary({
             accounts: {
                 buyer: provider.wallet.publicKey,
                 seller: seller,
