@@ -128,13 +128,13 @@ pub struct Ledger {
 
 #[error_code]
 pub enum LedgerErrors {
-    #[msg("we've already sold-out. check the secondary market.")]
+    #[msg("we've already sold-out. wait for the secondary market to open.")]
     SoldOut,
     #[msg("you can only pay the boss for this track.")]
     BossUp,
     #[msg("your public-key is not on the ledger.")]
     SellerNotOnLedger,
-    #[msg("the item you've requested is not for sale.")]
+    #[msg("the item you've requested is not for sale in the secondary market.")]
     ItemNotInEscrow,
     #[msg("seller unauthorized to sell this item.")]
     UnauthorizedSeller,
