@@ -368,7 +368,7 @@ describe("somos-solana", () => {
         // assertions
         assert.ok(actualLedger.escrow.length === 1)
     });
-    // remove // TODO: fails when not on escrow
+    // remove
     it("remove from escrow", async () => {
         await program04.rpc.removeFromEscrow({
             accounts: {
@@ -377,6 +377,27 @@ describe("somos-solana", () => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             }
         });
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        // assertions
+        assert.ok(actualLedger.escrow.length === 0)
+    });
+    // remove
+    it("remove from escrow fails when item not on escrow", async () => {
+        try {
+            await program04.rpc.removeFromEscrow({
+                accounts: {
+                    seller: user04.key.publicKey,
+                    ledger: pdaLedgerPublicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            assert.ok(error.code === 6003)
+        }
         const actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
         );
