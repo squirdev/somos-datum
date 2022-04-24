@@ -6,7 +6,7 @@
     "build": "sh sync-idl.sh; sh zip.sh"
   },
   "dependencies": {
-    "@project-serum/anchor": "^0.16.1",
+    "@project-serum/anchor": "^0.22.1",
     "base58": "^2.0.1",
     "react-native-get-random-values": "^1.7.2",
     "tweetnacl": "^1.0.3"

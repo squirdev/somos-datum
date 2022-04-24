@@ -21,7 +21,7 @@ const programID = new web3.PublicKey(idl.metadata.address);
 const program = new Program(idl, programID, provider);
 // get program public key
 const textEncoder = new TextEncoder()
-const ACCOUNT_SEED = "hancock"
+const ACCOUNT_SEED = "shortershortersh"
 let statePublicKey, bump = null;
 
 exports.handler = async function (event, context) {
@@ -68,6 +68,9 @@ let formatError = function (error) {
             "Content-Type": "text/plain",
             "x-amzn-ErrorType": error.code
         },
+        "multiValueHeaders": {
+            "Access-Control-Allow-Origin": ["*"],
+        },
         "isBase64Encoded": false,
         "body": error.code + ": " + error.message
     }
@@ -86,9 +89,9 @@ function verifySignature(signedMessage) {
 }
 
 async function verifyOwnership(user) {
-    const purchasedList = await getPurchasedList();
+    const ownersList = await getOwnersList();
     const decodedUser = new web3.PublicKey(decodeBase64(user)).toString()
-    return purchasedList.includes(decodedUser)
+    return ownersList.includes(decodedUser)
 }
 
 async function getStatePubKeyAndBump() {
@@ -98,10 +101,10 @@ async function getStatePubKeyAndBump() {
     );
 }
 
-async function getPurchasedList() {
+async function getOwnersList() {
     await getStatePubKeyAndBump()
     const state = await program.account.ledger.fetch(statePublicKey);
-    return state.purchased.map(_publicKey => _publicKey.toString());
+    return state.owners.map(_publicKey => _publicKey.toString());
 }
 
 function getPreSignedUrl() {
