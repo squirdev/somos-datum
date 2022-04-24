@@ -54,15 +54,13 @@ pub mod somos_solana {
     }
 
     pub fn purchase_secondary(
-        ctx: Context<PurchaseSecondary>,
-        escrow_item: Pubkey, // TODO: drop
+        ctx: Context<PurchaseSecondary>
     ) -> Result<()> {
         let buyer = &ctx.accounts.buyer;
         let seller = &ctx.accounts.seller;
         let boss = &ctx.accounts.boss;
         let ledger = &mut ctx.accounts.ledger;
         EscrowItem::purchase_secondary(
-            &escrow_item,
             ledger,
             buyer,
             seller,
@@ -136,8 +134,6 @@ pub enum LedgerErrors {
     SellerNotOnLedger,
     #[msg("the item you've requested is not for sale in the secondary market.")]
     ItemNotInEscrow,
-    #[msg("seller unauthorized to sell this item.")]
-    UnauthorizedSeller,
     #[msg("items still available in primary market.")]
     PrimarySaleStillOn,
     #[msg("you've already purchased this item. don't be greedy.")]
@@ -299,7 +295,6 @@ impl EscrowItem {
     }
 
     pub fn purchase_secondary<'a>(
-        escrow_item: &Pubkey,
         ledger: &mut Ledger,
         buyer: &Signer<'a>,
         seller: &SystemAccount<'a>,
@@ -308,26 +303,18 @@ impl EscrowItem {
         // validate buyer
         match Ledger::validate_first_time_purchase(ledger, buyer.key) {
             Ok(_) => {
-                // validate escrow item
-                match EscrowItem::validate_escrow_item(escrow_item, ledger, seller) {
-                    Ok(_) => {
-                        // pop
-                        match EscrowItem::pop_escrow_item(escrow_item, ledger) {
-                            Ok(a) => {
-                                // push
-                                ledger.owners.push(buyer.key());
-                                // collect
-                                EscrowItem::collect(a, buyer, seller, boss, ledger.resale)
-                            }
-                            Err(err) => { Err(err) }
-                        }
+                // pop
+                match EscrowItem::pop_escrow_item(seller.key, ledger) {
+                    Ok(a) => {
+                        // push
+                        ledger.owners.push(buyer.key());
+                        // collect
+                        EscrowItem::collect(a, buyer, seller, boss, ledger.resale)
                     }
-                    err @ Err(_) => { err }
+                    Err(err) => { Err(err) }
                 }
             }
-            err @ Err(_) => {
-                err
-            }
+            err @ Err(_) => { err }
         }
     }
 
@@ -352,25 +339,6 @@ impl EscrowItem {
         match ledger.original_supply_remaining == 0 {
             true => { Ok(()) }
             false => { Err(LedgerErrors::PrimarySaleStillOn.into()) }
-        }
-    }
-
-    // TODO: drop ?
-    fn validate_escrow_item<'a>(
-        escrow_item: &Pubkey,
-        ledger: &Ledger,
-        seller: &SystemAccount<'a>,
-    ) -> Result<()> {
-        let escrow: Vec<Pubkey> = ledger.escrow.iter()
-            .map(|escrow_item| escrow_item.seller).collect();
-        match escrow.contains(escrow_item) {
-            true => {
-                match escrow_item == seller.key {
-                    true => { Ok(()) }
-                    false => { Err(LedgerErrors::UnauthorizedSeller.into()) }
-                }
-            }
-            false => { Err(LedgerErrors::ItemNotInEscrow.into()) }
         }
     }
 

@@ -131,12 +131,7 @@
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "escrowItem",
-          "type": "publicKey"
-        }
-      ]
+      "args": []
     },
     {
       "name": "removeFromEscrow",
@@ -258,21 +253,16 @@
     },
     {
       "code": 6004,
-      "name": "UnauthorizedSeller",
-      "msg": "seller unauthorized to sell this item."
-    },
-    {
-      "code": 6005,
       "name": "PrimarySaleStillOn",
       "msg": "items still available in primary market."
     },
     {
-      "code": 6006,
+      "code": 6005,
       "name": "DontBeGreedy",
       "msg": "you've already purchased this item. don't be greedy."
     },
     {
-      "code": 6007,
+      "code": 6006,
       "name": "ItemAlreadyInEscrow",
       "msg": "you've already submitted this item to escrow."
     }

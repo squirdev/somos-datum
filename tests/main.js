@@ -84,7 +84,7 @@ describe("somos-solana", () => {
             });
         } catch (error) {
             console.log(error)
-            assert.ok(error.code === 6005)
+            assert.ok(error.code === 6004)
         }
         const actualLedger = await program.account.ledger.fetch(
             pdaLedgerPublicKey
@@ -125,7 +125,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6006)
+            assert.ok(error.code === 6005)
             console.log(error)
         }
         const actualLedger = await program03.account.ledger.fetch(
@@ -236,7 +236,7 @@ describe("somos-solana", () => {
                 }
             });
         } catch (error) {
-            assert.ok(error.code === 6007)
+            assert.ok(error.code === 6006)
             console.log(error);
         }
         const actualLedger = await program02.account.ledger.fetch(
@@ -252,7 +252,7 @@ describe("somos-solana", () => {
         const seller = user03.key.publicKey; // user03 never submitted for escrow
         const boss = provider.wallet.publicKey;
         try {
-            await _program.rpc.purchaseSecondary(seller, {
+            await _program.rpc.purchaseSecondary({
                 accounts: {
                     buyer: buyer.key.publicKey,
                     seller: seller,
@@ -267,27 +267,6 @@ describe("somos-solana", () => {
         }
     });
     // purchase secondary
-    it("fail on purchase secondary when item is on escrow but specified seller does not match", async () => {
-        const buyer = await createUser();
-        const _program = programForUser(buyer)
-        const seller = user02.key.publicKey;
-        const boss = provider.wallet.publicKey;
-        try {
-            await _program.rpc.purchaseSecondary(seller, {
-                accounts: {
-                    buyer: buyer.key.publicKey,
-                    seller: boss, // should be user02 (seller)
-                    boss: boss,
-                    ledger: pdaLedgerPublicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                }
-            });
-        } catch (error) {
-            assert.ok(error.code === 6004)
-            console.log(error);
-        }
-    });
-    // purchase secondary
     it("purchase secondary", async () => {
         // players
         const buyer = user04.key.publicKey;
@@ -297,7 +276,7 @@ describe("somos-solana", () => {
         const balanceSeller = await provider.connection.getBalance(seller);
         const balanceBoss = await provider.connection.getBalance(boss);
         // success
-        await program04.rpc.purchaseSecondary(seller, {
+        await program04.rpc.purchaseSecondary({
             accounts: {
                 buyer: buyer,
                 seller: seller,
@@ -330,7 +309,7 @@ describe("somos-solana", () => {
         const boss = provider.wallet.publicKey;
         // failure
         try {
-            await program04.rpc.purchaseSecondary(seller, {
+            await program04.rpc.purchaseSecondary({
                 accounts: {
                     buyer: buyer,
                     seller: seller,
@@ -341,7 +320,7 @@ describe("somos-solana", () => {
             });
         } catch (error) {
             console.log(error);
-            assert.ok(error.code === 6006)
+            assert.ok(error.code === 6005)
         }
         // PDAs
         const actualLedger = await program.account.ledger.fetch(
