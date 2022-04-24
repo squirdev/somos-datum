@@ -351,4 +351,37 @@ describe("somos-solana", () => {
         // assertions
         assert.ok(actualLedger.escrow.length === 0)
     });
+    // submit
+    it("submit to escrow after purchasing secondary", async () => {
+        const price = 0.55 * anchor.web3.LAMPORTS_PER_SOL
+        await program04.rpc.submitToEscrow(new anchor.BN(price), {
+            accounts: {
+                seller: user04.key.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        // assertions
+        assert.ok(actualLedger.escrow.length === 1)
+    });
+    // remove
+    it("remove from escrow", async () => {
+        await program04.rpc.removeFromEscrow({
+            accounts: {
+                seller: user04.key.publicKey,
+                ledger: pdaLedgerPublicKey,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            }
+        });
+        const actualLedger = await program.account.ledger.fetch(
+            pdaLedgerPublicKey
+        );
+        console.log(actualLedger)
+        // assertions
+        assert.ok(actualLedger.escrow.length === 0)
+    });
 });

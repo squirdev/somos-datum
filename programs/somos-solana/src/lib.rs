@@ -55,7 +55,7 @@ pub mod somos_solana {
 
     pub fn purchase_secondary(
         ctx: Context<PurchaseSecondary>,
-        escrow_item: Pubkey,
+        escrow_item: Pubkey, // TODO: drop
     ) -> Result<()> {
         let buyer = &ctx.accounts.buyer;
         let seller = &ctx.accounts.seller;
@@ -68,6 +68,14 @@ pub mod somos_solana {
             seller,
             boss,
         )
+    }
+
+    pub fn remove_from_escrow(
+        ctx: Context<SubmitToEscrow>
+    ) -> Result<()> {
+        let seller = &ctx.accounts.seller;
+        let ledger = &mut ctx.accounts.ledger;
+        EscrowItem::remove_from_escrow(seller, ledger)
     }
 }
 
@@ -279,6 +287,18 @@ impl EscrowItem {
         }
     }
 
+    pub fn remove_from_escrow(
+        seller: &Signer,
+        ledger: &mut Ledger,
+    ) -> Result<()> {
+        EscrowItem::remove_from_vec(
+            &mut ledger.escrow,
+            &seller.key(),
+            |x| &x.seller,
+            LedgerErrors::ItemNotForSale,
+        ).map(|_| ())
+    }
+
     pub fn purchase_secondary<'a>(
         escrow_item: &Pubkey,
         ledger: &mut Ledger,
@@ -336,6 +356,7 @@ impl EscrowItem {
         }
     }
 
+    // TODO: drop ?
     fn validate_escrow_item<'a>(
         escrow_item: &Pubkey,
         ledger: &Ledger,
