@@ -9,7 +9,7 @@
   "author": "MrMizz",
   "license": "ISC",
   "devDependencies": {
-    "bulma": "^0.9.1",
-    "node-sass": "^5.0.0"
+    "bulma": "^0.9.4",
+    "node-sass": "^6.0.0"
   }
 }
