@@ -184,7 +184,6 @@ body admin =
         ]
 
 
-
 boss : Wallet
 boss =
     "DEuG4JnzvMVxMFPoBVvf2GH38mn3ybunMxtfmVU3ms86"
