@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 variable "deployment_id" {
   ### increment to force deployment
-  default = "2"
+  default = "1"
 }
 resource "aws_api_gateway_rest_api" "api" {
   name = "SomosDownload"

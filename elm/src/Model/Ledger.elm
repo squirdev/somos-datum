@@ -32,8 +32,8 @@ type alias EscrowItem =
 
 type alias Ledgers =
     { one : Ledger
-    -- , two : Ledger
 
+    -- , two : Ledger
     -- not actually in the ledger
     -- just the current user
     , wallet : Wallet

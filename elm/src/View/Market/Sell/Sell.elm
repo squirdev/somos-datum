@@ -206,11 +206,9 @@ body seller =
                                             -- button to remove from escrow
                                             remove ledgers.wallet ledger.release
 
-
                                         Nothing ->
                                             -- user input to submit price for escrow
                                             startTyping ledger.release ledgers
-
                     in
                     body_ ledgers input
 
@@ -237,7 +235,6 @@ body seller =
                                         Just _ ->
                                             -- button to remove from escrow
                                             remove ledgers.wallet ledger.release
-
 
                                         Nothing ->
                                             -- user input to submit price for escrow
@@ -301,6 +298,7 @@ header wallet =
             ]
         ]
 
+
 startTyping : Release -> Ledgers -> Html Msg
 startTyping release ledgers =
     Html.div
@@ -314,6 +312,7 @@ startTyping release ledgers =
             [ Html.text "type your price here"
             ]
         ]
+
 
 remove : Wallet -> Release -> Html Msg
 remove wallet release =

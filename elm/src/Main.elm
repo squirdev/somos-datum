@@ -252,7 +252,6 @@ update msg model =
                     , removeFromEscrowSender json
                     )
 
-
                 PurchaseSecondary escrowItem wallet release ->
                     let
                         encoder : Encode.Value
@@ -269,7 +268,6 @@ update msg model =
                     ( model
                     , purchaseSecondarySender json
                     )
-
 
         FromAnchor fromAnchorMsg ->
             case fromAnchorMsg of
@@ -386,7 +384,6 @@ update msg model =
             ( { model | state = Error string }
             , Cmd.none
             )
-
 
 
 

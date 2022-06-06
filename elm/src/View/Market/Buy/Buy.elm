@@ -187,7 +187,7 @@ body buyer =
                                                 [ Html.div
                                                     [ class "has-font-2"
                                                     ]
-                                                    [ Html.text "nothing here yet \u{1F97A}"
+                                                    [ Html.text "nothing here yet 🥺"
                                                     ]
                                                 , Html.div
                                                     [ class "has-font-2"

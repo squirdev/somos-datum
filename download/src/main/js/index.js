@@ -2,7 +2,7 @@
 const nacl = require("tweetnacl");
 
 const {Buffer} = require("buffer");
-const {web3, Wallet, Program, Provider} = require("@project-serum/anchor");
+const {web3, Wallet, Program, AnchorProvider} = require("@project-serum/anchor");
 const fs = require('fs')
 let idl = JSON.parse(fs.readFileSync('./idl.json', 'utf-8'))
 
@@ -12,12 +12,12 @@ const keyPair = web3.Keypair.generate()
 const wallet = new Wallet(keyPair)
 // build provider
 const preflightCommitment = "processed";
-// const devnet = "https://psytrbhymqlkfrhudd.dev.genesysgo.net:8899/"
-const mainnet = "https://ssc-dao.genesysgo.net/"
-const connection = new web3.Connection(mainnet, preflightCommitment);
-const provider = new Provider(connection, wallet, preflightCommitment);
+const devnet = "https://psytrbhymqlkfrhudd.dev.genesysgo.net:8899/"
+//const mainnet = "https://ssc-dao.genesysgo.net/"
+const connection = new web3.Connection(devnet, preflightCommitment);
+const provider = new AnchorProvider(connection, wallet, preflightCommitment);
 // build program
-const programID = new web3.PublicKey(idl.metadata.address);
+const programID = new web3.PublicKey("HQ1wD4yJytCvha9kZiooZNgCgTvJdAL5sY54AK4rh43o");
 const program = new Program(idl, programID, provider);
 // get program public key
 const textEncoder = new TextEncoder()

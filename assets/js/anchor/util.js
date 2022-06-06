@@ -1,4 +1,4 @@
-import {Program, Provider, web3} from "@project-serum/anchor";
+import {Program, AnchorProvider, web3} from "@project-serum/anchor";
 import {Buffer} from "buffer";
 import {network, preflightCommitment, programID} from "./config.js";
 import {PhantomWallet} from "./wallet";
@@ -12,7 +12,7 @@ export function getPP(_phantom) {
     // build wallet
     const wallet = new PhantomWallet(_phantom)
     // set provider
-    const provider = new Provider(connection, wallet, preflightCommitment);
+    const provider = new AnchorProvider(connection, wallet, preflightCommitment);
     // fetch current state of program
     // program
     const program = new Program(idl, programID, provider);

@@ -61,6 +61,7 @@ body admin =
                                             ]
                                         ]
                                     ]
+
                                 --, Html.div
                                 --    [ class "column has-border-2 is-12"
                                 --    ]
@@ -159,6 +160,7 @@ body admin =
                                     ledgers.one.owners
                                 )
                             ]
+
                         -- , Html.div
                         --     [ class "has-border-2"
                         --     ]
@@ -182,6 +184,10 @@ body admin =
         ]
 
 
+
+-- TODO; boss
+
+
 boss : Wallet
 boss =
-    "DLXRomaskStghSHAyoFZMKnFk1saLYDhYggW25Ze4jug"
+    "3XEuQQzBCZam4EfhLjF6sACBovq6VxR4PgB8ekk1enNQ"

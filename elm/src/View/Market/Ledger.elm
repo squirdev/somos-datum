@@ -165,6 +165,7 @@ type alias Meta =
 toList : Ledgers -> (Ledger -> Html Msg) -> List ( Ledger, Html Msg )
 toList ledgers local =
     [ ( ledgers.one, body { wallet = ledgers.wallet, ledger = ledgers.one, meta = release01, local = local } )
+
     -- , ( ledgers.two, body { wallet = ledgers.wallet, ledger = ledgers.two, meta = release02, local = local } )
     ]
 
@@ -227,7 +228,7 @@ release01 =
                     [ Html.b
                         [ class "mr-2"
                         ]
-                        [ Html.text "\u{1F941}"
+                        [ Html.text "🥁"
                         ]
                     , Html.text "audio file"
                     ]

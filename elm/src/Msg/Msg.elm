@@ -27,7 +27,7 @@ type Msg
       -- user forms
     | FromSeller FromSellerMsg
     | FromAdmin FromAdminMsg
-    -- generic javascript error
+      -- generic javascript error
     | FromJsError String
 
 
